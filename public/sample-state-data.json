@@ -1,0 +1,177 @@
+{
+  "Uttar Pradesh": {
+    "pensioner_count": [85000, 42000],
+    "internet_penetration": [0.65, 0.65],
+    "DLC_potential": [55250, 27300],
+    "DLC_success": [44200, 21840],
+    "DLC_failed": [5525, 2730],
+    "DLC_success_channels": [
+      {
+        "lic": 15000,
+        "epfo": 12000,
+        "banks": 10000,
+        "post": 7200
+      },
+      {
+        "lic": 7500,
+        "epfo": 6000,
+        "banks": 5000,
+        "post": 3340
+      }
+    ],
+    "DLC_failed_channels": [
+      {
+        "lic": 1500,
+        "epfo": 1200,
+        "banks": 1000,
+        "post": 1825
+      },
+      {
+        "lic": 750,
+        "epfo": 600,
+        "banks": 500,
+        "post": 880
+      }
+    ]
+  },
+  "Maharashtra": {
+    "pensioner_count": [72000, 36000],
+    "internet_penetration": [0.78, 0.78],
+    "DLC_potential": [56160, 28080],
+    "DLC_success": [50544, 25272],
+    "DLC_failed": [2808, 1404],
+    "DLC_success_channels": [
+      {
+        "lic": 18000,
+        "epfo": 15000,
+        "banks": 12000,
+        "post": 5544
+      },
+      {
+        "lic": 9000,
+        "epfo": 7500,
+        "banks": 6000,
+        "post": 2772
+      }
+    ],
+    "DLC_failed_channels": [
+      {
+        "lic": 800,
+        "epfo": 700,
+        "banks": 600,
+        "post": 708
+      },
+      {
+        "lic": 400,
+        "epfo": 350,
+        "banks": 300,
+        "post": 354
+      }
+    ]
+  },
+  "Bihar": {
+    "pensioner_count": [65000, 32000],
+    "internet_penetration": [0.45, 0.45],
+    "DLC_potential": [29250, 14400],
+    "DLC_success": [20475, 10080],
+    "DLC_failed": [4387, 2160],
+    "DLC_success_channels": [
+      {
+        "lic": 8000,
+        "epfo": 6000,
+        "banks": 4000,
+        "post": 2475
+      },
+      {
+        "lic": 4000,
+        "epfo": 3000,
+        "banks": 2000,
+        "post": 1080
+      }
+    ],
+    "DLC_failed_channels": [
+      {
+        "lic": 1200,
+        "epfo": 1000,
+        "banks": 800,
+        "post": 1387
+      },
+      {
+        "lic": 600,
+        "epfo": 500,
+        "banks": 400,
+        "post": 660
+      }
+    ]
+  },
+  "West Bengal": {
+    "pensioner_count": [58000, 29000],
+    "internet_penetration": [0.72, 0.72],
+    "DLC_potential": [41760, 20880],
+    "DLC_success": [35496, 17748],
+    "DLC_failed": [2088, 1044],
+    "DLC_success_channels": [
+      {
+        "lic": 12000,
+        "epfo": 10000,
+        "banks": 8000,
+        "post": 5496
+      },
+      {
+        "lic": 6000,
+        "epfo": 5000,
+        "banks": 4000,
+        "post": 2748
+      }
+    ],
+    "DLC_failed_channels": [
+      {
+        "lic": 600,
+        "epfo": 500,
+        "banks": 400,
+        "post": 588
+      },
+      {
+        "lic": 300,
+        "epfo": 250,
+        "banks": 200,
+        "post": 294
+      }
+    ]
+  },
+  "Tamil Nadu": {
+    "pensioner_count": [48000, 24000],
+    "internet_penetration": [0.85, 0.85],
+    "DLC_potential": [40800, 20400],
+    "DLC_success": [38760, 19380],
+    "DLC_failed": [1224, 612],
+    "DLC_success_channels": [
+      {
+        "lic": 15000,
+        "epfo": 12000,
+        "banks": 8000,
+        "post": 3760
+      },
+      {
+        "lic": 7500,
+        "epfo": 6000,
+        "banks": 4000,
+        "post": 1880
+      }
+    ],
+    "DLC_failed_channels": [
+      {
+        "lic": 400,
+        "epfo": 300,
+        "banks": 200,
+        "post": 324
+      },
+      {
+        "lic": 200,
+        "epfo": 150,
+        "banks": 100,
+        "post": 162
+      }
+    ]
+  }
+}
