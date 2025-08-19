@@ -48,6 +48,66 @@
 
         <div id="leaflet-map" class="leaflet-map"></div>
 
+        <!-- State Info Popup Modal -->
+        <VaModal v-model="showStateModal" size="large" :mobile-fullscreen="false" class="state-modal">
+          <template #header>
+            <h2 class="text-xl font-bold">{{ selectedStateData?.name }} - Pensioner Details</h2>
+          </template>
+          
+          <div v-if="selectedStateData" class="p-4">
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <div class="bg-blue-50 p-4 rounded-lg text-center">
+                <div class="text-2xl font-bold text-blue-600">{{ selectedStateData.totalPensioners.toLocaleString() }}</div>
+                <div class="text-sm text-gray-600">Total Pensioners</div>
+              </div>
+              <div class="bg-green-50 p-4 rounded-lg text-center">
+                <div class="text-2xl font-bold text-green-600">{{ selectedStateData.totalBanks }}</div>
+                <div class="text-sm text-gray-600">Banks</div>
+              </div>
+              <div class="bg-purple-50 p-4 rounded-lg text-center">
+                <div class="text-2xl font-bold text-purple-600">{{ selectedStateData.districts.length }}</div>
+                <div class="text-sm text-gray-600">Districts</div>
+              </div>
+            </div>
+
+            <!-- Districts Table -->
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold mb-3">District-wise Breakdown</h3>
+              <div class="overflow-x-auto">
+                <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">District</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pensioners</th>
+                      <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Banks</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr v-for="district in selectedStateData.districts" :key="district.name" class="hover:bg-gray-50">
+                      <td class="px-4 py-2 text-sm font-medium text-gray-900">{{ district.name }}</td>
+                      <td class="px-4 py-2 text-sm text-gray-600">{{ district.pensioners.toLocaleString() }}</td>
+                      <td class="px-4 py-2 text-sm text-gray-600">{{ district.banks }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Banks List -->
+            <div>
+              <h3 class="text-lg font-semibold mb-3">Top Banks in {{ selectedStateData.name }}</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div v-for="bank in selectedStateData.topBanks" :key="bank.name" 
+                     class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <span class="font-medium">{{ bank.name }}</span>
+                  <span class="text-sm text-gray-600">{{ bank.count }} pensioners</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </VaModal>
+
         <!-- Floating Legend Panel -->
         <div class="floating-legend-container">
           <!-- Small Floating Card Button - Always positioned -->
@@ -124,7 +184,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { pensionersApi } from '@/services/pensionersApi'
-import type { Pensioner } from '@/types/pensioner'
+// Remove problematic import and define interface locally
+interface Pensioner {
+  pensioner_state: string
+  pensioner_district: string
+  disbursing_agency: string
+  [key: string]: any
+}
 import * as L from 'leaflet'
 
 // Type definitions
@@ -152,13 +218,18 @@ interface LocationData {
 const useCustomGeoJSON = ref(false)
 const showLegendPanel = ref(false)
 const showChatbot = ref(false)
+const showStateModal = ref(false)
+const selectedStateData = ref<any>(null)
+const currentZoomLevel = ref(5)
+const stateWisePensionerData = ref({})
 
 // Map variables
 let map: L.Map | null = null
-let markerGroup: L.LayerGroup | null = null
-let customGeoJSONLayer: L.GeoJSON | null = null
 let choroplethLayer: L.GeoJSON | null = null
+let districtMarkersLayer: L.LayerGroup | null = null
+let currentDistrictData: any[] = []
 let markers: L.Marker[] = []
+let markersLayer: L.LayerGroup | null = null
 
 // Additional data variables
 const verificationData = ref<VerificationData[]>([])
@@ -298,45 +369,8 @@ const loadVerificationData = async () => {
       }
     })
 
-    // Method 2: Add additional sample data points ONLY for states/districts not covered by real API data
-    const additionalSampleData: VerificationData[] = []
-    
-    // Only add sample data for locations that don't exist in real data
-    const realLocationKeys = new Set(realVerificationData.map(loc => `${loc.state}-${loc.district}`))
-    
-    const potentialSampleData = [
-      { state: 'Uttar Pradesh', district: 'Kanpur', total: 45, completed: 36, pending: 9, coordinates: { latitude: 26.4499, longitude: 80.3319 }, pensioners: [] },
-      { state: 'Maharashtra', district: 'Pune', total: 38, completed: 30, pending: 8, coordinates: { latitude: 18.5204, longitude: 73.8567 }, pensioners: [] },
-      { state: 'Karnataka', district: 'Mysore', total: 32, completed: 26, pending: 6, coordinates: { latitude: 12.2958, longitude: 76.6394 }, pensioners: [] },
-      { state: 'Tamil Nadu', district: 'Coimbatore', total: 28, completed: 22, pending: 6, coordinates: { latitude: 11.0168, longitude: 76.9558 }, pensioners: [] },
-      { state: 'West Bengal', district: 'Howrah', total: 35, completed: 28, pending: 7, coordinates: { latitude: 22.5958, longitude: 88.2636 }, pensioners: [] },
-      { state: 'Gujarat', district: 'Ahmedabad', total: 42, completed: 34, pending: 8, coordinates: { latitude: 23.0225, longitude: 72.5714 }, pensioners: [] },
-      { state: 'Rajasthan', district: 'Jaipur', total: 29, completed: 23, pending: 6, coordinates: { latitude: 26.9124, longitude: 75.7873 }, pensioners: [] },
-      { state: 'Andhra Pradesh', district: 'Vijayawada', total: 31, completed: 25, pending: 6, coordinates: { latitude: 16.5062, longitude: 80.6480 }, pensioners: [] },
-      { state: 'Kerala', district: 'Kochi', total: 26, completed: 21, pending: 5, coordinates: { latitude: 9.9312, longitude: 76.2673 }, pensioners: [] },
-      { state: 'Punjab', district: 'Amritsar', total: 33, completed: 26, pending: 7, coordinates: { latitude: 31.6340, longitude: 74.8723 }, pensioners: [] },
-      { state: 'Haryana', district: 'Gurgaon', total: 40, completed: 32, pending: 8, coordinates: { latitude: 28.4595, longitude: 77.0266 }, pensioners: [] },
-      { state: 'Bihar', district: 'Patna', total: 27, completed: 22, pending: 5, coordinates: { latitude: 25.5941, longitude: 85.1376 }, pensioners: [] },
-      { state: 'Madhya Pradesh', district: 'Indore', total: 34, completed: 27, pending: 7, coordinates: { latitude: 22.7196, longitude: 75.8577 }, pensioners: [] },
-      { state: 'Odisha', district: 'Bhubaneswar', total: 30, completed: 24, pending: 6, coordinates: { latitude: 20.2961, longitude: 85.8245 }, pensioners: [] },
-      { state: 'Assam', district: 'Guwahati', total: 25, completed: 20, pending: 5, coordinates: { latitude: 26.1445, longitude: 91.7362 }, pensioners: [] },
-      { state: 'Jharkhand', district: 'Ranchi', total: 28, completed: 22, pending: 6, coordinates: { latitude: 23.3441, longitude: 85.3096 }, pensioners: [] },
-      { state: 'Chhattisgarh', district: 'Raipur', total: 24, completed: 19, pending: 5, coordinates: { latitude: 21.2514, longitude: 81.6296 }, pensioners: [] },
-      { state: 'Uttarakhand', district: 'Dehradun', total: 22, completed: 18, pending: 4, coordinates: { latitude: 30.3165, longitude: 78.0322 }, pensioners: [] },
-      { state: 'Himachal Pradesh', district: 'Shimla', total: 20, completed: 16, pending: 4, coordinates: { latitude: 31.1048, longitude: 77.1734 }, pensioners: [] },
-      { state: 'Manipur', district: 'Imphal', total: 18, completed: 14, pending: 4, coordinates: { latitude: 24.8170, longitude: 93.9368 }, pensioners: [] }
-    ]
-    
-    // Only add sample data for locations that don't exist in real API data
-    potentialSampleData.forEach(sample => {
-      const sampleKey = `${sample.state}-${sample.district}`
-      if (!realLocationKeys.has(sampleKey)) {
-        additionalSampleData.push(sample)
-      }
-    })
-
-    // Combine real data with additional sample data (real data takes priority)
-    const combinedData = [...realVerificationData, ...additionalSampleData]
+    // Use only real API data - no sample data
+    const combinedData = [...realVerificationData]
     
     verificationData.value = combinedData
     rawData.value = { pensioners: pensioners, locations: combinedData }
@@ -349,12 +383,8 @@ const loadVerificationData = async () => {
     })
     
     console.log(`✅ Loaded ${realVerificationData.length} real locations from API`)
-    console.log(`📊 Added ${additionalSampleData.length} sample locations for uncovered areas`)
-    console.log(`🎯 Total data points: ${combinedData.length}`)
+    console.log(`🎯 Total data points: ${combinedData.length} (real API data only)`)
     console.log(`📋 Real API locations:`, realVerificationData.map(loc => `${loc.district}, ${loc.state}`).slice(0, 10))
-    if (additionalSampleData.length > 0) {
-      console.log(`📋 Sample locations:`, additionalSampleData.map(loc => `${loc.district}, ${loc.state}`).slice(0, 10))
-    }
     
     // Debug: Check specific locations
     const puneData = realVerificationData.filter(loc => loc.district.toLowerCase().includes('pune'))
@@ -387,6 +417,78 @@ const dlcTypeData = ref<Record<string, number>>({})
 const disbursingAuthorityData = ref<Record<string, number>>({})
 const ageDistributionData = ref<Record<string, number>>({})
 
+// Process state-wise data for enhanced map features
+const processStateWiseData = (pensioners: any[]) => {
+  const stateGroups: any = {}
+  
+  pensioners.forEach(pensioner => {
+    const state = pensioner.pensioner_state || 'Unknown'
+    const district = pensioner.pensioner_district || 'Unknown'
+    const bank = pensioner.disbursing_agency || 'Unknown Bank'
+    
+    if (!stateGroups[state]) {
+      stateGroups[state] = {
+        totalPensioners: 0,
+        districts: {},
+        banks: {},
+        pensioners: []
+      }
+    }
+    
+    stateGroups[state].totalPensioners++
+    stateGroups[state].pensioners.push(pensioner)
+    
+    if (!stateGroups[state].districts[district]) {
+      stateGroups[state].districts[district] = {
+        pensioners: 0,
+        banks: new Set()
+      }
+    }
+    stateGroups[state].districts[district].pensioners++
+    stateGroups[state].districts[district].banks.add(bank)
+    
+    if (!stateGroups[state].banks[bank]) {
+      stateGroups[state].banks[bank] = 0
+    }
+    stateGroups[state].banks[bank]++
+  })
+  
+  const processedData: any = {}
+  Object.entries(stateGroups).forEach(([stateName, stateInfo]: [string, any]) => {
+    processedData[stateName] = {
+      name: stateName,
+      totalPensioners: stateInfo.totalPensioners,
+      totalBanks: Object.keys(stateInfo.banks).length,
+      districts: Object.entries(stateInfo.districts).map(([districtName, districtInfo]: [string, any]) => ({
+        name: districtName,
+        pensioners: districtInfo.pensioners,
+        banks: districtInfo.banks.size
+      })).sort((a, b) => b.pensioners - a.pensioners),
+      topBanks: Object.entries(stateInfo.banks)
+        .map(([bankName, count]) => ({ name: bankName, count }))
+        .sort((a: any, b: any) => b.count - a.count)
+        .slice(0, 10),
+      pensioners: stateInfo.pensioners
+    }
+  })
+  
+  return processedData
+}
+
+// Global function to open state details (called from popup)
+const openStateDetails = (stateName: string) => {
+  const stateInfo = (stateWisePensionerData.value as any)[stateName]
+  if (stateInfo) {
+    selectedStateData.value = stateInfo
+    showStateModal.value = true
+  }
+}
+
+// Make function globally available
+if (typeof window !== 'undefined') {
+  (window as any).openStateDetails = openStateDetails
+}
+
 // Fetch pensioners data from API
 const fetchPensionersData = async (date?: string) => {
   try {
@@ -402,17 +504,20 @@ const fetchPensionersData = async (date?: string) => {
     dlcTypeData.value = pensionersApi.getDLCTypeWiseData(pensionersData.value)
     disbursingAuthorityData.value = pensionersApi.getDisbursingAuthorityData(pensionersData.value)
     ageDistributionData.value = pensionersApi.getAgeDistribution(pensionersData.value)
+    
+    // Process state-wise data for enhanced features
+    stateWisePensionerData.value = processStateWiseData(pensionersData.value)
 
-    console.log('Pensioners data loaded:', {
+    console.log('Enhanced pensioners data loaded:', {
       total: pensionersData.value.length,
-      stateData: stateData.value,
-      departmentData: departmentData.value
+      states: Object.keys(stateWisePensionerData.value).length,
+      stateData: stateData.value
     })
 
     // Refresh map if it's already initialized
     if (map) {
       if (useCustomGeoJSON.value) {
-        showCustomGeoJSONMap()
+        showChoroplethMap()
       } else {
         showOriginalMap()
       }
@@ -469,33 +574,21 @@ const toggleMapType = () => {
   }
 }
 
-// Show choropleth map with state-wise data
+// Show choropleth map with state-wise data - now enhanced by default
 const showChoroplethMap = () => {
   if (!map) return
   
-  console.log('🗺️ Showing choropleth map...')
+  console.log('🗺️ Showing enhanced choropleth map with real API data...')
   
   // Clear existing markers
   clearMarkers()
   
-  // Calculate state-wise statistics
-  const stateStats: { [key: string]: { total: number, completed: number, pending: number } } = {}
-  
-  verificationData.value.forEach(location => {
-    const state = location.state
-    if (!stateStats[state]) {
-      stateStats[state] = { total: 0, completed: 0, pending: 0 }
-    }
-    stateStats[state].total += location.total
-    stateStats[state].completed += location.completed
-    stateStats[state].pending += location.pending
-  })
-  
-  console.log('📊 State statistics:', stateStats)
-  console.log('🔍 Available states in data:', Object.keys(stateStats))
-  console.log('📋 Sample state mapping:')
-  Object.entries(stateStats).slice(0, 5).forEach(([state, stats]) => {
-    console.log(`  ${state}: ${stats.total} pensioners`)
+  // Use real API pensioner data instead of sample data
+  console.log('📊 Real API state data:', stateWisePensionerData.value)
+  console.log('🔍 Available states in real data:', Object.keys(stateWisePensionerData.value))
+  console.log('📋 Sample real state mapping:')
+  Object.entries(stateWisePensionerData.value).slice(0, 5).forEach(([state, data]: [string, any]) => {
+    console.log(`  ${state}: ${data.totalPensioners} pensioners, ${data.totalBanks} banks`)
   })
   
   // Load India GeoJSON and create choropleth
@@ -518,62 +611,123 @@ const showChoroplethMap = () => {
       
       // Add choropleth layer
       choroplethLayer = L.geoJSON(geojson, {
-        style: (feature) => {
+        style: (feature: any) => {
           const stateName = feature.properties.st_nm
-          const stats = stateStats[stateName] || { total: 0, completed: 0, pending: 0 }
+          const stateInfo = (stateWisePensionerData.value as any)[stateName]
           
-          console.log(`🎨 Styling state: ${stateName}, stats:`, stats)
+          console.log(`🎨 Styling state: ${stateName}, real data:`, stateInfo)
           
-          // Color based on total pensioners with better scaling
-          const maxValue = Math.max(...Object.values(stateStats).map(s => s.total), 1)
-          const intensity = Math.min(stats.total / maxValue, 1) // Normalize to 0-1
+          // Color based on real pensioner count from API with distinct colors
+          let fillColor = '#f3f4f6' // Default light gray for no data
+          let fillOpacity = 0.5
           
-          // Create a gradient from red (low) to green (high)
-          const red = Math.floor(255 * (1 - intensity))
-          const green = Math.floor(255 * intensity)
-          const color = `rgb(${red}, ${green}, 0)`
+          if (stateInfo && stateInfo.totalPensioners > 0) {
+            const pensioners = stateInfo.totalPensioners
+            
+            // Use distinct colors for different pensioner ranges
+            if (pensioners > 500) {
+              fillColor = '#dc2626' // Red for very high
+              fillOpacity = 0.7
+            } else if (pensioners > 200) {
+              fillColor = '#f59e0b' // Orange for high
+              fillOpacity = 0.6
+            } else if (pensioners > 100) {
+              fillColor = '#10b981' // Green for medium
+              fillOpacity = 0.6
+            } else if (pensioners > 50) {
+              fillColor = '#3b82f6' // Blue for low-medium
+              fillOpacity = 0.5
+            } else {
+              fillColor = '#8b5cf6' // Purple for low
+              fillOpacity = 0.5
+            }
+          }
           
           return {
-            fillColor: color,
+            fillColor: fillColor,
             weight: 2,
             opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: 0.7
+            color: '#ffffff',
+            dashArray: '',
+            fillOpacity: fillOpacity
           }
         },
-        onEachFeature: (feature, layer) => {
+        onEachFeature: (feature: any, layer: any) => {
           const stateName = feature.properties.st_nm
-          const stats = stateStats[stateName] || { total: 0, completed: 0, pending: 0 }
+          const stateInfo = (stateWisePensionerData.value as any)[stateName]
           
-          layer.bindPopup(`
+          // Enhanced popup with real API state details and click functionality
+          const popupContent = stateInfo ? `
             <div class="choropleth-popup">
-              <h3>${stateName}</h3>
-              <div class="stats">
-                <div><strong>Total Pensioners:</strong> ${stats.total}</div>
-                <div><strong>Completed:</strong> ${stats.completed}</div>
-                <div><strong>Pending:</strong> ${stats.pending}</div>
+              <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px; font-weight: 700;">${stateName}</h3>
+              <div class="stats" style="font-size: 14px; color: #374151;">
+                <div style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px solid #e5e7eb;">
+                  <strong style="color: #111827;">Total Pensioners:</strong> ${stateInfo.totalPensioners.toLocaleString()}
+                </div>
+                <div style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px solid #e5e7eb;">
+                  <strong style="color: #111827;">Banks:</strong> ${stateInfo.totalBanks}
+                </div>
+                <div style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px solid #e5e7eb;">
+                  <strong style="color: #111827;">Districts:</strong> ${stateInfo.districts.length}
+                </div>
+                <div style="margin-bottom: 8px; padding: 4px 0;">
+                  <strong style="color: #111827;">Top Bank:</strong> ${stateInfo.topBanks[0]?.name || 'N/A'}
+                </div>
+              </div>
+              <button style="
+                background: #3b82f6; 
+                color: white; 
+                border: none; 
+                padding: 8px 16px; 
+                border-radius: 6px; 
+                cursor: pointer; 
+                font-size: 12px; 
+                margin-top: 10px;
+                width: 100%;
+              " onclick="window.openStateDetails && window.openStateDetails('${stateName}')">
+                View Details
+              </button>
+            </div>
+          ` : `
+            <div class="choropleth-popup">
+              <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px; font-weight: 700;">${stateName}</h3>
+              <div class="stats" style="font-size: 14px; color: #374151;">
+                <div style="margin-bottom: 5px;"><strong style="color: #111827;">Status:</strong> No pensioner data available</div>
+                <div style="font-style: italic; color: #6b7280;">This state may not have pensioners in the current dataset</div>
               </div>
             </div>
-          `)
+          `
           
-          // Add hover effects
+          layer.bindPopup(popupContent)
+          
+          // Enhanced hover and click effects
           layer.on({
-            mouseover: (e) => {
-              const layer = e.target
-              layer.setStyle({
+            mouseover: (e: any) => {
+              const targetLayer = e.target
+              targetLayer.setStyle({
                 weight: 3,
-                color: '#666',
+                color: '#2563eb',
                 dashArray: '',
                 fillOpacity: 0.9
               })
             },
-            mouseout: (e) => {
+            mouseout: (e: any) => {
               choroplethLayer?.resetStyle(e.target)
+            },
+            click: (e: any) => {
+              // Open state details modal if data is available
+              if (stateInfo) {
+                openStateDetails(stateName)
+              }
+              // Zoom to state bounds
+              const bounds = e.target.getBounds()
+              if (map) {
+                map.fitBounds(bounds, { padding: [20, 20] })
+              }
             }
           })
         }
-      }).addTo(map)
+      }).addTo(map!)
       
       console.log('✅ Choropleth map loaded successfully')
       
@@ -603,6 +757,197 @@ const showMarkerMap = () => {
   
   // Add markers back
   addPensionerLocationMarkers()
+}
+
+// Show district-level markers when zoomed in
+const showDistrictMarkers = async () => {
+  if (!map || !currentDistrictData.length) {
+    console.log('📍 Loading district data for markers...')
+    await loadDistrictData()
+  }
+  
+  if (!currentDistrictData.length) {
+    console.log('❌ No district data available for markers')
+    return
+  }
+  
+  console.log('📍 Showing district markers...')
+  
+  // Create district markers layer if it doesn't exist
+  if (!districtMarkersLayer) {
+    districtMarkersLayer = L.layerGroup()
+  }
+  
+  // Clear existing markers
+  districtMarkersLayer.clearLayers()
+  
+  // Get current map bounds to show only visible districts
+  const bounds = map.getBounds()
+  
+  // Add district markers
+  currentDistrictData.forEach((districtInfo: any) => {
+    if (districtInfo.coordinates && 
+        bounds.contains([districtInfo.coordinates.lat, districtInfo.coordinates.lng])) {
+      
+      const marker = createDistrictMarker(districtInfo)
+      if (marker) {
+        districtMarkersLayer!.addLayer(marker)
+      }
+    }
+  })
+  
+  // Add to map if not already added
+  if (!map.hasLayer(districtMarkersLayer)) {
+    map.addLayer(districtMarkersLayer)
+  }
+}
+
+// Hide district markers
+const hideDistrictMarkers = () => {
+  if (districtMarkersLayer && map) {
+    map.removeLayer(districtMarkersLayer)
+    console.log('📍 District markers hidden')
+  }
+}
+
+// Load district data from API
+const loadDistrictData = async () => {
+  try {
+    console.log('🔄 Loading district data...')
+    const response = await pensionersApi.getPensioners()
+    const pensioners = response.DLC_generated_pensioners || []
+    
+    // Group by state and district
+    const districtGroups: { [key: string]: any[] } = {}
+    
+    pensioners.forEach((pensioner: any) => {
+      const state = pensioner.pensioner_state || 'Unknown'
+      const district = pensioner.pensioner_district || 'Unknown'
+      const key = `${state}-${district}`
+      
+      if (!districtGroups[key]) {
+        districtGroups[key] = []
+      }
+      districtGroups[key].push(pensioner)
+    })
+    
+    // Convert to district data with coordinates
+    currentDistrictData = Object.entries(districtGroups).map(([key, pensioners]) => {
+      const [state, district] = key.split('-')
+      const coordinates = getDistrictCoordinates(state, district)
+      
+      return {
+        state,
+        district,
+        pensioners: pensioners.length,
+        coordinates,
+        banks: [...new Set(pensioners.map((p: any) => p.disbursing_agency))].length,
+        topBank: getTopBank(pensioners),
+        data: pensioners
+      }
+    }).filter(d => d.coordinates) // Only include districts with known coordinates
+    
+    console.log('✅ District data loaded:', currentDistrictData.length, 'districts')
+  } catch (error) {
+    console.error('❌ Error loading district data:', error)
+  }
+}
+
+// Create district marker
+const createDistrictMarker = (districtInfo: any) => {
+  if (!districtInfo.coordinates) return null
+  
+  const { lat, lng } = districtInfo.coordinates
+  
+  // Create pin-style marker for district (smaller than state markers)
+  const markerHtml = `
+    <svg width="20" height="28" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="district-shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.3)"/>
+        </filter>
+      </defs>
+      <!-- Pin background -->
+      <path d="M10 0C4.48 0 0 4.48 0 10c0 7.5 10 18 10 18s10-10.5 10-18c0-5.52-4.48-10-10-10z" 
+            fill="#10b981" stroke="#ffffff" stroke-width="2" filter="url(#district-shadow)"/>
+      <!-- Inner circle -->
+      <circle cx="10" cy="10" r="4" fill="#ffffff"/>
+      <!-- Center dot -->
+      <circle cx="10" cy="10" r="2" fill="#10b981"/>
+    </svg>
+  `
+  
+  const marker = L.marker([lat, lng], {
+    icon: L.divIcon({
+      html: markerHtml,
+      className: 'district-pin-marker',
+      iconSize: [20, 28],
+      iconAnchor: [10, 28]
+    })
+  })
+  
+  // Add popup with district details
+  const popupContent = `
+    <div class="district-popup">
+      <h4 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">
+        ${districtInfo.district}, ${districtInfo.state}
+      </h4>
+      <div style="font-size: 12px; color: #374151;">
+        <div style="margin-bottom: 4px;">
+          <strong>Pensioners:</strong> ${districtInfo.pensioners}
+        </div>
+        <div style="margin-bottom: 4px;">
+          <strong>Banks:</strong> ${districtInfo.banks}
+        </div>
+        <div>
+          <strong>Top Bank:</strong> ${districtInfo.topBank}
+        </div>
+      </div>
+    </div>
+  `
+  
+  marker.bindPopup(popupContent)
+  return marker
+}
+
+// Get district coordinates (simplified mapping)
+const getDistrictCoordinates = (state: string, district: string) => {
+  // District coordinates mapping for major districts
+  const districtCoords: { [key: string]: { lat: number, lng: number } } = {
+    // Gujarat districts
+    'Gujarat-Surat': { lat: 21.1702, lng: 72.8311 },
+    'Gujarat-Vadodara': { lat: 22.3072, lng: 73.1812 },
+    'Gujarat-Rajkot': { lat: 22.3039, lng: 70.8022 },
+    'Gujarat-Bhavnagar': { lat: 21.7645, lng: 72.1519 },
+    'Gujarat-Ahmedabad': { lat: 23.0225, lng: 72.5714 },
+    
+    // Rajasthan districts
+    'Rajasthan-Kota': { lat: 25.2138, lng: 75.8648 },
+    'Rajasthan-Jaipur': { lat: 26.9124, lng: 75.7873 },
+    'Rajasthan-Bikaner': { lat: 28.0229, lng: 73.3119 },
+    'Rajasthan-Ajmer': { lat: 26.4499, lng: 74.6399 },
+    'Rajasthan-Jodhpur': { lat: 26.2389, lng: 73.0243 },
+    
+    // Add more districts as needed
+  }
+  
+  const key = `${state}-${district}`
+  return districtCoords[key] || null
+}
+
+// Get top bank for district
+const getTopBank = (pensioners: any[]) => {
+  const bankCounts: { [key: string]: number } = {}
+  
+  pensioners.forEach((p: any) => {
+    const bank = p.disbursing_agency || 'Unknown'
+    bankCounts[bank] = (bankCounts[bank] || 0) + 1
+  })
+  
+  const topBank = Object.entries(bankCounts)
+    .sort(([,a], [,b]) => b - a)[0]
+  
+  return topBank ? topBank[0] : 'Unknown'
 }
 
 
@@ -664,6 +1009,19 @@ const initializeMap = () => {
         position: 'topright',
       })
       .addTo(map)
+
+    // Add zoom event listener for district-level markers
+    map.on('zoomend', () => {
+      const currentZoom = map.getZoom()
+      console.log('🔍 Zoom level changed to:', currentZoom)
+      
+      // Show district markers when zoomed in (zoom level 7 or higher)
+      if (currentZoom >= 7) {
+        showDistrictMarkers()
+      } else {
+        hideDistrictMarkers()
+      }
+    })
 
     // Add optimized tile layer with better styling
     const tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -936,6 +1294,11 @@ const addPensionerLocationMarkers = async () => {
 
   // Clear existing markers
   clearMarkers()
+  
+  // Initialize markers layer if not exists
+  if (!markersLayer) {
+    markersLayer = L.layerGroup().addTo(map)
+  }
 
   try {
     console.log('🔄 Fetching pensioner data from external API...')
@@ -972,170 +1335,166 @@ const addPensionerLocationMarkers = async () => {
     // Process location data and add markers
     console.log(`📍 Processing ${pensionersData.length} pensioners for markers...`)
 
-    // Use the verification data that includes both real and sample data
-    const allLocations = verificationData.value
-    console.log(`📍 Found ${allLocations.length} total locations (real + sample data)`)
+    // Use only real API pensioner data - no sample data
+    console.log(`📍 Processing ${pensionersData.length} real pensioners for markers...`)
 
     let markersAdded = 0
+    const stateGroups: { [key: string]: any[] } = {}
 
-    // Create markers for each location using combined data
-    for (const location of allLocations) {
+    // Group pensioners by state to create state-level markers
+    pensionersData.forEach((pensioner: any) => {
+      const state = pensioner.pensioner_state || pensioner.state || pensioner.State || 'Unknown'
+      if (!stateGroups[state]) {
+        stateGroups[state] = []
+      }
+      stateGroups[state].push(pensioner)
+    })
+
+    console.log(`📍 Found ${Object.keys(stateGroups).length} states with real pensioner data`)
+
+    // State coordinates mapping
+    const stateCoordinates: { [key: string]: { latitude: number, longitude: number } } = {
+      'Andhra Pradesh': { latitude: 15.9129, longitude: 79.7400 },
+      'Arunachal Pradesh': { latitude: 28.2180, longitude: 94.7278 },
+      'Assam': { latitude: 26.2006, longitude: 92.9376 },
+      'Bihar': { latitude: 25.0961, longitude: 85.3131 },
+      'Chhattisgarh': { latitude: 21.2787, longitude: 81.8661 },
+      'Goa': { latitude: 15.2993, longitude: 74.1240 },
+      'Gujarat': { latitude: 23.0225, longitude: 72.5714 },
+      'Haryana': { latitude: 29.0588, longitude: 76.0856 },
+      'Himachal Pradesh': { latitude: 31.1048, longitude: 77.1734 },
+      'Jharkhand': { latitude: 23.6102, longitude: 85.2799 },
+      'Karnataka': { latitude: 15.3173, longitude: 75.7139 },
+      'Kerala': { latitude: 10.8505, longitude: 76.2711 },
+      'Madhya Pradesh': { latitude: 22.9734, longitude: 78.6569 },
+      'Maharashtra': { latitude: 19.7515, longitude: 75.7139 },
+      'Manipur': { latitude: 24.6637, longitude: 93.9063 },
+      'Meghalaya': { latitude: 25.4670, longitude: 91.3662 },
+      'Mizoram': { latitude: 23.1645, longitude: 92.9376 },
+      'Nagaland': { latitude: 26.1584, longitude: 94.5624 },
+      'Odisha': { latitude: 20.9517, longitude: 85.0985 },
+      'Punjab': { latitude: 31.1471, longitude: 75.3412 },
+      'Rajasthan': { latitude: 27.0238, longitude: 74.2179 },
+      'Sikkim': { latitude: 27.5330, longitude: 88.5122 },
+      'Tamil Nadu': { latitude: 11.1271, longitude: 78.6569 },
+      'Telangana': { latitude: 18.1124, longitude: 79.0193 },
+      'Tripura': { latitude: 23.9408, longitude: 91.9882 },
+      'Uttar Pradesh': { latitude: 26.8467, longitude: 80.9462 },
+      'Uttarakhand': { latitude: 30.0668, longitude: 79.0193 },
+      'West Bengal': { latitude: 22.9868, longitude: 87.8550 },
+      'Delhi': { latitude: 28.7041, longitude: 77.1025 },
+      'Jammu and Kashmir': { latitude: 34.0837, longitude: 74.7973 },
+      'Ladakh': { latitude: 34.1526, longitude: 77.5771 }
+    }
+
+    // Create markers for each state using real API data only
+    for (const [stateName, statePensioners] of Object.entries(stateGroups)) {
       try {
-        const state = location.state
-        const district = location.district
-        console.log(`📍 Processing location: ${district}, ${state}`)
+        console.log(`📍 Processing state: ${stateName} with ${statePensioners.length} pensioners`)
         
-        // Use coordinates from the location data
-        let coordinates = location.coordinates
-
-        if (coordinates && coordinates.latitude && coordinates.longitude) {
-          console.log(`✅ Using coordinates for ${district}, ${state}: [${coordinates.latitude}, ${coordinates.longitude}]`)
-        } else {
-          // Fallback to predefined coordinates if no coordinates available
-          const fallbackCoordinates: { [key: string]: { latitude: number, longitude: number } } = {
-            'Delhi': { latitude: 28.6139, longitude: 77.2090 },
-            'Mumbai': { latitude: 19.0760, longitude: 72.8777 },
-            'Kolkata': { latitude: 22.5726, longitude: 88.3639 },
-            'Chennai': { latitude: 13.0827, longitude: 80.2707 },
-            'Bangalore': { latitude: 12.9716, longitude: 77.5946 },
-            'Hyderabad': { latitude: 17.3850, longitude: 78.4867 },
-            'Pune': { latitude: 18.5204, longitude: 73.8567 },
-            'Lucknow': { latitude: 26.8467, longitude: 80.9462 },
-            'Dhanbad': { latitude: 23.7957, longitude: 86.4304 },
-            'Deoghar': { latitude: 24.4820, longitude: 86.7089 },
-            'Kanpur': { latitude: 26.4499, longitude: 80.3319 },
-            'Mysore': { latitude: 12.2958, longitude: 76.6394 },
-            'Coimbatore': { latitude: 11.0168, longitude: 76.9558 },
-            'Howrah': { latitude: 22.5958, longitude: 88.2636 },
-            'Ahmedabad': { latitude: 23.0225, longitude: 72.5714 },
-            'Jaipur': { latitude: 26.9124, longitude: 75.7873 },
-            'Vijayawada': { latitude: 16.5062, longitude: 80.6480 },
-            'Kochi': { latitude: 9.9312, longitude: 76.2673 },
-            'Amritsar': { latitude: 31.6340, longitude: 74.8723 },
-            'Gurgaon': { latitude: 28.4595, longitude: 77.0266 },
-            'Patna': { latitude: 25.5941, longitude: 85.1376 },
-            'Indore': { latitude: 22.7196, longitude: 75.8577 },
-            'Bhubaneswar': { latitude: 20.2961, longitude: 85.8245 },
-            'Guwahati': { latitude: 26.1445, longitude: 91.7362 },
-            'Ranchi': { latitude: 23.3441, longitude: 85.3096 },
-            'Raipur': { latitude: 21.2514, longitude: 81.6296 },
-            'Dehradun': { latitude: 30.3165, longitude: 78.0322 },
-            'Shimla': { latitude: 31.1048, longitude: 77.1734 },
-            'Imphal': { latitude: 24.8170, longitude: 93.9368 }
-          }
-
-          const cityKey = district || state
-          coordinates = fallbackCoordinates[cityKey] || fallbackCoordinates[state]
-
-          if (coordinates) {
-            console.log(`🔄 Using fallback coordinates for ${state}, ${district}:`, coordinates)
-          } else {
-            console.warn(`⚠️ No coordinates found for ${state}, ${district} - skipping`)
-            continue
-          }
+        // Get coordinates for this state
+        const coordinates = stateCoordinates[stateName]
+        
+        if (!coordinates) {
+          console.warn(`❌ No coordinates found for state: ${stateName}`)
+          continue
         }
 
-        if (coordinates && map) {
-          const lat = coordinates.latitude
-          const lng = coordinates.longitude
-          console.log(`📍 SUCCESS: Adding marker at [${lat}, ${lng}] for ${state}, ${district}`)
+        // Validate coordinates are within India
+        if (!isWithinIndia(coordinates.latitude, coordinates.longitude)) {
+          console.warn(`❌ Coordinates for ${stateName} are outside India bounds:`, coordinates)
+          continue
+        }
 
-          // Derive PIN codes and details from real API data when available
-          // This fixes cases like Kanpur showing "0 PIN Codes" by computing from global API data
-          let pinCodes: string[] = []
-          let pensionerDetails = ''
-          let matchedPensioners: any[] = []
+        const pensionerCount = statePensioners.length
+        const colorScheme = pensionerCount > 100 ? 'high' : pensionerCount > 50 ? 'medium' : pensionerCount > 10 ? 'low' : 'default'
 
-          // Helper: fuzzy match for district names (e.g., "Kanpur" vs "Kanpur Nagar")
-          const fuzzyDistrictMatch = (a: string, b: string) => {
-            if (!a || !b) return false
-            const aa = String(a).toLowerCase()
-            const bb = String(b).toLowerCase()
-            return aa === bb || aa.includes(bb) || bb.includes(aa)
-          }
+        console.log(`🎨 Creating marker for ${stateName} with ${pensionerCount} pensioners (${colorScheme} scheme)`)
 
-          if (location.pensioners && Array.isArray(location.pensioners) && location.pensioners.length > 0) {
-            matchedPensioners = location.pensioners
-          } else if (pensionersData.value && pensionersData.value.length > 0) {
-            // Fallback: compute from full API dataset for this state/district
-            matchedPensioners = pensionersData.value.filter((p: any) => {
-              const stateOk = (p.pensioner_state || '').toLowerCase() === (state || '').toLowerCase()
-              const districtOk = fuzzyDistrictMatch(p.pensioner_district || '', district || '')
-              return stateOk && districtOk
-            })
-          }
+        // Create pin-style location marker
+        const getMarkerColor = (count: number) => {
+          if (count > 100) return '#dc2626' // red for high
+          if (count > 50) return '#f59e0b'  // amber for medium
+          if (count > 10) return '#10b981'  // green for low
+          return '#6b7280' // gray for default
+        }
 
-          if (matchedPensioners.length > 0) {
-            pinCodes = matchedPensioners
-              .map((p: any) => p.pensioner_pin || p.pin || p.pincode)
-              .filter((pin: any) => !!pin)
+        const markerColor = getMarkerColor(pensionerCount)
+        const customIcon = L.icon({
+          iconUrl: `data:image/svg+xml;base64,${btoa(`
+            <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0Z" fill="${markerColor}"/>
+              <circle cx="12.5" cy="12.5" r="6" fill="white"/>
+            </svg>
+          `)}`,
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34]
+        })
 
-            // Show first few pensioner details
-            const firstFewPensioners = matchedPensioners.slice(0, 3)
-            pensionerDetails = firstFewPensioners
-              .map((p: any) => `${p.name || 'Unknown'} (${p.pensioner_pin || p.pin || p.pincode || 'No PIN'})`)
-              .join('<br>')
-
-            if (matchedPensioners.length > 3) {
-              pensionerDetails += `<br><em>... and ${matchedPensioners.length - 3} more</em>`
-            }
-          }
-
-          // --- Enhanced Popup Content with Real Data ---
-          const isRealData = matchedPensioners.length > 0
-          const dataSource = isRealData ? '📊 Real API Data' : '📋 Sample Data'
-          const uniquePinCount = Array.from(new Set(pinCodes)).length
-          const displayTotal = isRealData ? matchedPensioners.length : location.total
-          
-          const popupHtml = `
-            <div class="custom-popup-card">
-              <div class="popup-header">
-                <span class="popup-title">${district}</span>
-                <span class="popup-close" onclick="this.closest('.leaflet-popup').style.display='none'">×</span>
+        // Create popup content with detailed state information like choropleth
+        const stateInfo = (stateWisePensionerData.value as any)[stateName]
+        const popupContent = stateInfo ? `
+          <div class="choropleth-popup">
+            <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px; font-weight: 700;">${stateName}</h3>
+            <div class="stats" style="font-size: 14px; color: #374151;">
+              <div style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px solid #e5e7eb;">
+                <strong style="color: #111827;">Total Pensioners:</strong> ${stateInfo.totalPensioners.toLocaleString()}
               </div>
-              <div class="popup-state">${state}</div>
-              <div class="popup-data-source">${dataSource}</div>
-              <div class="popup-divider"></div>
-              <div class="popup-row">
-                <span class="popup-label"><b>${displayTotal}</b> Pensioners</span>
+              <div style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px solid #e5e7eb;">
+                <strong style="color: #111827;">Banks:</strong> ${stateInfo.totalBanks}
               </div>
-              ${pensionerDetails ? `
-              <div class="popup-pensioners">
-                <div class="popup-subtitle">Sample Pensioners:</div>
-                <div class="popup-pensioner-list">${pensionerDetails}</div>
+              <div style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px solid #e5e7eb;">
+                <strong style="color: #111827;">Districts:</strong> ${stateInfo.districts.length}
               </div>
-              ` : ''}
-              <div class="popup-coords">
-                <span class="popup-pin">📍</span>
-                <span>${lat.toFixed(4)}, ${lng.toFixed(4)}</span>
+              <div style="margin-bottom: 8px; padding: 4px 0;">
+                <strong style="color: #111827;">Top Bank:</strong> ${stateInfo.topBanks[0]?.name || 'N/A'}
               </div>
             </div>
-          `
+            <button style="
+              background: #3b82f6; 
+              color: white; 
+              border: none; 
+              padding: 8px 16px; 
+              border-radius: 6px; 
+              cursor: pointer; 
+              font-size: 12px; 
+              margin-top: 10px;
+              width: 100%;
+            " onclick="window.openStateDetails && window.openStateDetails('${stateName}')">
+              View Details
+            </button>
+          </div>
+        ` : `
+          <div class="choropleth-popup">
+            <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px; font-weight: 700;">${stateName}</h3>
+            <div class="stats" style="font-size: 14px; color: #374151;">
+              <div style="margin-bottom: 8px; padding: 4px 0; border-bottom: 1px solid #e5e7eb;">
+                <strong style="color: #111827;">Total Pensioners:</strong> ${pensionerCount.toLocaleString()}
+              </div>
+              <div style="margin-bottom: 5px;"><strong style="color: #111827;">Status:</strong> Limited data available</div>
+              <div style="font-style: italic; color: #6b7280;">Showing marker-level data only</div>
+            </div>
+          </div>
+        `
 
-          const marker = L.marker([lat, lng], {
-            pane: 'markerPane',
-            icon: L.icon({
-              iconUrl: 'https://cdn-icons-png.flaticon.com/512/684/684908.png',
-              iconSize: [32, 32],
-              iconAnchor: [16, 32],
-              popupAnchor: [0, -28],
-              className: 'premium-location-pin'
-            })
+        const marker = L.marker([coordinates.latitude, coordinates.longitude], {
+          icon: customIcon
+        })
+          .bindPopup(popupContent, {
+            className: 'custom-leaflet-popup',
+            closeButton: true,
+            minWidth: 200,
+            maxWidth: 250
           })
-            .bindPopup(popupHtml, {
-              className: 'custom-leaflet-popup',
-              closeButton: false,
-              minWidth: 210,
-              maxWidth: 260
-            })
-            .addTo(map)
+          .addTo(map)
 
-          markers.push(marker)
-          markersAdded++
-          console.log(`✅ Marker ${markersAdded} added successfully for ${district}, ${state}`)
-        }
+        markersLayer.addLayer(marker)
+        markersAdded++
+        console.log(`✅ Marker ${markersAdded} added successfully for ${stateName} with ${pensionerCount} pensioners`)
+        
       } catch (error) {
-        console.error('Error adding marker:', error)
+        console.error(`Error adding marker for ${stateName}:`, error)
       }
     }
 
@@ -1289,20 +1648,20 @@ const addPensionerLocationMarkers = async () => {
       document.head.appendChild(style)
     }
 
-    console.log(`✅ Added ${markersAdded} location markers to map`)
-    console.log(`📊 Total locations processed: ${allLocations.length}`)
+    console.log(`✅ Added ${markersAdded} state-level markers to map from real API data`)
+    console.log(`📊 Total states processed: ${Object.keys(stateGroups).length}`)
     console.log(`📍 Successful markers: ${markersAdded}`)
-    console.log(`❌ Failed locations: ${allLocations.length - markersAdded}`)
 
     // Fit map bounds to show all markers if we have any
-    if (markersAdded > 0 && markers.length > 0 && map) {
-      console.log('🔄 Fitting map bounds to show all markers...')
-      markerGroup = L.featureGroup(markers)
-      map.fitBounds(markerGroup.getBounds(), {
-        maxZoom: 6
-      })
-      console.log('✅ Map bounds fitted to show all markers')
-      setTimeout(() => {}, 0)
+    if (markersAdded > 0 && map) {
+      console.log('🔄 Fitting map to India bounds...')
+      try {
+        // Set view to India with appropriate zoom
+        map.setView([20.5937, 78.9629], 5)
+        console.log('✅ Map view set to show India with markers')
+      } catch (boundsError) {
+        console.warn('⚠️ Could not set map view:', boundsError)
+      }
     }
   } catch (error) {
     console.error('❌ Error in addPensionerLocationMarkers:', error)
@@ -2241,7 +2600,7 @@ const forceReloadData = async () => {
   border: 1px solid var(--va-info, #2196f3);
   padding: 8px 16px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;

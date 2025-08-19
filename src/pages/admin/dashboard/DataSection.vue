@@ -46,6 +46,7 @@ import { useColors, useGlobalConfig } from 'vuestic-ui'
 import DataSectionItem from './DataSectionItem.vue'
 import VaChart from '@/components/va-charts/VaChart.vue'
 import { pensionersApi } from '@/services/pensionersApi'
+import { statsApi } from '@/services/statsApi'
 
 interface DashboardMetric {
   id: string
@@ -68,11 +69,19 @@ const gridColor = computed(() => isDarkTheme.value ? 'rgba(255, 255, 255, 0.1)' 
 const tooltipBg = computed(() => isDarkTheme.value ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)')
 const tooltipText = computed(() => isDarkTheme.value ? '#ffffff' : '#1f2937')
 
+// Real-time stats from API
+const apiStats = ref({
+  totalPensioners: '0',
+  verifiedThisMonth: '0',
+  pendingVerification: '0',
+  flaggedProfiles: '0'
+})
+
 const dashboardMetrics = computed<DashboardMetric[]>(() => [
   {
     id: 'totalRegisteredPensioners',
     title: 'Total Registered Pensioners',
-    value: '2,45,847',
+    value: apiStats.value.totalPensioners,
     icon: 'mso-people',
     changeText: '+2,150',
     changeDirection: 'up',
@@ -82,7 +91,7 @@ const dashboardMetrics = computed<DashboardMetric[]>(() => [
   {
     id: 'verifiedThisMonth',
     title: 'Verified This Month',
-    value: '18,456',
+    value: apiStats.value.verifiedThisMonth,
     icon: 'mso-verified',
     changeText: '+12.8%',
     changeDirection: 'up',
@@ -448,6 +457,24 @@ const simpleChartOptions = {
   animation: { duration: 800 }
 }
 
+// Fetch real-time stats from API
+async function fetchApiStats() {
+  try {
+    const stats = await statsApi.getPensionerStats()
+    apiStats.value = stats
+    console.log('📊 Updated dashboard stats:', stats)
+  } catch (error) {
+    console.error('Failed to fetch API stats:', error)
+    // Keep existing values or set fallback
+    apiStats.value = {
+      totalPensioners: '0',
+      verifiedThisMonth: '0',
+      pendingVerification: '0',
+      flaggedProfiles: '0'
+    }
+  }
+}
+
 async function fetchStateVerifications() {
   // Build a weekly trend from your running API (/pensioners)
   try {
@@ -558,10 +585,13 @@ function setDemoData() {
 let refreshInterval: NodeJS.Timeout | null = null
 
 onMounted(() => {
+  // Fetch initial data
+  fetchApiStats()
   fetchStateVerifications()
 
   // Set up real-time data refresh
   refreshInterval = setInterval(() => {
+    fetchApiStats()
     fetchStateVerifications()
   }, 30000) // Refresh every 30 seconds
 })

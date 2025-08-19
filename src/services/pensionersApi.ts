@@ -24,23 +24,43 @@ class PensionersApiService {
   private baseUrl: string
 
   constructor() {
-    // Use your real Jeevan Pramaan API Server
-    this.baseUrl = import.meta.env.VITE_PENSIONERS_API_URL || 'http://100.113.47.45:8080/pensioners'
+    // Use proxy in development, direct URL in production
+    this.baseUrl = import.meta.env.DEV 
+      ? '/api/pensioners' 
+      : (import.meta.env.VITE_PENSIONERS_API_URL || 'http://100.113.47.45:8080/pensioners')
   }
 
   async getPensioners(date?: string): Promise<PensionersResponse> {
     try {
       const url = date ? `${this.baseUrl}?date=${date}` : this.baseUrl
-      const response = await fetch(url)
+      console.log('🔄 Fetching pensioners from:', url)
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors', // Enable CORS
+      })
+
+      console.log('📡 API Response status:', response.status)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
       const data = await response.json()
+      console.log('✅ API data received:', {
+        total_count: data.total_count,
+        pensioners_length: data.DLC_generated_pensioners?.length || 0,
+        generated_at: data.generated_at
+      })
+      
       return data
     } catch (error) {
-      console.error('Error fetching pensioners data, using fallback data:', error)
+      console.error('❌ Error fetching pensioners data:', error)
+      console.log('🔄 Using fallback data instead')
       // Return fallback dummy data when API is not available
       return this.getFallbackData()
     }

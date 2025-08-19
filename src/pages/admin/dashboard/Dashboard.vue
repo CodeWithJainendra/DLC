@@ -49,7 +49,7 @@ const isDark = ref(false)
     </div>
 
     <!-- Map Section - Moved up for better positioning -->
-    <div class="flex flex-col sm:flex-row gap-2 -mt-[49.1rem] mb-0">
+    <div class="flex flex-col sm:flex-row gap-2 -mt-[40.1rem] mb-0">
       <RevenueByLocationMap class="w-full sm:w-[69%]" />
     </div>
 

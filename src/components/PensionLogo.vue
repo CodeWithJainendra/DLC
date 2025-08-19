@@ -2,15 +2,14 @@
   <div class="pension-logo flex items-center gap-3">
     <!-- Logo Icon -->
     <div class="logo-icon">
-      <div
-        class="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-lg bank-icon"
-        :style="{ backgroundColor: iconColor }"
-      >
-        <!-- Bank Icon -->
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="text-white">
-          <path d="M12 2L2 7v2h20V7l-10-5zM4 11v8h2v-8H4zm4 0v8h2v-8H8zm4 0v8h2v-8h-2zm4 0v8h2v-8h-2zm4 0v8h2v-8h-2zM2 21h20v2H2v-2z"/>
-        </svg>
-      </div>
+      <img
+        src="/mainlogo.png"
+        alt="Main Logo"
+        class="w-10 h-10 rounded-lg object-contain shadow cursor-pointer"
+        style="background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.12);"
+        @click="openLogoFullscreen"
+        ref="logoImg"
+      />
     </div>
     
     <!-- Logo Text -->
@@ -26,7 +25,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useColors } from 'vuestic-ui'
 
 const { getColor } = useColors()
@@ -44,6 +43,21 @@ const props = withDefaults(
 
 const iconColor = computed(() => getColor(props.iconColor))
 const primaryColor = computed(() => getColor(props.primaryColor))
+
+const logoImg = ref<HTMLImageElement | null>(null)
+
+function openLogoFullscreen() {
+  const img = logoImg.value
+  if (img) {
+    if (img.requestFullscreen) {
+      img.requestFullscreen()
+    } else if ((img as any).webkitRequestFullscreen) {
+      (img as any).webkitRequestFullscreen()
+    } else if ((img as any).msRequestFullscreen) {
+      (img as any).msRequestFullscreen()
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

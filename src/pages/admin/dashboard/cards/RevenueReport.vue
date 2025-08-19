@@ -179,78 +179,30 @@ import BarChartRace from '../../../../components/charts/BarChartRace.vue'
 import IndiaStateMap from '../../../../components/maps/IndiaStateMap.vue'
 import { downloadAsCSV } from '../../../../services/toCSV'
 import PythonApiService from '@/services/pythonApi'
-import { pensionersApi } from '../../../../services/pensionersApi'
 import {
   earningsColor,
   expensesColor,
   months,
+  generateRevenues,
+  getRevenuePerMonth,
   // formatMoney,
 } from '../../../../data/charts/revenueChartData'
 
+const revenues = generateRevenues(months)
 const chartRef = ref<InstanceType<typeof BarChartRace> | null>(null)
-
-// Real API-based data instead of hardcoded revenues
-const realVerificationData = ref({
-  verified: 0,
-  pending: 0,
-  total: 0
-})
 
 const currentYear = new Date().getFullYear()
 const monthsWithCurrentYear = months.map((month) => `${month} ${currentYear}`)
+
 const selectedMonth = ref(monthsWithCurrentYear[0])
 
-// Load real verification data from API
-const loadVerificationData = async () => {
-  try {
-    console.log('🔄 Loading real verification data from API...')
-
-    const response = await pensionersApi.getPensioners()
-    const pensioners = response.DLC_generated_pensioners || []
-
-    // Calculate verification stats based on real data
-    const total = pensioners.length
-    // Simulate verification status - in real system this would come from API
-    const verified = Math.floor(total * 0.75) // 75% verified
-    const pending = total - verified
-
-    realVerificationData.value = {
-      verified,
-      pending,
-      total
-    }
-
-    console.log('📊 Verification data loaded:', realVerificationData.value)
-
-  } catch (error) {
-    console.error('❌ Error loading verification data:', error)
-    // Show zeros instead of fallback data
-    realVerificationData.value = {
-      verified: 0,
-      pending: 0,
-      total: 0
-    }
-  }
-}
-
-const earningsForSelectedMonth = computed(() => ({
-  earning: realVerificationData.value.verified,
-  expenses: realVerificationData.value.pending
-}))
-
+const earningsForSelectedMonth = computed(() => getRevenuePerMonth(selectedMonth.value.split(' ')[0], revenues))
 const totalVerifications = computed(() => {
-  return realVerificationData.value.total
+  return earningsForSelectedMonth.value.earning + earningsForSelectedMonth.value.expenses
 })
 
 const exportAsCSV = () => {
-  // Export real verification data instead of fake revenue data
-  const exportData = [{
-    month: selectedMonth.value,
-    verified: realVerificationData.value.verified,
-    pending: realVerificationData.value.pending,
-    total: realVerificationData.value.total
-  }]
-  downloadAsCSV(exportData, 'verification-report')
+  downloadAsCSV(revenues, 'revenue-report')
 }
 
 // State-wise race data for BarChartRace
@@ -474,9 +426,6 @@ const loadStateWiseData = async () => {
 
 // Load data on mount
 onMounted(async () => {
-  console.log('🔄 Loading verification data...')
-  await loadVerificationData()
-
   console.log('🔄 Loading state-wise data...')
   await loadStateWiseData()
   console.log('📊 State data loaded:', stateWiseRaceData.value)

@@ -283,6 +283,7 @@ import {
   VaDataTable, VaBadge, VaModal, VaForm, VaDateInput, VaTextarea, 
   VaIcon, VaAvatar, VaPagination, VaFileUpload 
 } from 'vuestic-ui'
+import { statsApi } from '@/services/statsApi'
 
 interface Pensioner {
   id: string
@@ -315,10 +316,10 @@ const currentPage = ref(1)
 const pageSize = ref(50)
 
 const stats = ref({
-  totalPensioners: '2,45,847',
-  verifiedThisYear: '1,89,234',
-  pendingVerification: '56,613',
-  flaggedProfiles: '23'
+  totalPensioners: '0',
+  verifiedThisYear: '0',
+  pendingVerification: '0',
+  flaggedProfiles: '0'
 })
 
 const statusOptions = ['Verified', 'Pending', 'Expired', 'Flagged']
@@ -532,7 +533,24 @@ const closeModal = () => {
   showModal.value = false
 }
 
+// Fetch real-time stats from API
+async function fetchStats() {
+  try {
+    const apiStats = await statsApi.getPensionerStats()
+    stats.value = {
+      totalPensioners: apiStats.totalPensioners,
+      verifiedThisYear: apiStats.verifiedThisMonth, // Using monthly data as yearly placeholder
+      pendingVerification: apiStats.pendingVerification,
+      flaggedProfiles: apiStats.flaggedProfiles
+    }
+    console.log('📊 Updated pensioner records stats:', stats.value)
+  } catch (error) {
+    console.error('Failed to fetch pensioner stats:', error)
+  }
+}
+
 onMounted(() => {
   // Load initial data
+  fetchStats()
 })
 </script>

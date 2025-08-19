@@ -84,103 +84,199 @@
   </VaCard>
 
   <!-- Enhanced Modal Popup with Two Charts -->
-  <VaModal
-    v-model="showModal"
-    size="large"
-    :mobile-fullscreen="false"
-    max-height="500px"
-    max-width="1200px"
-    :close-on-click-outside="true"
-    :hide-default-actions="false"
-  >
+  <VaModal v-model="showModal" size="large" class="dlc-status-modal resizable-modal">
     <template #header>
-      <div class="flex items-center justify-between">
-        <h2 class="text-xs font-semibold" style="margin: 0; padding: 0.2rem 0; line-height: 1">
-          DLC Status vs Total Pensioners Charts
-        </h2>
-        <button 
-          @click="refreshData" 
-          class="px-2 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-600"
-        >
-          <VaIcon name="refresh" size="12px" class="mr-1" />
-          Refresh
-        </button>
+      <div class="flex justify-between items-center w-full">
+        <h3 class="text-lg font-semibold text-gray-800">DLC Status vs Total Pensioners Charts</h3>
+        <div class="flex gap-2 items-center">
+          <!-- Filter Controls -->
+          <select 
+            v-model="stateLimit" 
+            class="px-2 py-1 border border-gray-300 rounded text-sm"
+            @change="applyFilters"
+          >
+            <option :value="5">Top 5 States</option>
+            <option :value="10">Top 10 States</option>
+            <option :value="0">All States</option>
+          </select>
+          
+          <select 
+            v-model="bankLimit" 
+            class="px-2 py-1 border border-gray-300 rounded text-sm"
+            @change="applyFilters"
+          >
+            <option :value="5">Top 5 Banks</option>
+            <option :value="10">Top 10 Banks</option>
+            <option :value="0">All Banks</option>
+          </select>
+          
+          <button 
+            @click="toggleBankWiseView" 
+            class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-sm font-medium"
+          >
+            {{ showBankWiseView ? 'Show State-wise Data' : 'Show Data with Bank Wise Category' }}
+          </button>
+        </div>
       </div>
     </template>
 
-    <div class="modal-body" style="padding: 0.4rem; background: #f8f9fa; height: 400px; overflow: hidden">
-      <!-- Horizontal Layout Container -->
-      <div style="display: flex; gap: 1rem; height: 100%; align-items: stretch">
-        <!-- Over All State-wise Chart Section (LEFT) -->
-        <div
-          style="
-            flex: 1;
-            background: white;
-            border-radius: 4px;
-            padding: 0.5rem;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
-          "
-        >
-          <h3
-            style="
-              font-size: 12px;
-              font-weight: 600;
-              margin-bottom: 0.6rem;
-              color: #333;
-              text-align: center;
-              line-height: 1.3;
-              padding-bottom: 0.3rem;
-              border-bottom: 2px solid #e0e0e0;
-            "
-          >
-            DLC Status : Over All State-wise
-          </h3>
-          <div style="flex: 1; min-height: 0; height: 300px; margin-top: 0.3rem">
-            <canvas id="overAllChart" ref="overAllCanvas" style="width: 100%; height: 100%"></canvas>
+    <div class="modal-body resizable-content overflow-y-auto bg-white p-4">
+      <!-- State-wise Table View (Default) -->
+      <div v-if="!showBankWiseView" style="height: 100%; overflow-y: auto; background: white; border-radius: 4px; padding: 0.5rem">
+        <div v-if="isLoading" class="flex items-center justify-center h-full">
+          <VaIcon name="refresh" class="animate-spin text-primary mr-2" />
+          <span class="text-sm text-gray-600">Loading state-wise data...</span>
+        </div>
+        
+        <div v-else-if="Object.keys(realStateWiseData).length === 0" class="flex items-center justify-center h-full">
+          <span class="text-sm text-gray-500">No state-wise data available ({{ Object.keys(realStateWiseData).length }} states)</span>
+        </div>
+        
+        <div v-else>
+          <!-- Debug Info -->
+          <div class="mb-2 text-xs text-gray-400">
+            Debug: {{ debugStateData }} | States: {{ Object.keys(realStateWiseData).length }} | Filtered: {{ sortedStateData.length }}
+          </div>
+          
+          <!-- State-wise DLC Status Table -->
+          <div class="mb-4">
+            <!-- Filter Info -->
+            <div class="mb-2 text-sm text-gray-600">
+              Showing {{ stateLimit === 0 ? 'all' : `top ${stateLimit}` }} states (sorted by total pensioners) - {{ sortedStateData.length }} states found
+            </div>
+            <!-- Header -->
+            <div class="bg-blue-50 px-3 py-2 rounded-t border-l-4 border-blue-500">
+              <h4 class="text-sm font-semibold text-blue-800 mb-1">DLC Status - State-wise Data</h4>
+              <div class="flex gap-4 text-xs text-blue-600">
+                <span><strong>Total States:</strong> {{ Object.keys(realStateWiseData).length }}</span>
+                <span><strong>Total Pensioners:</strong> {{ totalPensioners.toLocaleString() }}</span>
+              </div>
+            </div>
+            
+            <!-- State Data Table -->
+            <div class="border border-t-0 rounded-b overflow-hidden">
+              <table class="w-full text-xs">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="px-2 py-2 text-left font-medium text-gray-700 border-r">S.No</th>
+                    <th class="px-2 py-2 text-left font-medium text-gray-700 border-r">State Name</th>
+                    <th class="px-2 py-2 text-center font-medium text-gray-700 border-r">DLC Generated</th>
+                    <th class="px-2 py-2 text-center font-medium text-gray-700 border-r">Percentage</th>
+                    <th class="px-2 py-2 text-center font-medium text-gray-700">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(state, stateIndex) in sortedStateData" :key="state.name" 
+                      class="border-t hover:bg-gray-50 transition-colors"
+                      v-show="sortedStateData.length > 0">
+                    <td class="px-2 py-2 text-center border-r">{{ stateIndex + 1 }}</td>
+                    <td class="px-2 py-2 border-r font-medium text-gray-800">{{ state.name }}</td>
+                    <td class="px-2 py-2 text-center border-r text-blue-600 font-medium">{{ state.count.toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center border-r">
+                      <span class="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                        {{ ((state.count / totalPensioners) * 100).toFixed(1) }}%
+                      </span>
+                    </td>
+                    <td class="px-2 py-2 text-center">
+                      <span class="px-2 py-1 rounded text-xs font-medium" 
+                            :class="state.count > 1000 ? 'bg-green-100 text-green-800' : 
+                                   state.count > 500 ? 'bg-yellow-100 text-yellow-800' : 
+                                   'bg-red-100 text-red-800'">
+                        {{ state.count > 1000 ? 'High' : state.count > 500 ? 'Medium' : 'Low' }}
+                      </span>
+                    </td>
+                  </tr>
+                  <!-- Total Row -->
+                  <tr class="border-t-2 border-gray-300 bg-blue-50 font-semibold">
+                    <td class="px-2 py-2 text-center border-r">-</td>
+                    <td class="px-2 py-2 border-r text-blue-800">Total</td>
+                    <td class="px-2 py-2 text-center border-r text-blue-800">{{ totalPensioners.toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center border-r text-blue-800">100.0%</td>
+                    <td class="px-2 py-2 text-center text-blue-800">Active</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+      </div>
 
-        <!-- Vertical Separator -->
-        <div
-          style="
-            width: 3px;
-            background: linear-gradient(180deg, #4fc3f7 0%, #81c784 50%, #ffb74d 100%);
-            border-radius: 3px;
-            margin: 0.5rem 0.7rem;
-            box-shadow: 0 0 10px rgba(79, 195, 247, 0.4);
-          "
-        ></div>
-
-        <!-- State-wise Chart Section (RIGHT) -->
-        <div
-          style="
-            flex: 1;
-            background: white;
-            border-radius: 4px;
-            padding: 0.5rem;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
-          "
-        >
-          <h3
-            style="
-              font-size: 12px;
-              font-weight: 600;
-              margin-bottom: 0.6rem;
-              color: #333;
-              text-align: center;
-              line-height: 1.3;
-              padding-bottom: 0.3rem;
-              border-bottom: 2px solid #e0e0e0;
-            "
-          >
-            DLC Status : State-wise
-          </h3>
-          <div style="flex: 1; min-height: 0; height: 300px; margin-top: 0.3rem">
-            <canvas id="stateWiseChart" ref="stateWiseCanvas" style="width: 100%; height: 100%"></canvas>
+      <!-- Bank-wise Table View -->
+      <div v-else style="height: 100%; overflow-y: auto; background: white; border-radius: 4px; padding: 0.5rem">
+        <div v-if="isLoading" class="flex items-center justify-center h-full">
+          <VaIcon name="refresh" class="animate-spin text-primary mr-2" />
+          <span class="text-sm text-gray-600">Loading bank-wise data...</span>
+        </div>
+        
+        <div v-else-if="bankWiseData.length === 0" class="flex items-center justify-center h-full">
+          <span class="text-sm text-gray-500">No bank-wise data available ({{ bankWiseData.length }} states)</span>
+        </div>
+        
+        <div v-else>
+          <!-- Debug Info -->
+          <div class="mb-2 text-xs text-gray-400">
+            Debug: {{ debugBankData }} | Bank States: {{ bankWiseData.length }} | Filtered: {{ filteredBankWiseData.length }}
+          </div>
+          
+          <!-- Filter Info -->
+          <div class="mb-4 text-sm text-gray-600">
+            Showing {{ stateLimit === 0 ? 'all' : `top ${stateLimit}` }} states with {{ bankLimit === 0 ? 'all' : `top ${bankLimit}` }} banks each (sorted by pensioner count) - {{ filteredBankWiseData.length }} states found
+          </div>
+          
+          <!-- State-wise Bank Data Tables -->
+          <div v-for="(stateData, index) in filteredBankWiseData" :key="stateData.stateName" class="mb-4">
+            <!-- State Header -->
+            <div class="bg-blue-50 px-3 py-2 rounded-t border-l-4 border-blue-500">
+              <h4 class="text-sm font-semibold text-blue-800 mb-1">{{ stateData.stateName }}</h4>
+              <div class="flex gap-4 text-xs text-blue-600">
+                <span><strong>Total Pensioners:</strong> {{ stateData.totalPensioners.toLocaleString() }}</span>
+                <span><strong>DLC Generated:</strong> {{ stateData.totalDLCGenerated.toLocaleString() }}</span>
+                <span><strong>Success Rate:</strong> {{ ((stateData.totalDLCGenerated / stateData.totalPensioners) * 100).toFixed(1) }}%</span>
+              </div>
+            </div>
+            
+            <!-- Bank Data Table -->
+            <div class="border border-t-0 rounded-b overflow-hidden">
+              <table class="w-full text-xs">
+                <thead class="bg-gray-100">
+                  <tr>
+                    <th class="px-2 py-2 text-left font-medium text-gray-700 border-r">S.No</th>
+                    <th class="px-2 py-2 text-left font-medium text-gray-700 border-r">Bank Name</th>
+                    <th class="px-2 py-2 text-center font-medium text-gray-700 border-r">Total Pensioners</th>
+                    <th class="px-2 py-2 text-center font-medium text-gray-700 border-r">DLC Generated</th>
+                    <th class="px-2 py-2 text-center font-medium text-gray-700 border-r">DLC Pending</th>
+                    <th class="px-2 py-2 text-center font-medium text-gray-700">Success %</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(bank, bankIndex) in stateData.bankWiseData" :key="bank.bankName" 
+                      class="border-t hover:bg-gray-50 transition-colors">
+                    <td class="px-2 py-2 text-center border-r">{{ bankIndex + 1 }}</td>
+                    <td class="px-2 py-2 border-r font-medium text-gray-800">{{ bank.bankName }}</td>
+                    <td class="px-2 py-2 text-center border-r">{{ bank.totalPensioners.toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center border-r text-green-600 font-medium">{{ bank.dlcGenerated.toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center border-r text-orange-600 font-medium">{{ bank.dlcPending.toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center">
+                      <span class="px-2 py-1 rounded text-xs font-medium" 
+                            :class="bank.percentage >= 95 ? 'bg-green-100 text-green-800' : 
+                                   bank.percentage >= 90 ? 'bg-yellow-100 text-yellow-800' : 
+                                   'bg-red-100 text-red-800'">
+                        {{ bank.percentage.toFixed(1) }}%
+                      </span>
+                    </td>
+                  </tr>
+                  <!-- Total Row -->
+                  <tr class="border-t-2 border-gray-300 bg-blue-50 font-semibold">
+                    <td class="px-2 py-2 text-center border-r">-</td>
+                    <td class="px-2 py-2 border-r text-blue-800">Total</td>
+                    <td class="px-2 py-2 text-center border-r text-blue-800">{{ stateData.totalPensioners.toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center border-r text-green-700">{{ stateData.totalDLCGenerated.toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center border-r text-orange-700">{{ (stateData.totalPensioners - stateData.totalDLCGenerated).toLocaleString() }}</td>
+                    <td class="px-2 py-2 text-center text-blue-800">{{ ((stateData.totalDLCGenerated / stateData.totalPensioners) * 100).toFixed(1) }}%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -192,10 +288,9 @@
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { VaCard, VaModal } from 'vuestic-ui'
 import VaChart from '../../../../components/va-charts/VaChart.vue'
-import { useChartData } from '../../../../data/charts/composables/useChartData'
-// import { lineChartData } from '../../../../data/charts/lineChartData'
 import { ChartOptions, Chart, registerables } from 'chart.js'
 import { pensionersApi } from '../../../../services/pensionersApi'
+import { statsApi, type DLCStatusData, type BankWiseData } from '../../../../services/statsApi'
 
 // Register Chart.js components
 Chart.register(...registerables)
@@ -214,8 +309,88 @@ let overAllChart: Chart | null = null
 // Real data from API
 const realStateWiseData = ref<Record<string, number>>({})
 const realOverAllData = ref<Record<string, number>>({})
+const bankWiseData = ref<DLCStatusData[]>([])
 const isLoading = ref(false)
 const totalPensioners = ref(0)
+const showBankWiseView = ref(false)
+
+// Filter controls - ensure they are numbers
+const stateLimit = ref<number>(5)
+const bankLimit = ref<number>(5)
+
+// Debug computed properties
+const debugStateData = computed(() => {
+  console.log('🔍 Debug sortedStateData:')
+  console.log('  realStateWiseData:', realStateWiseData.value)
+  console.log('  stateLimit:', stateLimit.value)
+  console.log('  Object.keys length:', Object.keys(realStateWiseData.value).length)
+  return true
+})
+
+const debugBankData = computed(() => {
+  console.log('🔍 Debug filteredBankWiseData:')
+  console.log('  bankWiseData length:', bankWiseData.value.length)
+  console.log('  stateLimit:', stateLimit.value)
+  console.log('  bankLimit:', bankLimit.value)
+  return true
+})
+
+// Computed property for sorted state data
+const sortedStateData = computed(() => {
+  const sorted = Object.entries(realStateWiseData.value)
+    .map(([name, count]) => ({ name, count }))
+    .sort((a, b) => b.count - a.count)
+  
+  const limit = Number(stateLimit.value)
+  
+  console.log('🔍 sortedStateData computed:', {
+    totalStates: sorted.length,
+    stateLimit: limit,
+    stateLimitType: typeof limit,
+    willReturn: limit === 0 ? sorted.length : Math.min(sorted.length, limit)
+  })
+  
+  return limit === 0 ? sorted : sorted.slice(0, limit)
+})
+
+// Computed property for filtered bank-wise data
+const filteredBankWiseData = computed(() => {
+  let filtered = [...bankWiseData.value]
+  
+  const stateLimit_num = Number(stateLimit.value)
+  const bankLimit_num = Number(bankLimit.value)
+  
+  console.log('🔍 filteredBankWiseData computed:', {
+    originalStates: filtered.length,
+    stateLimit: stateLimit_num,
+    bankLimit: bankLimit_num,
+    stateLimitType: typeof stateLimit_num,
+    bankLimitType: typeof bankLimit_num
+  })
+  
+  // Sort states by total pensioners (highest first)
+  filtered.sort((a, b) => b.totalPensioners - a.totalPensioners)
+  
+  // Limit states if specified
+  if (stateLimit_num > 0) {
+    filtered = filtered.slice(0, stateLimit_num)
+  }
+  
+  // Limit banks within each state if specified
+  if (bankLimit_num > 0) {
+    filtered = filtered.map(state => ({
+      ...state,
+      bankWiseData: state.bankWiseData.slice(0, bankLimit_num)
+    }))
+  }
+  
+  console.log('🔍 filteredBankWiseData result:', {
+    finalStates: filtered.length,
+    stateNames: filtered.map(s => s.stateName)
+  })
+  
+  return filtered
+})
 
 // Animation state for card interactions
 const isHovered = ref(false)
@@ -276,27 +451,97 @@ const loadRealData = async () => {
     
   } catch (error) {
     console.error('❌ Error loading real DLC data in MonthlyEarnings:', error)
-    console.log('⚠️ Using fallback hardcoded data due to API error')
-    // Fallback to hardcoded data if API fails
-    realStateWiseData.value = {
-      'Maharashtra': 65000,
-      'Uttar Pradesh': 48000,
-      'Punjab': 35000,
-      'Tamil Nadu': 31000,
-      'Haryana': 28000,
-      'Kerala': 24000,
-      'Karnataka': 22000,
-      'West Bengal': 20000,
-      'Rajasthan': 18000,
-      'Bihar': 17000
-    }
-    // Generate over all data with different values for fallback
-    const fallbackOverAllData: Record<string, number> = {}
-    Object.entries(realStateWiseData.value).forEach(([state, count]) => {
-      fallbackOverAllData[state] = count * 50 // 50x multiplier for over all data
+    // Show zeros instead of fallback hardcoded data
+    realStateWiseData.value = {}
+    realOverAllData.value = {}
+    totalPensioners.value = 0
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Load bank-wise data from real API
+const loadBankWiseData = async () => {
+  try {
+    isLoading.value = true
+    console.log('🔄 Loading bank-wise DLC data from real API...')
+    
+    // Get pensioners data from real API
+    const response = await pensionersApi.getPensioners()
+    const pensioners = response.DLC_generated_pensioners || []
+    
+    console.log(`📊 Processing ${pensioners.length} pensioners for bank-wise data`)
+    
+    // Group by state first
+    const stateGroups: Record<string, any[]> = {}
+    pensioners.forEach((pensioner: any) => {
+      const state = pensioner.pensioner_state || pensioner.state || pensioner.State || 'Unknown State'
+      if (!stateGroups[state]) {
+        stateGroups[state] = []
+      }
+      stateGroups[state].push(pensioner)
     })
-    realOverAllData.value = fallbackOverAllData
-    totalPensioners.value = 119086
+    
+    // Generate bank-wise data for each state
+    const result: DLCStatusData[] = []
+    
+    Object.entries(stateGroups).forEach(([stateName, statePensioners]) => {
+      // Group by bank within state
+      const bankGroups: Record<string, any[]> = {}
+      statePensioners.forEach((pensioner: any) => {
+        // Extract bank name from disbursing_agency field (primary) or other possible fields
+        const bank = pensioner.disbursing_agency || 
+                    pensioner.bank || 
+                    pensioner.Bank || 
+                    pensioner.bankName || 
+                    pensioner.bank_name || 
+                    pensioner.paying_bank ||
+                    'Unknown Bank'
+        if (!bankGroups[bank]) {
+          bankGroups[bank] = []
+        }
+        bankGroups[bank].push(pensioner)
+      })
+      
+      // Create bank-wise data for this state
+      const bankWiseData: BankWiseData[] = Object.entries(bankGroups).map(([bankName, bankPensioners]) => {
+        const totalPensioners = bankPensioners.length
+        // Assume all pensioners have DLC generated (since they're in DLC_generated_pensioners)
+        const dlcGenerated = totalPensioners
+        const dlcPending = 0
+        const percentage = 100 // Since all are DLC generated
+        
+        return {
+          bankName,
+          totalPensioners,
+          dlcGenerated,
+          dlcPending,
+          percentage
+        }
+      }).sort((a, b) => b.totalPensioners - a.totalPensioners)
+      
+      console.log(`📊 ${stateName} - Generated ${bankWiseData.length} banks, sorted by pensioner count`)
+      
+      const totalPensioners = statePensioners.length
+      const totalDLCGenerated = totalPensioners // All are DLC generated
+      
+      result.push({
+        stateName,
+        bankWiseData, // This will be filtered later by the computed property
+        totalPensioners,
+        totalDLCGenerated
+      })
+    })
+    
+    // Sort states by total pensioners
+    bankWiseData.value = result.sort((a, b) => b.totalPensioners - a.totalPensioners)
+    
+    console.log('📊 Bank-wise data processed from real API:', bankWiseData.value)
+    
+  } catch (error) {
+    console.error('❌ Error loading bank-wise data from real API:', error)
+    // Use fallback data if API fails
+    bankWiseData.value = await statsApi.getBankWiseDLCStatus()
   } finally {
     isLoading.value = false
   }
@@ -312,25 +557,28 @@ onMounted(async () => {
 // const chartData = useChartData(lineChartData)
 
 // Mini bar chart data for the card - showing top 6 states
-const miniBarData = {
-  labels: [
-    'Maharashtra',
-    'Uttar Pradesh',
-    'Punjab',
-    'Haryana',
-    'Tamil Nadu',
-    'Jammu & Kashmir',
-    'West Bengal'
-  ],
-  datasets: [
-    {
-      data: [55000, 38000, 27000, 23000, 19000, 16000, 15000],
-      backgroundColor: ['#4FC3F7', '#81C784', '#FFB74D', '#F06292', '#BA68C8', '#66BB6A', '#FF8A65'],
-      borderWidth: 0,
-      borderRadius: 2,
-    },
-  ],
-}
+// Mini bar chart data for the card - showing top states from API
+const miniBarChartData = computed(() => {
+  // Get top 7 states from realStateWiseData, sorted decreasing by count
+  const stateData = realStateWiseData.value
+  const sortedStates = Object.entries(stateData)
+    .sort(([, a], [, b]) => b - a)
+    .slice(0, 7)
+  const labels = sortedStates.map(([state]) => state)
+  const data = sortedStates.map(([, count]) => count)
+  const colors = ['#4FC3F7', '#81C784', '#FFB74D', '#F06292', '#BA68C8', '#66BB6A', '#FF8A65']
+  return {
+    labels,
+    datasets: [
+      {
+        data,
+        backgroundColor: colors.slice(0, labels.length),
+        borderWidth: 0,
+        borderRadius: 2,
+      },
+    ],
+  }
+})
 
 // State-wise DLC Status data
 /* const stateWiseData = {
@@ -377,7 +625,7 @@ const miniBarData = {
   ],
 } */
 
-const miniBarChartData = useChartData(miniBarData)
+// Use computed miniBarChartData directly
 // const stateWiseChartData = useChartData(stateWiseData)
 
 const verticalBarOptions: ChartOptions<'bar'> = {
@@ -385,7 +633,7 @@ const verticalBarOptions: ChartOptions<'bar'> = {
   maintainAspectRatio: false,
   interaction: {
     intersect: false,
-    mode: 'index',
+    mode: 'index' as const,
   },
   layout: {
     padding: {
@@ -436,7 +684,7 @@ const verticalBarOptions: ChartOptions<'bar'> = {
     tooltip: {
       enabled: true,
       callbacks: {
-        label: function (context) {
+        label: function (context: any) {
           return context.label + ': ' + context.parsed.y.toLocaleString() + ' DLCs'
         },
       },
@@ -530,248 +778,155 @@ const verticalBarOptions: ChartOptions<'bar'> = {
   },
 } */
 
-// Chart data for modal charts - Updated with correct data from image
-// Over All State-wise Chart Data for Modal - Using Real API Data
-const getModalOverAllChartData = () => {
-  const overAllData = realOverAllData.value
-  console.log('🔍 getModalOverAllChartData called with overAllData:', overAllData)
-  
-  const sortedStates = Object.entries(overAllData)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 15) // Top 15 states
-  
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-    '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-    '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2'
-  ]
-  
-  return {
-    labels: sortedStates.map(([state]) => state),
-          datasets: [
-        {
-          label: 'Total Pensioners (All Categories)',
-        data: sortedStates.map(([, count]) => count),
-        backgroundColor: colors.slice(0, sortedStates.length),
-        borderColor: colors.slice(0, sortedStates.length),
-        borderWidth: 2,
-        borderRadius: 4,
-      },
-    ],
-  }
+// Removed chart creation functions - now only showing table view
+
+// Refresh bank-wise data
+const refreshBankData = async () => {
+  await loadBankWiseData()
 }
 
-// State-wise Chart Data for Modal - Using Real API Data
-const getModalStateWiseChartData = () => {
-  const stateData = realStateWiseData.value
-  console.log('🔍 getModalStateWiseChartData called with stateData:', stateData)
+// Apply filters function
+const applyFilters = () => {
+  // Ensure values are numbers
+  stateLimit.value = Number(stateLimit.value)
+  bankLimit.value = Number(bankLimit.value)
   
-  const sortedStates = Object.entries(stateData)
-    .sort(([,a], [,b]) => b - a)
-    .slice(0, 15) // Top 15 states
+  console.log(`🔍 Applied filters: States=${stateLimit.value === 0 ? 'All' : stateLimit.value}, Banks=${bankLimit.value === 0 ? 'All' : bankLimit.value}`)
+  console.log(`🔍 Filter types: stateLimit=${typeof stateLimit.value}, bankLimit=${typeof bankLimit.value}`)
+}
+
+// Toggle between state-wise and bank-wise table view
+const toggleBankWiseView = async () => {
+  showBankWiseView.value = !showBankWiseView.value
   
-  const colors = [
-    '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
-    '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9',
-    '#F8C471', '#82E0AA', '#F1948A', '#85C1E9', '#D7BDE2'
-  ]
-  
-  return {
-    labels: sortedStates.map(([state]) => state),
-          datasets: [
-        {
-          label: 'DLC Generated Pensioners',
-        data: sortedStates.map(([, count]) => count),
-        backgroundColor: colors.slice(0, sortedStates.length),
-        borderColor: colors.slice(0, sortedStates.length),
-        borderWidth: 2,
-        borderRadius: 4,
-      },
-    ],
+  if (showBankWiseView.value) {
+    // Load bank-wise data when switching to bank-wise view
+    await loadBankWiseData()
   }
 }
 
 // Create charts function
 const createCharts = async () => {
   await nextTick()
-
   console.log('🎨 Creating charts in MonthlyEarnings modal...')
-
-  // Destroy existing charts
-  if (stateWiseChart) {
-    stateWiseChart.destroy()
-  }
-  if (overAllChart) {
-    overAllChart.destroy()
-  }
-
-  // Create State-wise Chart
-  const stateWiseCanvasElement =
-    stateWiseCanvas.value || (document.getElementById('stateWiseChart') as HTMLCanvasElement)
-  if (stateWiseCanvasElement) {
-    console.log('✅ Creating state-wise chart...')
-    console.log('🔍 Current realStateWiseData:', realStateWiseData.value)
-    console.log('🔍 Current realOverAllData:', realOverAllData.value)
-    const ctx1 = stateWiseCanvasElement.getContext('2d')
-    if (ctx1) {
-      const stateWiseData = getModalStateWiseChartData()
-      console.log('State-wise chart data:', stateWiseData)
-      
-      stateWiseChart = new Chart(ctx1, {
-        type: 'bar',
-        data: stateWiseData,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          indexAxis: 'y',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              enabled: true,
-              callbacks: {
-                label: function (context: any) {
-                  return `${context.label}: ${context.parsed.x.toLocaleString()}`
-                },
-              },
-            },
-          },
-          scales: {
-            x: {
-              beginAtZero: true,
-              ticks: {
-                font: { size: 9 },
-                color: '#333',
-                callback: function (value: any) {
-                  return (value / 1000).toFixed(0) + 'K'
-                },
-              },
-              grid: { display: false },
-            },
-            y: {
-              ticks: {
-                maxRotation: 0,
-                minRotation: 0,
-                font: { size: 9 },
-                maxTicksLimit: 15,
-                color: '#333',
-              },
-              grid: { display: false },
-            },
-          },
-          layout: {
-            padding: {
-              left: 5,
-              right: 5,
-              top: 10,
-              bottom: 40,
-            },
-          },
-        },
-      })
-      console.log('✅ State-wise chart created successfully')
-    }
-  }
-
-  // Create Over All Chart
-  const overAllCanvasElement = overAllCanvas.value || (document.getElementById('overAllChart') as HTMLCanvasElement)
-  if (overAllCanvasElement) {
-    console.log('✅ Creating over all chart...')
-    const ctx2 = overAllCanvasElement.getContext('2d')
-    if (ctx2) {
-      const overAllData = getModalOverAllChartData()
-      console.log('Over all chart data:', overAllData)
-      
-      overAllChart = new Chart(ctx2, {
-        type: 'bar',
-        data: overAllData,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          indexAxis: 'y',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              enabled: true,
-              callbacks: {
-                label: function (context: any) {
-                  return `${context.label}: ${context.parsed.x.toLocaleString()}`
-                },
-              },
-            },
-          },
-          scales: {
-            x: {
-              beginAtZero: true,
-              ticks: {
-                font: { size: 9 },
-                color: '#333',
-                callback: function (value: any) {
-                  return (value / 1000).toFixed(0) + 'K'
-                },
-              },
-              grid: { display: false },
-            },
-            y: {
-              ticks: {
-                maxRotation: 0,
-                minRotation: 0,
-                font: { size: 9 },
-                maxTicksLimit: 15,
-                color: '#333',
-              },
-              grid: { display: false },
-            },
-          },
-          layout: {
-            padding: {
-              left: 5,
-              right: 5,
-              top: 10,
-              bottom: 40,
-            },
-          },
-        },
-      })
-      console.log('✅ Over all chart created successfully')
-    }
-  }
-
-  console.log('🎉 Charts creation completed')
-}
-
-// Refresh data function
-const refreshData = async () => {
-  console.log('🔄 Refreshing DLC data in MonthlyEarnings...')
-  try {
-    await loadRealData()
-    // Recreate charts if modal is open
-    if (showModal.value) {
-      setTimeout(() => {
-        createCharts()
-      }, 100)
-    }
-    console.log('✅ DLC data refreshed successfully in MonthlyEarnings')
-  } catch (error) {
-    console.error('❌ Error refreshing DLC data in MonthlyEarnings:', error)
-  }
+  // Chart creation logic will be added
 }
 
 const openModal = async () => {
   console.log('🚀 Opening DLC Status modal from MonthlyEarnings...')
-  console.log('📊 Current real data - State-wise:', realStateWiseData.value)
-  console.log('📈 Current real data - Over all:', realOverAllData.value)
   isPressed.value = true
 
   setTimeout(async () => {
     showModal.value = true
     isPressed.value = false
 
-    // Wait for DOM to be ready and create charts
-    await nextTick()
-    setTimeout(() => {
-      console.log('🔧 Creating charts after modal open...')
-      createCharts()
-    }, 500)
+    // Load real data when modal opens (default state-wise table view)
+    if (Object.keys(realStateWiseData.value).length === 0) {
+      await loadRealData()
+    }
   }, 150)
 }
 </script>
+
+<style scoped>
+.monthly-earnings-card {
+  height: 100%;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.monthly-earnings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.chart-container {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+.dlc-status-modal .va-modal__container {
+  max-width: 95vw;
+  width: 1400px;
+  min-width: 800px;
+  resize: both;
+  overflow: auto;
+}
+
+.resizable-modal .va-modal__dialog {
+  resize: both;
+  overflow: auto;
+  min-width: 800px;
+  min-height: 600px;
+  max-width: 95vw;
+  max-height: 90vh;
+}
+
+.resizable-content {
+  height: 600px;
+  min-height: 400px;
+  max-height: 80vh;
+  resize: vertical;
+  overflow-y: auto;
+}
+
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.chart-wrapper {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-wrapper h4 {
+  margin-bottom: 1rem;
+  color: #374151;
+  font-weight: 600;
+}
+
+.success-high {
+  color: #059669;
+  font-weight: 600;
+}
+
+.success-medium {
+  color: #d97706;
+  font-weight: 600;
+}
+
+.success-low {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* Resize handle styling */
+.resizable-modal .va-modal__dialog::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(-45deg, transparent 0%, transparent 40%, #ccc 40%, #ccc 60%, transparent 60%);
+  cursor: nw-resize;
+  pointer-events: none;
+}
+
+.resizable-content::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 15px;
+  height: 15px;
+  background: linear-gradient(-45deg, transparent 0%, transparent 40%, #999 40%, #999 60%, transparent 60%);
+  cursor: ns-resize;
+  pointer-events: none;
+}
+</style>

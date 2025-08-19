@@ -194,38 +194,10 @@ const loadRealData = async () => {
     
   } catch (error) {
     console.error('❌ Error loading real DLC data:', error)
-    console.log('⚠️ Using fallback hardcoded data due to API error')
-    // Fallback to hardcoded data if API fails
-    realStateWiseData.value = {
-      'Maharashtra': 65000,
-      'Uttar Pradesh': 48000,
-      'Punjab': 35000,
-      'Tamil Nadu': 31000,
-      'Haryana': 28000,
-      'Kerala': 24000,
-      'Karnataka': 22000,
-      'West Bengal': 20000,
-      'Rajasthan': 18000,
-      'Bihar': 17000
-    }
-    realOverAllData.value = {
-      'Maharashtra': 350000,
-      'Tamil Nadu': 220000,
-      'Gujarat': 180000,
-      'Uttar Pradesh': 160000,
-      'Karnataka': 140000,
-      'Andhra Pradesh': 120000,
-      'Kerala': 100000,
-      'West Bengal': 90000,
-      'Rajasthan': 80000,
-      'Punjab': 70000,
-      'Haryana': 60000,
-      'Madhya Pradesh': 50000,
-      'Bihar': 45000,
-      'Odisha': 40000,
-      'Telangana': 35000
-    }
-    totalPensioners.value = 119086
+    // The API service already handles fallback data, so this shouldn't happen
+    realStateWiseData.value = {}
+    realOverAllData.value = {}
+    totalPensioners.value = 0
   } finally {
     isLoading.value = false
   }

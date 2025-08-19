@@ -102,6 +102,7 @@ import {
   VaCard, VaCardContent, VaCardTitle, VaSelect, VaButton, 
   VaDataTable, VaBadge, VaIcon 
 } from 'vuestic-ui'
+import { statsApi } from '@/services/statsApi'
 
 const selectedMonth = ref('January')
 const selectedYear = ref(2024)
@@ -116,10 +117,10 @@ const yearOptions = [2024, 2023, 2022]
 const reportTypes = ['All Verifications', 'Life Certificates', 'Document Verifications', 'Failed Verifications']
 
 const monthlyStats = ref({
-  totalVerifications: '18,456',
-  onlineVerifications: '12,567',
-  offlineVerifications: '5,889',
-  successRate: 94.2
+  totalVerifications: '0',
+  onlineVerifications: '0',
+  offlineVerifications: '0',
+  successRate: 0
 })
 
 const columns = [
@@ -162,8 +163,20 @@ const getStatusColor = (status: string) => {
   return colors[status as keyof typeof colors] || 'secondary'
 }
 
+// Fetch real-time monthly stats from API
+async function fetchMonthlyStats() {
+  try {
+    const apiStats = await statsApi.getMonthlyStats()
+    monthlyStats.value = apiStats
+    console.log('📊 Updated monthly stats:', apiStats)
+  } catch (error) {
+    console.error('Failed to fetch monthly stats:', error)
+  }
+}
+
 const generateReport = () => {
   loading.value = true
+  fetchMonthlyStats()
   setTimeout(() => {
     loading.value = false
   }, 1000)
@@ -174,6 +187,7 @@ const exportReport = () => {
 }
 
 onMounted(() => {
+  fetchMonthlyStats()
   generateReport()
 })
 </script>
