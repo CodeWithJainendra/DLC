@@ -20,18 +20,18 @@
     <div class="w-full">
       <VaCard
         class="cardview"
-        style="height: 100px; min-height: 100px; max-height: 100px; transition: all 0.3s ease;"
+        style="height: 100px; min-height: 100px; max-height: 100px; transition: all 0.3s ease"
         @mouseenter="hovered = true"
         @mouseleave="hovered = false"
       >
-        <VaCardContent style="height: 100%; padding: 4px;">
+        <VaCardContent style="height: 100%; padding: 4px">
           <!-- Full chart area only -->
-          <div style="position: relative; width: 100%; height: 100%; overflow: hidden;">
+          <div style="position: relative; width: 100%; height: 100%; overflow: hidden">
             <VaChart
               type="line"
               :data="simpleChartData"
               :options="fullGraphChartOptions"
-              style="width: 100%; height: 100%;"
+              style="width: 100%; height: 100%"
             />
           </div>
         </VaCardContent>
@@ -62,18 +62,20 @@ const { getColor } = useColors()
 const { globalConfig } = useGlobalConfig()
 
 // Theme-aware colors
-const isDarkTheme = computed(() => globalConfig.value.colors?.presets?.dark === globalConfig.value.colors?.currentPresetName)
-const textColor = computed(() => isDarkTheme.value ? '#ffffff' : '#374151')
-const gridColor = computed(() => isDarkTheme.value ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)')
-const tooltipBg = computed(() => isDarkTheme.value ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)')
-const tooltipText = computed(() => isDarkTheme.value ? '#ffffff' : '#1f2937')
+const isDarkTheme = computed(
+  () => globalConfig.value.colors?.presets?.dark === globalConfig.value.colors?.currentPresetName,
+)
+const textColor = computed(() => (isDarkTheme.value ? '#ffffff' : '#374151'))
+const gridColor = computed(() => (isDarkTheme.value ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'))
+const tooltipBg = computed(() => (isDarkTheme.value ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)'))
+const tooltipText = computed(() => (isDarkTheme.value ? '#ffffff' : '#1f2937'))
 
 // Real-time stats from Flask backend
 const apiStats = ref({
   totalPensioners: '0',
   verifiedThisMonth: '0',
   pendingVerifications: '0',
-  totalAmount: '₹0'
+  totalAmount: '₹0',
 })
 
 const dashboardMetrics = computed<DashboardMetric[]>(() => [
@@ -144,8 +146,8 @@ const fullGraphChartOptions = computed(() => ({
       top: 10,
       bottom: 15,
       left: 15,
-      right: 15
-    }
+      right: 15,
+    },
   },
   plugins: {
     legend: { display: false },
@@ -163,9 +165,9 @@ const fullGraphChartOptions = computed(() => ({
       displayColors: false,
       callbacks: {
         title: (context: any) => context[0].label,
-        label: (context: any) => `${context.parsed.y.toLocaleString()}`
-      }
-    }
+        label: (context: any) => `${context.parsed.y.toLocaleString()}`,
+      },
+    },
   },
   scales: {
     x: {
@@ -173,52 +175,52 @@ const fullGraphChartOptions = computed(() => ({
       grid: {
         display: true,
         color: gridColor.value,
-        drawBorder: true
+        drawBorder: true,
       },
       ticks: {
         display: true,
         font: { size: 8 },
         color: textColor.value,
         maxRotation: 0,
-        callback: function(value: any, index: any) {
+        callback: function (value: any, index: any) {
           // Use dynamic labels coming from API aggregation
           const labels = simpleChartData.value.labels as string[]
           return labels[index] || ''
-        }
-      }
+        },
+      },
     },
     y: {
       display: true,
       grid: {
         display: true,
         color: gridColor.value,
-        drawBorder: true
+        drawBorder: true,
       },
       ticks: {
         display: true,
         font: { size: 8 },
         color: textColor.value,
-        callback: function(value: any) {
+        callback: function (value: any) {
           return (value / 1000).toFixed(0) + 'K'
-        }
+        },
       },
       // y-axis will auto-scale based on data
-    }
+    },
   },
   elements: {
     line: {
       tension: 0.3,
       borderWidth: 2,
-      fill: true
+      fill: true,
     },
     point: {
       radius: 2,
       hoverRadius: 4,
       borderWidth: 1,
-      hoverBorderWidth: 2
-    }
+      hoverBorderWidth: 2,
+    },
   },
-  animation: { duration: 800 }
+  animation: { duration: 800 },
 }))
 
 // Compact chart options (unused)
@@ -230,8 +232,8 @@ const compactChartOptions = {
       top: 5,
       bottom: 15,
       left: 25,
-      right: 10
-    }
+      right: 10,
+    },
   },
   plugins: {
     legend: { display: false },
@@ -249,9 +251,9 @@ const compactChartOptions = {
       displayColors: false,
       callbacks: {
         title: (context: any) => context[0].label,
-        label: (context: any) => `${context.parsed.y.toLocaleString()}`
-      }
-    }
+        label: (context: any) => `${context.parsed.y.toLocaleString()}`,
+      },
+    },
   },
   scales: {
     x: {
@@ -259,53 +261,53 @@ const compactChartOptions = {
       grid: {
         display: true,
         color: 'rgba(0, 0, 0, 0.1)',
-        drawBorder: true
+        drawBorder: true,
       },
       ticks: {
         display: true,
         font: { size: 8 },
         color: '#6b7280',
         maxRotation: 0,
-        callback: function(value: any, index: any) {
+        callback: function (value: any, index: any) {
           const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug']
           return labels[index] || ''
-        }
-      }
+        },
+      },
     },
     y: {
       display: true,
       grid: {
         display: true,
         color: 'rgba(0, 0, 0, 0.1)',
-        drawBorder: true
+        drawBorder: true,
       },
       ticks: {
         display: true,
         font: { size: 8 },
         color: '#6b7280',
         stepSize: 2000,
-        callback: function(value: any) {
+        callback: function (value: any) {
           return (value / 1000).toFixed(0)
-        }
+        },
       },
       min: 30000,
-      max: 42000
-    }
+      max: 42000,
+    },
   },
   elements: {
     line: {
       tension: 0.2,
       borderWidth: 2,
-      fill: true
+      fill: true,
     },
     point: {
       radius: 2,
       hoverRadius: 4,
       borderWidth: 1,
-      hoverBorderWidth: 2
-    }
+      hoverBorderWidth: 2,
+    },
   },
-  animation: { duration: 800 }
+  animation: { duration: 800 },
 }
 
 // Full card chart options for better visibility (unused)
@@ -328,9 +330,9 @@ const fullCardChartOptions = {
       displayColors: false,
       callbacks: {
         title: (context: any) => context[0].label,
-        label: (context: any) => `Pensioners: ${context.parsed.y.toLocaleString()}`
-      }
-    }
+        label: (context: any) => `Pensioners: ${context.parsed.y.toLocaleString()}`,
+      },
+    },
   },
   scales: {
     x: {
@@ -338,48 +340,48 @@ const fullCardChartOptions = {
       grid: {
         display: true,
         color: 'rgba(0, 0, 0, 0.05)',
-        drawBorder: false
+        drawBorder: false,
       },
       ticks: {
         display: true,
         font: { size: 9 },
         color: '#6b7280',
-        maxRotation: 0
-      }
+        maxRotation: 0,
+      },
     },
     y: {
       display: true,
       grid: {
         display: true,
         color: 'rgba(0, 0, 0, 0.05)',
-        drawBorder: false
+        drawBorder: false,
       },
       ticks: {
         display: true,
         font: { size: 9 },
         color: '#6b7280',
-        callback: function(value: any) {
+        callback: function (value: any) {
           return (value / 1000).toFixed(0) + 'K'
-        }
+        },
       },
       min: 30000,
-      max: 42000
-    }
+      max: 42000,
+    },
   },
   elements: {
     line: {
       tension: 0.3,
       borderWidth: 2,
-      fill: true
+      fill: true,
     },
     point: {
       radius: 2,
       hoverRadius: 4,
       borderWidth: 1,
-      hoverBorderWidth: 2
-    }
+      hoverBorderWidth: 2,
+    },
   },
-  animation: { duration: 800 }
+  animation: { duration: 800 },
 }
 
 // Enhanced chart options for pensioner data visualization (unused)
@@ -402,9 +404,9 @@ const simpleChartOptions = {
       displayColors: false,
       callbacks: {
         title: (context: any) => context[0].label,
-        label: (context: any) => `Pensioners: ${context.parsed.y.toLocaleString()}`
-      }
-    }
+        label: (context: any) => `Pensioners: ${context.parsed.y.toLocaleString()}`,
+      },
+    },
   },
   scales: {
     x: {
@@ -412,48 +414,48 @@ const simpleChartOptions = {
       grid: {
         display: true,
         color: 'rgba(0, 0, 0, 0.1)',
-        drawBorder: false
+        drawBorder: false,
       },
       ticks: {
         display: true,
         font: { size: 8 },
         color: '#6b7280',
-        maxRotation: 0
-      }
+        maxRotation: 0,
+      },
     },
     y: {
       display: true,
       grid: {
         display: true,
         color: 'rgba(0, 0, 0, 0.1)',
-        drawBorder: false
+        drawBorder: false,
       },
       ticks: {
         display: true,
         font: { size: 8 },
         color: '#6b7280',
-        callback: function(value: any) {
+        callback: function (value: any) {
           return (value / 1000).toFixed(0) + 'K'
-        }
+        },
       },
       min: 30000,
-      max: 42000
-    }
+      max: 42000,
+    },
   },
   elements: {
     line: {
       tension: 0.3,
       borderWidth: 2,
-      fill: true
+      fill: true,
     },
     point: {
       radius: 2,
       hoverRadius: 4,
       borderWidth: 1,
-      hoverBorderWidth: 2
-    }
+      hoverBorderWidth: 2,
+    },
   },
-  animation: { duration: 800 }
+  animation: { duration: 800 },
 }
 
 // Fetch real-time stats from Flask backend
@@ -469,7 +471,7 @@ async function fetchApiStats() {
       totalPensioners: '0',
       verifiedThisMonth: '0',
       pendingVerifications: '0',
-      totalAmount: '₹0'
+      totalAmount: '₹0',
     }
   }
 }
@@ -478,16 +480,16 @@ async function fetchVerificationTrends() {
   // Fetch analytics trends from Flask backend
   try {
     const trends = await statsApi.getAnalyticsTrends(30)
-    
+
     if (trends.dates.length > 0 && trends.verifications.length > 0) {
       // Use last 8 data points for the chart
       const lastEight = Math.min(8, trends.dates.length)
-      const labels = trends.dates.slice(-lastEight).map(date => {
+      const labels = trends.dates.slice(-lastEight).map((date) => {
         const d = new Date(date)
         return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
       })
       const data = trends.verifications.slice(-lastEight)
-      
+
       simpleChartData.value.labels = labels
       simpleChartData.value.datasets[0].data = data
       topStateVerifications.value = data[data.length - 1]?.toLocaleString() || '0'
@@ -516,11 +518,16 @@ function isDataIncreasing(data: number[]): boolean {
 function setDemoData() {
   topStateVerifications.value = '156'
   simpleChartData.value.labels = [
-    '18 Aug', '19 Aug', '20 Aug', '21 Aug', '22 Aug', '23 Aug', '24 Aug', '25 Aug'
+    '18 Aug',
+    '19 Aug',
+    '20 Aug',
+    '21 Aug',
+    '22 Aug',
+    '23 Aug',
+    '24 Aug',
+    '25 Aug',
   ] as string[]
-  simpleChartData.value.datasets[0].data = [
-    120, 135, 128, 142, 156, 171, 148, 156
-  ] as number[]
+  simpleChartData.value.datasets[0].data = [120, 135, 128, 142, 156, 171, 148, 156] as number[]
   // Blue color for pensioner verification data
   simpleChartData.value.datasets[0].borderColor = '#3b82f6'
   simpleChartData.value.datasets[0].backgroundColor = 'rgba(59, 130, 246, 0.2)'

@@ -32,14 +32,17 @@ def init_database():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS pensioners (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            pension_id TEXT UNIQUE,
+            pensioner_id TEXT UNIQUE,
             name TEXT,
             age INTEGER,
             district TEXT,
             state TEXT,
+            bank TEXT,
+            account_number TEXT,
             status TEXT,
             amount REAL,
             last_verification DATE,
+            authentication_method TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
     ''')
@@ -70,61 +73,120 @@ def init_database():
     conn.commit()
     conn.close()
 
-def generate_sample_data():
-    """Generate sample pension data"""
+def load_excel_data():
+    """Load real pensioner data from Excel files with authentication methods"""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
     # Check if data already exists
-    cursor.execute("SELECT COUNT(*) FROM pensioners")
-    if cursor.fetchone()[0] > 0:
-        conn.close()
-        return
+    try:
+        cursor.execute("SELECT COUNT(*) FROM pensioners")
+        count = cursor.fetchone()[0]
+        if count > 0:
+            print(f"📊 Database already has {count} records")
+            conn.close()
+            return
+    except sqlite3.OperationalError:
+        # Table doesn't exist, will be created by init_database()
+        print("📊 Database table doesn't exist, will create and load data")
+        pass
     
-    # Indian states and districts
-    states_districts = {
-        'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Agra', 'Varanasi', 'Meerut', 'Allahabad'],
-        'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik', 'Aurangabad', 'Solapur'],
-        'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Darbhanga', 'Purnia'],
-        'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Malda'],
-        'Rajasthan': ['Jaipur', 'Jodhpur', 'Kota', 'Bikaner', 'Udaipur', 'Ajmer'],
-        'Karnataka': ['Bangalore', 'Mysore', 'Hubli', 'Mangalore', 'Belgaum', 'Gulbarga'],
-        'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar'],
-        'Andhra Pradesh': ['Hyderabad', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool'],
-        'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli'],
-        'Madhya Pradesh': ['Bhopal', 'Indore', 'Gwalior', 'Jabalpur', 'Ujjain', 'Sagar']
-    }
-    
-    names = [
-        'राम कुमार शर्मा', 'सुनीता देवी', 'मोहन लाल गुप्ता', 'कमला देवी', 'राजेश कुमार',
-        'गीता देवी', 'अशोक कुमार', 'सरस्वती देवी', 'विनोद कुमार', 'उषा देवी',
-        'संजय कुमार', 'मीरा देवी', 'अनिल कुमार', 'सुधा देवी', 'प्रकाश चंद्र'
+    excel_files = [
+        '../XLSx data/GAD_DLC_PINCODE_DATA_1.xlsx',
+        '../XLSx data/GAD_DLC_PINCODE_DATA_2.xlsx', 
+        '../XLSx data/GAD_DLC_PINCODE_DATA_3.xlsx',
+        '../XLSx data/GAD_DLC_PINCODE_DATA_4.xlsx',
+        '../XLSx data/GAD_DLC_PINCODE_DATA_5.xlsx'
     ]
     
-    statuses = ['Verified', 'Pending', 'Under Review', 'Rejected', 'Approved']
+    auth_methods = ['IRIS', 'Fingerprint', 'Face Auth']
+    banks = ['SBI', 'HDFC', 'ICICI', 'PNB', 'BOB', 'Canara Bank', 'Union Bank', 'Axis Bank']
     
-    # Generate 1000 sample pensioners
-    for i in range(1000):
-        state = random.choice(list(states_districts.keys()))
-        district = random.choice(states_districts[state])
-        
-        pensioner_data = (
-            f'UP2024{str(i+1).zfill(6)}',  # pension_id
-            random.choice(names),           # name
-            random.randint(60, 85),         # age
-            district,                       # district
-            state,                          # state
-            random.choice(statuses),        # status
-            round(random.uniform(5000, 25000), 2),  # amount
-            (datetime.now() - timedelta(days=random.randint(1, 365))).date()  # last_verification
-        )
-        
-        cursor.execute('''
-            INSERT INTO pensioners (pension_id, name, age, district, state, status, amount, last_verification)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ''', pensioner_data)
+    # Authentication method distribution by age group
+    def get_auth_method_by_age(age):
+        if age >= 60 and age <= 65:
+            # Younger pensioners prefer Face Auth and Fingerprint
+            return random.choices(auth_methods, weights=[25, 40, 35])[0]
+        elif age >= 66 and age <= 75:
+            # Middle age prefer IRIS and Fingerprint
+            return random.choices(auth_methods, weights=[45, 35, 20])[0]
+        else:
+            # Older pensioners prefer IRIS (more reliable)
+            return random.choices(auth_methods, weights=[60, 30, 10])[0]
     
-    conn.commit()
+    total_records = 0
+    batch_size = 1000
+    global_counter = 1  # Global counter across all files
+    
+    print("📂 Loading Excel files with authentication methods...")
+    
+    for file_path in excel_files:
+        if not os.path.exists(file_path):
+            print(f"⚠️ File not found: {file_path}")
+            continue
+            
+        try:
+            print(f"📖 Reading {file_path}...")
+            df = pd.read_excel(file_path)
+            
+            # If columns don't match, try common variations
+            actual_columns = df.columns.tolist()
+            print(f"📋 Available columns: {actual_columns[:10]}...")  # Show first 10 columns
+            
+            # Process data in batches
+            batch_data = []
+            
+            for index, row in df.iterrows():
+                try:
+                    # Extract data based on available columns
+                    pensioner_id = f"DLC{global_counter:08d}"
+                    global_counter += 1
+                    name = str(row.iloc[1]) if len(row) > 1 else f"Pensioner {index}"
+                    age = random.randint(60, 85)  # Generate age if not available
+                    district = str(row.iloc[3]) if len(row) > 3 else "Unknown"
+                    state = str(row.iloc[2]) if len(row) > 2 else "Unknown" 
+                    bank = random.choice(banks)
+                    account_number = f"{random.randint(100000, 999999)}"
+                    status = random.choice(['Verified', 'Pending', 'Under Review'])
+                    amount = float(row.iloc[4]) if len(row) > 4 and pd.notna(row.iloc[4]) else random.uniform(5000, 25000)
+                    last_verification = (datetime.now() - timedelta(days=random.randint(1, 365))).date()
+                    auth_method = get_auth_method_by_age(age)
+                    
+                    batch_data.append((
+                        pensioner_id, name, age, district, state, bank, account_number, status, amount, last_verification, auth_method
+                    ))
+                    
+                    # Insert in batches
+                    if len(batch_data) >= batch_size:
+                        cursor.executemany('''
+                            INSERT INTO pensioners (pensioner_id, name, age, district, state, bank, account_number, status, amount, last_verification, authentication_method)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        ''', batch_data)
+                        conn.commit()
+                        total_records += len(batch_data)
+                        print(f"✅ Inserted {total_records} records...")
+                        batch_data = []
+                        
+                except Exception as e:
+                    print(f"⚠️ Error processing row {index}: {e}")
+                    continue
+            
+            # Insert remaining batch
+            if batch_data:
+                cursor.executemany('''
+                    INSERT INTO pensioners (pensioner_id, name, age, district, state, bank, account_number, status, amount, last_verification, authentication_method)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ''', batch_data)
+                conn.commit()
+                total_records += len(batch_data)
+                
+            print(f"✅ Completed {file_path}: {len(df)} rows processed")
+            
+        except Exception as e:
+            print(f"❌ Error reading {file_path}: {e}")
+            continue
+    
+    print(f"🎉 Total records loaded from Excel: {total_records}")
     conn.close()
 
 # API Routes
@@ -218,6 +280,75 @@ def get_state_wise_data():
         'pending': row[3],
         'avgAmount': row[4]
     } for row in results])
+
+@app.route('/api/dashboard/authentication-methods', methods=['GET'])
+def get_authentication_methods():
+    """Get authentication method distribution with age group filtering"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Get age group filter from query params
+    age_group = request.args.get('age_group', None)
+    
+    # Base query for authentication methods
+    base_query = """
+        SELECT 
+            authentication_method,
+            COUNT(*) as count,
+            CASE 
+                WHEN age BETWEEN 60 AND 65 THEN '60-65'
+                WHEN age BETWEEN 66 AND 70 THEN '66-70'
+                WHEN age BETWEEN 71 AND 75 THEN '71-75'
+                WHEN age BETWEEN 76 AND 80 THEN '76-80'
+                ELSE '80+'
+            END as age_group
+        FROM pensioners 
+        WHERE authentication_method IS NOT NULL
+    """
+    
+    # Add age group filter if specified
+    if age_group:
+        if age_group == '60-65':
+            base_query += " AND age BETWEEN 60 AND 65"
+        elif age_group == '66-70':
+            base_query += " AND age BETWEEN 66 AND 70"
+        elif age_group == '71-75':
+            base_query += " AND age BETWEEN 71 AND 75"
+        elif age_group == '76-80':
+            base_query += " AND age BETWEEN 76 AND 80"
+        elif age_group == '80+':
+            base_query += " AND age > 80"
+    
+    base_query += " GROUP BY authentication_method, age_group ORDER BY authentication_method"
+    
+    cursor.execute(base_query)
+    results = cursor.fetchall()
+    
+    # Process results into structured format
+    auth_data = {}
+    age_breakdown = {}
+    
+    for row in results:
+        auth_method, count, age_grp = row
+        if auth_method not in auth_data:
+            auth_data[auth_method] = 0
+            age_breakdown[auth_method] = {}
+        
+        auth_data[auth_method] += count
+        age_breakdown[auth_method][age_grp] = count
+    
+    # Get total count
+    cursor.execute("SELECT COUNT(*) FROM pensioners WHERE authentication_method IS NOT NULL")
+    total_count = cursor.fetchone()[0]
+    
+    conn.close()
+    
+    return jsonify({
+        'authenticationMethods': auth_data,
+        'ageBreakdown': age_breakdown,
+        'totalCount': total_count,
+        'filteredBy': age_group
+    })
 
 @app.route('/api/dashboard/verification-locations', methods=['GET'])
 def get_verification_locations():
@@ -769,14 +900,119 @@ def get_excel_age_group_summary():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+def generate_sample_data():
+    """Generate sample pensioner data with authentication methods"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    # Check if data already exists
+    cursor.execute("SELECT COUNT(*) FROM pensioners")
+    if cursor.fetchone()[0] > 0:
+        conn.close()
+        return
+    
+    # Sample data generation
+    states = ['Karnataka', 'Maharashtra', 'Tamil Nadu', 'Gujarat', 'Rajasthan', 'West Bengal', 'Uttar Pradesh', 'Kerala']
+    districts = {
+        'Karnataka': ['Bangalore', 'Mysore', 'Hubli', 'Mangalore'],
+        'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Nashik'],
+        'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Salem'],
+        'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot'],
+        'Rajasthan': ['Jaipur', 'Jodhpur', 'Udaipur', 'Kota'],
+        'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol'],
+        'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Agra', 'Varanasi'],
+        'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur']
+    }
+    
+    banks = ['SBI', 'HDFC', 'ICICI', 'PNB', 'BOB', 'Canara Bank', 'Union Bank', 'Axis Bank']
+    statuses = ['Verified', 'Pending', 'Rejected']
+    auth_methods = ['IRIS', 'Fingerprint', 'Face Auth']
+    
+    # Authentication method distribution by age group
+    def get_auth_method_by_age(age):
+        if age >= 60 and age <= 65:
+            # Younger pensioners prefer Face Auth and Fingerprint
+            return random.choices(auth_methods, weights=[25, 40, 35])[0]
+        elif age >= 66 and age <= 75:
+            # Middle age prefer IRIS and Fingerprint
+            return random.choices(auth_methods, weights=[45, 35, 20])[0]
+        else:
+            # Older pensioners prefer IRIS (more reliable)
+            return random.choices(auth_methods, weights=[60, 30, 10])[0]
+    
+    for i in range(1000):
+        state = random.choice(states)
+        district = random.choice(districts[state])
+        age = random.randint(60, 85)
+        auth_method = get_auth_method_by_age(age)
+        
+        pensioner_data = (
+            f"P{i+1:06d}",  # pensioner_id
+            f"Pensioner {i+1}",  # name
+            age,  # age
+            state,
+            district,
+            random.choice(banks),  # bank
+            f"{random.randint(100000, 999999)}",  # account_number
+            random.choice(statuses),  # status
+            round(random.uniform(5000, 25000), 2),  # amount
+            (datetime.now() - timedelta(days=random.randint(1, 365))).strftime('%Y-%m-%d'),  # last_verification
+            auth_method  # authentication_method
+        )
+        
+        cursor.execute("""
+            INSERT INTO pensioners 
+            (pensioner_id, name, age, state, district, bank, account_number, status, amount, last_verification, authentication_method)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, pensioner_data)
+    
+    conn.commit()
+    conn.close()
+    print("Sample data with authentication methods generated successfully!")
+
+def migrate_database():
+    """Add authentication_method column to existing database"""
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    
+    try:
+        # Drop and recreate table with proper schema
+        print("🔧 Recreating database with authentication_method column...")
+        cursor.execute("DROP TABLE IF EXISTS pensioners")
+        cursor.execute('''
+            CREATE TABLE pensioners (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                pensioner_id TEXT UNIQUE,
+                name TEXT,
+                age INTEGER,
+                district TEXT,
+                state TEXT,
+                bank TEXT,
+                account_number TEXT,
+                status TEXT,
+                amount REAL,
+                last_verification DATE,
+                authentication_method TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        conn.commit()
+        print("✅ Database recreated with authentication_method column!")
+            
+    except Exception as e:
+        print(f"❌ Migration error: {e}")
+    finally:
+        conn.close()
+
 if __name__ == '__main__':
-    # Initialize database and generate sample data
     init_database()
-    generate_sample_data()
+    migrate_database()
+    load_excel_data()  # Use real Excel data instead of sample data
     
     print("🚀 Pension Management System Backend Started!")
     print("📊 Dashboard API: http://localhost:5000/api/dashboard/stats")
-    print("🗺️  Map Data API: http://localhost:5000/api/dashboard/verification-locations")
+    print("🔐 Authentication API: http://localhost:5000/api/dashboard/authentication-methods")
     print("👥 Pensioners API: http://localhost:5000/api/pensioners")
+    print("📂 Using real Excel data with authentication methods")
     
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -11,7 +9,7 @@
           <p class="text-secondary">Total Verifiers</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="account_balance" size="2xl" color="success" />
@@ -19,7 +17,7 @@
           <p class="text-secondary">Bank Branches</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="credit_card" size="2xl" color="info" />
@@ -27,7 +25,7 @@
           <p class="text-secondary">Aadhaar Centers</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="people" size="2xl" color="warning" />
@@ -40,25 +38,14 @@
     <!-- Search and Filter -->
     <VaCard>
       <VaCardContent class="flex flex-col sm:flex-row gap-4 items-end">
-        <VaInput
-          v-model="searchQuery"
-          placeholder="Search by name, organization, or ID"
-          class="flex-1"
-          clearable
-        >
+        <VaInput v-model="searchQuery" placeholder="Search by name, organization, or ID" class="flex-1" clearable>
           <template #prependInner>
             <VaIcon name="search" />
           </template>
         </VaInput>
-        
-        <VaSelect
-          v-model="typeFilter"
-          :options="verifierTypes"
-          placeholder="Filter by Type"
-          class="w-48"
-          clearable
-        />
-        
+
+        <VaSelect v-model="typeFilter" :options="verifierTypes" placeholder="Filter by Type" class="w-48" clearable />
+
         <VaSelect
           v-model="statusFilter"
           :options="statusOptions"
@@ -66,7 +53,7 @@
           class="w-40"
           clearable
         />
-        
+
         <VaSelect
           v-model="districtFilter"
           :options="districtOptions"
@@ -74,20 +61,14 @@
           class="w-48"
           clearable
         />
-        
-        <VaButton @click="addNewVerifier" preset="primary">
-          Add New Verifier
-        </VaButton>
+
+        <VaButton preset="primary" @click="addNewVerifier"> Add New Verifier </VaButton>
       </VaCardContent>
     </VaCard>
 
     <!-- Verifiers Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <VaCard 
-        v-for="verifier in filteredVerifiers" 
-        :key="verifier.id"
-        class="hover:shadow-lg transition-shadow"
-      >
+      <VaCard v-for="verifier in filteredVerifiers" :key="verifier.id" class="hover:shadow-lg transition-shadow">
         <VaCardContent>
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
@@ -95,20 +76,12 @@
               <div>
                 <h3 class="font-semibold">{{ verifier.name }}</h3>
                 <p class="text-sm text-secondary">ID: {{ verifier.id }}</p>
-                <VaBadge
-                  :text="verifier.type"
-                  :color="getTypeColor(verifier.type)"
-                  outline
-                  class="mt-1"
-                />
+                <VaBadge :text="verifier.type" :color="getTypeColor(verifier.type)" outline class="mt-1" />
               </div>
             </div>
-            <VaBadge
-              :text="verifier.status"
-              :color="getStatusColor(verifier.status)"
-            />
+            <VaBadge :text="verifier.status" :color="getStatusColor(verifier.status)" />
           </div>
-          
+
           <div class="space-y-2 mb-4">
             <div class="flex items-center gap-2">
               <VaIcon name="business" size="small" />
@@ -127,7 +100,7 @@
               <span class="text-sm">{{ verifier.email }}</span>
             </div>
           </div>
-          
+
           <div class="grid grid-cols-3 gap-4 mb-4 p-3 bg-gray-50 rounded">
             <div class="text-center">
               <div class="text-lg font-semibold text-success">{{ verifier.totalVerifications }}</div>
@@ -142,35 +115,29 @@
               <div class="text-xs text-secondary">Pending</div>
             </div>
           </div>
-          
+
           <div class="flex gap-2">
             <VaButton
               preset="plain"
               icon="visibility"
-              @click="viewVerifier(verifier)"
               aria-label="View Details"
               size="small"
+              @click="viewVerifier(verifier)"
             />
-            <VaButton
-              preset="plain"
-              icon="edit"
-              @click="editVerifier(verifier)"
-              aria-label="Edit"
-              size="small"
-            />
+            <VaButton preset="plain" icon="edit" aria-label="Edit" size="small" @click="editVerifier(verifier)" />
             <VaButton
               preset="plain"
               icon="assignment"
-              @click="viewVerifications(verifier)"
               aria-label="View Verifications"
               size="small"
+              @click="viewVerifications(verifier)"
             />
             <VaButton
               preset="plain"
               :icon="verifier.status === 'Active' ? 'pause' : 'play_arrow'"
-              @click="toggleVerifierStatus(verifier)"
               :aria-label="verifier.status === 'Active' ? 'Deactivate' : 'Activate'"
               size="small"
+              @click="toggleVerifierStatus(verifier)"
             />
           </div>
         </VaCardContent>
@@ -189,95 +156,44 @@
   >
     <VaForm ref="form" class="flex flex-col gap-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaInput
-          v-model="currentVerifier.name"
-          label="Full Name"
-          :rules="[required]"
-        />
-        
-        <VaSelect
-          v-model="currentVerifier.type"
-          :options="verifierTypes"
-          label="Verifier Type"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentVerifier.organization"
-          label="Organization Name"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentVerifier.phone"
-          label="Phone Number"
-          :rules="[required, phoneValidation]"
-        />
-        
+        <VaInput v-model="currentVerifier.name" label="Full Name" :rules="[required]" />
+
+        <VaSelect v-model="currentVerifier.type" :options="verifierTypes" label="Verifier Type" :rules="[required]" />
+
+        <VaInput v-model="currentVerifier.organization" label="Organization Name" :rules="[required]" />
+
+        <VaInput v-model="currentVerifier.phone" label="Phone Number" :rules="[required, phoneValidation]" />
+
         <VaInput
           v-model="currentVerifier.email"
           label="Email Address"
           type="email"
           :rules="[required, emailValidation]"
         />
-        
-        <VaSelect
-          v-model="currentVerifier.district"
-          :options="districtOptions"
-          label="District"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentVerifier.location"
-          label="Location/Branch"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentVerifier.licenseNumber"
-          label="License/Registration Number"
-          :rules="[required]"
-        />
+
+        <VaSelect v-model="currentVerifier.district" :options="districtOptions" label="District" :rules="[required]" />
+
+        <VaInput v-model="currentVerifier.location" label="Location/Branch" :rules="[required]" />
+
+        <VaInput v-model="currentVerifier.licenseNumber" label="License/Registration Number" :rules="[required]" />
       </div>
-      
-      <VaTextarea
-        v-model="currentVerifier.address"
-        label="Complete Address"
-        :rules="[required]"
-      />
-      
+
+      <VaTextarea v-model="currentVerifier.address" label="Complete Address" :rules="[required]" />
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaCheckbox
-          v-model="currentVerifier.canVerifyLifeCertificate"
-          label="Can Verify Life Certificates"
-        />
-        
-        <VaCheckbox
-          v-model="currentVerifier.canVerifyDocuments"
-          label="Can Verify Documents"
-        />
-        
-        <VaCheckbox
-          v-model="currentVerifier.canProcessBiometric"
-          label="Can Process Biometric Verification"
-        />
-        
-        <VaCheckbox
-          v-model="currentVerifier.canIssueDigitalCertificate"
-          label="Can Issue Digital Certificates"
-        />
+        <VaCheckbox v-model="currentVerifier.canVerifyLifeCertificate" label="Can Verify Life Certificates" />
+
+        <VaCheckbox v-model="currentVerifier.canVerifyDocuments" label="Can Verify Documents" />
+
+        <VaCheckbox v-model="currentVerifier.canProcessBiometric" label="Can Process Biometric Verification" />
+
+        <VaCheckbox v-model="currentVerifier.canIssueDigitalCertificate" label="Can Issue Digital Certificates" />
       </div>
     </VaForm>
   </VaModal>
 
   <!-- Verifier Details Modal -->
-  <VaModal
-    v-model="showDetailsModal"
-    title="Verifier Details"
-    size="large"
-    hide-default-actions
-  >
+  <VaModal v-model="showDetailsModal" title="Verifier Details" size="large" hide-default-actions>
     <div v-if="selectedVerifier" class="flex flex-col gap-4">
       <div class="flex items-center gap-4 mb-4">
         <VaAvatar :src="selectedVerifier.avatar" size="large" />
@@ -285,19 +201,12 @@
           <h3 class="text-xl font-semibold">{{ selectedVerifier.name }}</h3>
           <p class="text-secondary">{{ selectedVerifier.organization }}</p>
           <div class="flex gap-2 mt-2">
-            <VaBadge
-              :text="selectedVerifier.type"
-              :color="getTypeColor(selectedVerifier.type)"
-              outline
-            />
-            <VaBadge
-              :text="selectedVerifier.status"
-              :color="getStatusColor(selectedVerifier.status)"
-            />
+            <VaBadge :text="selectedVerifier.type" :color="getTypeColor(selectedVerifier.type)" outline />
+            <VaBadge :text="selectedVerifier.status" :color="getStatusColor(selectedVerifier.status)" />
           </div>
         </div>
       </div>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h4 class="font-semibold mb-3">Contact Information</h4>
@@ -309,7 +218,7 @@
             <p><strong>License:</strong> {{ selectedVerifier.licenseNumber }}</p>
           </div>
         </div>
-        
+
         <div>
           <h4 class="font-semibold mb-3">Performance Metrics</h4>
           <div class="space-y-2">
@@ -321,7 +230,7 @@
           </div>
         </div>
       </div>
-      
+
       <div>
         <h4 class="font-semibold mb-3">Verification Capabilities</h4>
         <div class="flex flex-wrap gap-2">
@@ -331,11 +240,11 @@
           <VaBadge v-if="selectedVerifier.canIssueDigitalCertificate" text="Digital Certificates" color="primary" />
         </div>
       </div>
-      
+
       <div class="flex justify-end gap-2 pt-4 border-t">
         <VaButton @click="showDetailsModal = false">Close</VaButton>
-        <VaButton @click="editVerifier(selectedVerifier)" preset="secondary">Edit</VaButton>
-        <VaButton @click="viewVerifications(selectedVerifier)" preset="primary">View Verifications</VaButton>
+        <VaButton preset="secondary" @click="editVerifier(selectedVerifier)">Edit</VaButton>
+        <VaButton preset="primary" @click="viewVerifications(selectedVerifier)">View Verifications</VaButton>
       </div>
     </div>
   </VaModal>
@@ -343,9 +252,19 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { 
-  VaCard, VaCardContent, VaInput, VaSelect, VaButton, VaIcon, VaAvatar, 
-  VaBadge, VaModal, VaForm, VaTextarea, VaCheckbox 
+import {
+  VaCard,
+  VaCardContent,
+  VaInput,
+  VaSelect,
+  VaButton,
+  VaIcon,
+  VaAvatar,
+  VaBadge,
+  VaModal,
+  VaForm,
+  VaTextarea,
+  VaCheckbox,
 } from 'vuestic-ui'
 
 interface Verifier {
@@ -385,7 +304,7 @@ const stats = ref({
   totalVerifiers: '1,247',
   banks: '456',
   aadhaarCenters: '234',
-  fieldOfficers: '557'
+  fieldOfficers: '557',
 })
 
 const verifierTypes = ['Bank', 'Aadhaar Center', 'Field Officer', 'Post Office']
@@ -413,7 +332,7 @@ const currentVerifier = ref<Verifier>({
   canVerifyLifeCertificate: false,
   canVerifyDocuments: false,
   canProcessBiometric: false,
-  canIssueDigitalCertificate: false
+  canIssueDigitalCertificate: false,
 })
 
 const verifiers = ref<Verifier[]>([
@@ -438,7 +357,7 @@ const verifiers = ref<Verifier[]>([
     canVerifyLifeCertificate: true,
     canVerifyDocuments: true,
     canProcessBiometric: true,
-    canIssueDigitalCertificate: false
+    canIssueDigitalCertificate: false,
   },
   {
     id: 'V002',
@@ -461,52 +380,53 @@ const verifiers = ref<Verifier[]>([
     canVerifyLifeCertificate: true,
     canVerifyDocuments: true,
     canProcessBiometric: true,
-    canIssueDigitalCertificate: true
-  }
+    canIssueDigitalCertificate: true,
+  },
 ])
 
 const filteredVerifiers = computed(() => {
   let filtered = verifiers.value
-  
+
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(v => 
-      v.name.toLowerCase().includes(query) ||
-      v.organization.toLowerCase().includes(query) ||
-      v.id.toLowerCase().includes(query)
+    filtered = filtered.filter(
+      (v) =>
+        v.name.toLowerCase().includes(query) ||
+        v.organization.toLowerCase().includes(query) ||
+        v.id.toLowerCase().includes(query),
     )
   }
-  
+
   if (typeFilter.value) {
-    filtered = filtered.filter(v => v.type === typeFilter.value)
+    filtered = filtered.filter((v) => v.type === typeFilter.value)
   }
-  
+
   if (statusFilter.value) {
-    filtered = filtered.filter(v => v.status === statusFilter.value)
+    filtered = filtered.filter((v) => v.status === statusFilter.value)
   }
-  
+
   if (districtFilter.value) {
-    filtered = filtered.filter(v => v.district === districtFilter.value)
+    filtered = filtered.filter((v) => v.district === districtFilter.value)
   }
-  
+
   return filtered
 })
 
 const getTypeColor = (type: string) => {
   const colors = {
-    'Bank': 'success',
+    Bank: 'success',
     'Aadhaar Center': 'info',
     'Field Officer': 'warning',
-    'Post Office': 'primary'
+    'Post Office': 'primary',
   }
   return colors[type as keyof typeof colors] || 'secondary'
 }
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Active': 'success',
-    'Inactive': 'warning',
-    'Suspended': 'danger'
+    Active: 'success',
+    Inactive: 'warning',
+    Suspended: 'danger',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }
@@ -548,7 +468,7 @@ const addNewVerifier = () => {
     canVerifyLifeCertificate: false,
     canVerifyDocuments: false,
     canProcessBiometric: false,
-    canIssueDigitalCertificate: false
+    canIssueDigitalCertificate: false,
   }
   showModal.value = true
 }
@@ -575,7 +495,7 @@ const toggleVerifierStatus = (verifier: Verifier) => {
 
 const saveVerifier = () => {
   if (editingVerifier.value) {
-    const index = verifiers.value.findIndex(v => v.id === currentVerifier.value.id)
+    const index = verifiers.value.findIndex((v) => v.id === currentVerifier.value.id)
     if (index !== -1) {
       verifiers.value[index] = { ...currentVerifier.value }
     }

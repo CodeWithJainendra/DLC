@@ -124,7 +124,12 @@
           <div class="section-content">
             <div class="data-panel">
               <div class="data-grid">
-                <div class="data-item clickable" data-aos="slide-right" data-aos-delay="200" @click="openDetailedView('Above 50', 'Above 50 Years', '#4caf50')">
+                <div
+                  class="data-item clickable"
+                  data-aos="slide-right"
+                  data-aos-delay="200"
+                  @click="openDetailedView('Above 50', 'Above 50 Years', '#4caf50')"
+                >
                   <div class="data-indicator" style="background: linear-gradient(135deg, #4caf50, #66bb6a)"></div>
                   <div class="data-info">
                     <span class="data-label">Above 50</span>
@@ -137,7 +142,12 @@
                   <div class="click-hint">Click for details</div>
                 </div>
 
-                <div class="data-item clickable" data-aos="slide-right" data-aos-delay="300" @click="openDetailedView('30-50', '30-50 Years', '#9c27b0')">
+                <div
+                  class="data-item clickable"
+                  data-aos="slide-right"
+                  data-aos-delay="300"
+                  @click="openDetailedView('30-50', '30-50 Years', '#9c27b0')"
+                >
                   <div class="data-indicator" style="background: linear-gradient(135deg, #9c27b0, #ba68c8)"></div>
                   <div class="data-info">
                     <span class="data-label">30-50</span>
@@ -150,7 +160,12 @@
                   <div class="click-hint">Click for details</div>
                 </div>
 
-                <div class="data-item clickable" data-aos="slide-right" data-aos-delay="400" @click="openDetailedView('18-30', '18-30 Years', '#ff9800')">
+                <div
+                  class="data-item clickable"
+                  data-aos="slide-right"
+                  data-aos-delay="400"
+                  @click="openDetailedView('18-30', '18-30 Years', '#ff9800')"
+                >
                   <div class="data-indicator" style="background: linear-gradient(135deg, #ff9800, #ffb74d)"></div>
                   <div class="data-info">
                     <span class="data-label">18-30</span>
@@ -289,17 +304,31 @@
   >
     <template #header>
       <div class="detailed-header">
-        <button @click="closeDetailedView" class="back-button">
+        <button class="back-button" @click="closeDetailedView">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path
+              d="M19 12H5M12 19L5 12L12 5"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
           Back
         </button>
         <div class="header-content">
           <div class="header-icon" :style="{ backgroundColor: selectedCategoryColor }">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="2"/>
-              <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22" stroke="currentColor" stroke-width="2"/>
+              <path
+                d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
+                stroke="currentColor"
+                stroke-width="2"
+              />
+              <path
+                d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22"
+                stroke="currentColor"
+                stroke-width="2"
+              />
             </svg>
           </div>
           <div class="header-text">
@@ -310,7 +339,9 @@
         <div class="header-stats">
           <div class="stat-badge">
             <span class="stat-label">Total in Category</span>
-            <span class="stat-value">{{ selectedCategoryData.reduce((sum, state) => sum + state.total, 0).toLocaleString() }}</span>
+            <span class="stat-value">{{
+              selectedCategoryData.reduce((sum, state) => sum + state.total, 0).toLocaleString()
+            }}</span>
           </div>
         </div>
       </div>
@@ -323,18 +354,31 @@
           <div class="summary-card">
             <div class="summary-icon" :style="{ backgroundColor: selectedCategoryColor }">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22" stroke="currentColor" stroke-width="2"/>
+                <path
+                  d="M12 12C14.7614 12 17 9.76142 17 7C17 4.23858 14.7614 2 12 2C9.23858 2 7 4.23858 7 7C7 9.76142 9.23858 12 12 12Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
+                <path
+                  d="M20.5899 22C20.5899 18.13 16.7399 15 11.9999 15C7.25991 15 3.40991 18.13 3.40991 22"
+                  stroke="currentColor"
+                  stroke-width="2"
+                />
               </svg>
             </div>
             <div class="summary-info">
               <h3 class="summary-title">{{ selectedCategoryTitle }}</h3>
-              <p class="summary-subtitle">{{ selectedCategoryData.length }} states • {{ selectedCategoryData.reduce((sum, state) => sum + state.districts.length, 0) }} districts</p>
+              <p class="summary-subtitle">
+                {{ selectedCategoryData.length }} states •
+                {{ selectedCategoryData.reduce((sum, state) => sum + state.districts.length, 0) }} districts
+              </p>
             </div>
             <div class="summary-stats">
               <div class="stat-item">
                 <span class="stat-label">Total</span>
-                <span class="stat-value">{{ selectedCategoryData.reduce((sum, state) => sum + state.total, 0).toLocaleString() }}</span>
+                <span class="stat-value">{{
+                  selectedCategoryData.reduce((sum, state) => sum + state.total, 0).toLocaleString()
+                }}</span>
               </div>
             </div>
           </div>
@@ -342,8 +386,8 @@
 
         <!-- States Grid -->
         <div class="states-grid">
-          <div 
-            v-for="(state, index) in selectedCategoryData" 
+          <div
+            v-for="(state, index) in selectedCategoryData"
             :key="state.state"
             class="state-card"
             :style="{ animationDelay: `${index * 0.1}s` }"
@@ -351,9 +395,9 @@
             <div class="state-header">
               <div class="state-icon" :style="{ backgroundColor: selectedCategoryColor }">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2"/>
-                  <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
-                  <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" />
+                  <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" />
+                  <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" />
                 </svg>
               </div>
               <div class="state-info">
@@ -364,23 +408,19 @@
                 {{ ((state.total / selectedCategoryData.reduce((sum, s) => sum + s.total, 0)) * 100).toFixed(1) }}%
               </div>
             </div>
-            
+
             <div class="districts-list">
-              <div 
-                v-for="district in state.districts" 
-                :key="district.district"
-                class="district-item"
-              >
+              <div v-for="district in state.districts" :key="district.district" class="district-item">
                 <div class="district-info">
                   <span class="district-name">{{ district.district }}</span>
                   <span class="district-count">{{ district.count.toLocaleString() }}</span>
                 </div>
                 <div class="district-bar">
-                  <div 
-                    class="district-progress" 
-                    :style="{ 
+                  <div
+                    class="district-progress"
+                    :style="{
                       width: `${(district.count / state.total) * 100}%`,
-                      backgroundColor: selectedCategoryColor 
+                      backgroundColor: selectedCategoryColor,
                     }"
                   ></div>
                 </div>
@@ -454,55 +494,69 @@ const selectedCategoryColor = ref('')
 const loadPensionerData = async () => {
   try {
     isLoading.value = true
-    
+
     console.log('🔄 Loading age distribution from Flask backend...')
     const ageDistribution = await statsApi.getAgeDistribution()
-    
+
     console.log(`✅ Loaded age distribution data:`, ageDistribution)
-    
+
     // Process age distribution from Flask backend
     const processAgeDistributionFromAPI = (ageDistribution: any[]) => {
       // Convert Flask API response to chart format
       const ageGroups: { [key: string]: number } = {}
       const overAllAgeGroups: { [key: string]: number } = {}
-      
-      ageDistribution.forEach(item => {
+
+      ageDistribution.forEach((item) => {
         ageGroups[item.ageGroup] = item.count
-        
+
         // Map to overall age categories
         if (item.ageGroup === '60-65') {
           overAllAgeGroups['60-65'] = item.count
-        } else if (item.ageGroup === '66-70' || item.ageGroup === '71-75' || item.ageGroup === '76-80' || item.ageGroup === '80+') {
+        } else if (
+          item.ageGroup === '66-70' ||
+          item.ageGroup === '71-75' ||
+          item.ageGroup === '76-80' ||
+          item.ageGroup === '80+'
+        ) {
           overAllAgeGroups['Above 65'] = (overAllAgeGroups['Above 65'] || 0) + item.count
         }
       })
-      
+
       // Map to age-wise categories for the main chart
       const mappedAgeGroups = {
-        'Above 50': (ageGroups['60-65'] || 0) + (ageGroups['66-70'] || 0) + (ageGroups['71-75'] || 0) + (ageGroups['76-80'] || 0) + (ageGroups['80+'] || 0),
+        'Above 50':
+          (ageGroups['60-65'] || 0) +
+          (ageGroups['66-70'] || 0) +
+          (ageGroups['71-75'] || 0) +
+          (ageGroups['76-80'] || 0) +
+          (ageGroups['80+'] || 0),
         '30-50': Math.floor(((ageGroups['60-65'] || 0) + (ageGroups['66-70'] || 0)) * 0.3), // Estimate
-        '18-30': Math.floor(((ageGroups['60-65'] || 0) + (ageGroups['66-70'] || 0)) * 0.1)  // Estimate
+        '18-30': Math.floor(((ageGroups['60-65'] || 0) + (ageGroups['66-70'] || 0)) * 0.1), // Estimate
       }
-      
+
       // Calculate Below 60 for overall categories
       const totalPensioners = Object.values(ageGroups).reduce((sum, count) => sum + count, 0)
       overAllAgeGroups['Below 60'] = Math.floor(totalPensioners * 0.2) // Estimate 20% below 60
-      
+
       realAgeWiseData.value = mappedAgeGroups
       realOverAllAgeData.value = overAllAgeGroups
-      
+
       console.log('📊 Processed age groups from Flask backend:')
       console.log('  Age-wise:', realAgeWiseData.value)
       console.log('  Overall:', realOverAllAgeData.value)
     }
     processAgeDistributionFromAPI(ageDistribution)
-    
+
     // Also load pensioners data for detailed analysis
     const pensionersResponse = await statsApi.getPensioners()
     rawPensionerData.value = pensionersResponse.pensioners || []
-    totalPensioners.value = rawPensionerData.value.length
     
+    // Get total pensioners from dashboard stats API
+    const dashboardStats = await statsApi.getDashboardStats()
+    totalPensioners.value = dashboardStats.totalPensioners || rawPensionerData.value.length
     
+    console.log('📊 Total pensioners from dashboard stats:', dashboardStats.totalPensioners)
+    console.log('📊 Total pensioners from pensioners API:', rawPensionerData.value.length)
   } catch (error) {
     console.error('❌ Error loading age distribution from Flask backend:', error)
     useStaticFallbackData()
@@ -535,25 +589,24 @@ const openDetailedView = async (category: string, title: string, color: string) 
     selectedCategory.value = category
     selectedCategoryTitle.value = title
     selectedCategoryColor.value = color
-    
+
     // Get the total count for this category from the main card data
     const totalForCategory = realAgeWiseData.value[category] || 0
     console.log(`📊 Total for ${category}: ${totalForCategory}`)
-    
+
     // Create detailed breakdown based on the same data shown on main card
     const detailedData = createDetailedBreakdown(category, totalForCategory)
-    
+
     selectedCategoryData.value = detailedData
     showDetailedView.value = true
-    
+
     console.log(`✅ Detailed view opened for ${category}:`, detailedData)
-    
   } catch (error) {
     console.error('❌ Error opening detailed view:', error)
     // Fallback to sample data if error occurs
     const totalForCategory = realAgeWiseData.value[category] || 0
     const detailedData = createDetailedBreakdown(category, totalForCategory)
-    
+
     selectedCategoryData.value = detailedData
     showDetailedView.value = true
     console.log(`✅ Fallback detailed view for ${category}:`, detailedData)
@@ -568,29 +621,32 @@ const createDetailedBreakdown = (category: string, totalForCategory: number) => 
     { state: 'Uttar Pradesh', districts: ['Lucknow', 'Kanpur', 'Varanasi', 'Agra'] },
     { state: 'Karnataka', districts: ['Bangalore', 'Mysore', 'Hubli', 'Mangalore'] },
     { state: 'Tamil Nadu', districts: ['Chennai', 'Coimbatore', 'Madurai', 'Salem'] },
-    { state: 'West Bengal', districts: ['Kolkata', 'Howrah', 'Durgapur', 'Asansol'] }
+    { state: 'West Bengal', districts: ['Kolkata', 'Howrah', 'Durgapur', 'Asansol'] },
   ]
-  
+
   // Distribute the total across states based on typical distribution
   const stateDistribution = [0.4, 0.3, 0.2, 0.08, 0.02] // 40%, 30%, 20%, 8%, 2%
-  
-  const detailedData = sampleStates.map((stateInfo, index) => {
-    const stateCount = Math.floor(totalForCategory * stateDistribution[index]) || 1
-    return {
-      state: stateInfo.state,
-      total: stateCount,
-      districts: stateInfo.districts.map((district, distIndex) => {
-        const districtCount = Math.floor(stateCount / stateInfo.districts.length) + 
-          (distIndex === 0 ? stateCount % stateInfo.districts.length : 0)
-        return {
-          district,
-          count: districtCount,
-          pensioners: []
-        }
-      })
-    }
-  }).filter(state => state.total > 0)
-  
+
+  const detailedData = sampleStates
+    .map((stateInfo, index) => {
+      const stateCount = Math.floor(totalForCategory * stateDistribution[index]) || 1
+      return {
+        state: stateInfo.state,
+        total: stateCount,
+        districts: stateInfo.districts.map((district, distIndex) => {
+          const districtCount =
+            Math.floor(stateCount / stateInfo.districts.length) +
+            (distIndex === 0 ? stateCount % stateInfo.districts.length : 0)
+          return {
+            district,
+            count: districtCount,
+            pensioners: [],
+          }
+        }),
+      }
+    })
+    .filter((state) => state.total > 0)
+
   return detailedData
 }
 
@@ -607,12 +663,12 @@ const useStaticFallbackData = () => {
   realAgeWiseData.value = {
     'Above 50': 350,
     '30-50': 125,
-    '18-30': 25
+    '18-30': 25,
   }
   realOverAllAgeData.value = {
     'Below 60': 4500,
     '60-65': 1875,
-    'Above 65': 1125
+    'Above 65': 1125,
   }
   totalPensioners.value = 500
   console.log('⚠️ Using static fallback data for age distribution')
@@ -629,38 +685,30 @@ onMounted(async () => {
 const getAgeWiseData = () => {
   const ageData = realAgeWiseData.value
   return {
-  labels: ['Above 50', '30-50', '18-30'],
-  datasets: [
-    {
-        data: [
-          ageData['Above 50'] || 0,
-          ageData['30-50'] || 0,
-          ageData['18-30'] || 0
-        ],
-      backgroundColor: ['#4CAF50', '#9C27B0', '#FF9800'],
-      borderWidth: 0,
-    },
-  ],
-}
+    labels: ['Above 50', '30-50', '18-30'],
+    datasets: [
+      {
+        data: [ageData['Above 50'] || 0, ageData['30-50'] || 0, ageData['18-30'] || 0],
+        backgroundColor: ['#4CAF50', '#9C27B0', '#FF9800'],
+        borderWidth: 0,
+      },
+    ],
+  }
 }
 
 // DLC Over All Age-wise data - Using Real API Data
 const getOverAllAgeData = () => {
   const overAllAgeData = realOverAllAgeData.value
   return {
-  labels: ['Below 60', '60-65', 'Above 65'],
-  datasets: [
-    {
-        data: [
-          overAllAgeData['Below 60'] || 0,
-          overAllAgeData['60-65'] || 0,
-          overAllAgeData['Above 65'] || 0
-        ],
-      backgroundColor: ['#FF9800', '#8BC34A', '#795548'],
-      borderWidth: 0,
-    },
-  ],
-}
+    labels: ['Below 60', '60-65', 'Above 65'],
+    datasets: [
+      {
+        data: [overAllAgeData['Below 60'] || 0, overAllAgeData['60-65'] || 0, overAllAgeData['Above 65'] || 0],
+        backgroundColor: ['#FF9800', '#8BC34A', '#795548'],
+        borderWidth: 0,
+      },
+    ],
+  }
 }
 
 // Chart data - will be updated when real data changes
@@ -668,22 +716,26 @@ const ageWiseChartData = ref(getAgeWiseData())
 const overAllAgeChartData = ref(getOverAllAgeData())
 
 // Watch for changes in real data and update charts
-watch([realAgeWiseData, realOverAllAgeData], () => {
-  console.log('🔄 Age-wise data updated:')
-  console.log('📊 Age-wise data:', realAgeWiseData.value)
-  console.log('📊 Over All age data:', realOverAllAgeData.value)
-  
-  const newAgeWiseData = getAgeWiseData()
-  const newOverAllData = getOverAllAgeData()
-  
-  console.log('📊 New age-wise chart data:', newAgeWiseData)
-  console.log('📊 New over all chart data:', newOverAllData)
-  
-  // Update chart data
-  ageWiseChartData.value = newAgeWiseData
-  overAllAgeChartData.value = newOverAllData
-  console.log('✅ Charts updated')
-}, { deep: true })
+watch(
+  [realAgeWiseData, realOverAllAgeData],
+  () => {
+    console.log('🔄 Age-wise data updated:')
+    console.log('📊 Age-wise data:', realAgeWiseData.value)
+    console.log('📊 Over All age data:', realOverAllAgeData.value)
+
+    const newAgeWiseData = getAgeWiseData()
+    const newOverAllData = getOverAllAgeData()
+
+    console.log('📊 New age-wise chart data:', newAgeWiseData)
+    console.log('📊 New over all chart data:', newOverAllData)
+
+    // Update chart data
+    ageWiseChartData.value = newAgeWiseData
+    overAllAgeChartData.value = newOverAllData
+    console.log('✅ Charts updated')
+  },
+  { deep: true },
+)
 
 const options: ChartOptions<'doughnut'> = {
   ...doughnutConfig,
@@ -700,14 +752,14 @@ const options: ChartOptions<'doughnut'> = {
       padding: 3,
       displayColors: false,
       titleFont: {
-        size: 9
+        size: 9,
       },
       bodyFont: {
-        size: 9
+        size: 9,
       },
       caretSize: 3,
       callbacks: {
-        title: function() {
+        title: function () {
           return ''
         },
         label: function (context) {
@@ -745,13 +797,13 @@ const modalOptions: ChartOptions<'doughnut'> = {
       padding: 4,
       displayColors: false,
       titleFont: {
-        size: 10
+        size: 10,
       },
       bodyFont: {
-        size: 10
+        size: 10,
       },
       callbacks: {
-        title: function() {
+        title: function () {
           return ''
         },
         label: function (context) {
@@ -773,10 +825,12 @@ const modalOptions: ChartOptions<'doughnut'> = {
 }
 
 const openModal = () => {
+  console.log('🔄 DLC Status card clicked - opening modal...')
   isPressed.value = true
   setTimeout(() => {
     isPressed.value = false
     showModal.value = true
+    console.log('✅ Modal should be open now, showModal:', showModal.value)
   }, 150)
 }
 </script>
@@ -1259,7 +1313,7 @@ const openModal = () => {
 }
 
 .data-item:hover {
-  /* Removed transform and shadow effects */
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .data-item:hover::before {
@@ -1370,7 +1424,7 @@ const openModal = () => {
 /* Chart tooltip styling - Fixed positioning and overflow */
 :deep(.chartjs-tooltip) {
   background: rgba(255, 255, 255, 0.98) !important;
-  border: 2px solid #4CAF50 !important;
+  border: 2px solid #4caf50 !important;
   border-radius: 12px !important;
   color: #1a1a1a !important;
   font-weight: bold !important;
@@ -1400,7 +1454,7 @@ const openModal = () => {
   z-index: 99999 !important;
   position: fixed !important;
   background: rgba(255, 255, 255, 0.98) !important;
-  border: 2px solid #4CAF50 !important;
+  border: 2px solid #4caf50 !important;
   border-radius: 12px !important;
   color: #1a1a1a !important;
   font-weight: bold !important;
@@ -1714,11 +1768,11 @@ const openModal = () => {
     gap: 16px;
     padding: 20px;
   }
-  
+
   .states-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .state-card {
     padding: 16px;
   }

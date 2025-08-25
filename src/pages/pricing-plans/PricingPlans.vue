@@ -1,5 +1,4 @@
 <template>
-
   <div class="py-4 text-lg leading-[26px]">
     If you need more info about our pricing, please check
     <span class="text-primary underline">Pricing Guidelines</span>.

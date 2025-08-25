@@ -2,7 +2,7 @@
   <div class="login-container">
     <div class="login-card">
       <h2 class="text-xl font-semibold text-gray-800 mb-6 text-center">Sign In to Your Account</h2>
-      <VaForm ref="form" @submit.prevent="handleLogin" class="space-y-4">
+      <VaForm ref="form" class="space-y-4" @submit.prevent="handleLogin">
         <!-- Email Field -->
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
@@ -34,7 +34,7 @@
           >
             <template #prependInner>
               <VaIcon name="lock" size="small" color="secondary" />
-              </template>
+            </template>
             <template #appendInner>
               <VaIcon
                 :name="showPassword ? 'visibility_off' : 'visibility'"
@@ -52,14 +52,7 @@
           <a href="#" class="text-sm text-blue-600 hover:text-blue-800">Forgot password?</a>
         </div>
         <!-- Login Button -->
-        <VaButton
-          type="submit"
-          class="w-full"
-          :loading="isLoading"
-          :disabled="!isFormValid"
-        >
-          Sign In
-        </VaButton>
+        <VaButton type="submit" class="w-full" :loading="isLoading" :disabled="!isFormValid"> Sign In </VaButton>
       </VaForm>
       <!-- Demo Credentials Info -->
       <div class="demo-info">
@@ -85,7 +78,7 @@ const { init: initToast } = useToast()
 const formData = reactive({
   email: '',
   password: '',
-  keepLoggedIn: false
+  keepLoggedIn: false,
 })
 
 const showPassword = ref(false)
@@ -145,7 +138,7 @@ const handleLogin = async () => {
 
   try {
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
     // Check credentials
     if (formData.email === VALID_EMAIL && formData.password === VALID_PASSWORD) {
@@ -158,7 +151,7 @@ const handleLogin = async () => {
         message: 'Login successful! Welcome to DOPPW DLC Dashboard.',
         color: 'success',
         duration: 3000,
-        position: 'top-right'
+        position: 'top-right',
       })
 
       // Redirect to dashboard
@@ -169,7 +162,7 @@ const handleLogin = async () => {
         message: 'Invalid email or password. Please check your credentials.',
         color: 'danger',
         duration: 4000,
-        position: 'top-right'
+        position: 'top-right',
       })
     }
   } catch (error) {
@@ -178,7 +171,7 @@ const handleLogin = async () => {
       message: 'An error occurred during login. Please try again.',
       color: 'danger',
       duration: 4000,
-      position: 'top-right'
+      position: 'top-right',
     })
   } finally {
     isLoading.value = false
@@ -249,7 +242,7 @@ const handleLogin = async () => {
   .login-container {
     padding: 1rem;
   }
-  
+
   .login-card {
     padding: 1.5rem;
     margin: 0;

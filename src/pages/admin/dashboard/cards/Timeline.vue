@@ -19,7 +19,7 @@ const recentActivities = ref<RecentActivity[]>([
     details: 'for beneficiary ID: PEN-2024-001234',
     time: '5 min ago',
     type: 'verification',
-    icon: 'verified_user'
+    icon: 'verified_user',
   },
   {
     id: '2',
@@ -28,7 +28,7 @@ const recentActivities = ref<RecentActivity[]>([
     details: 'for 1,250 beneficiaries in Delhi region',
     time: '15 min ago',
     type: 'approval',
-    icon: 'check_circle'
+    icon: 'check_circle',
   },
   {
     id: '3',
@@ -37,7 +37,7 @@ const recentActivities = ref<RecentActivity[]>([
     details: 'in pension claim PEN-2024-005678',
     time: '1h ago',
     type: 'flag',
-    icon: 'flag'
+    icon: 'flag',
   },
   {
     id: '4',
@@ -46,7 +46,7 @@ const recentActivities = ref<RecentActivity[]>([
     details: 'for 500 widow pension beneficiaries',
     time: '2h ago',
     type: 'verification',
-    icon: 'task_alt'
+    icon: 'task_alt',
   },
   {
     id: '5',
@@ -55,7 +55,7 @@ const recentActivities = ref<RecentActivity[]>([
     details: 'for 25 beneficiaries in Punjab region',
     time: '3h ago',
     type: 'update',
-    icon: 'edit'
+    icon: 'edit',
   },
   {
     id: '6',
@@ -64,7 +64,7 @@ const recentActivities = ref<RecentActivity[]>([
     details: '45 approved, 12 rejected',
     time: '4h ago',
     type: 'approval',
-    icon: 'assignment_turned_in'
+    icon: 'assignment_turned_in',
   },
   {
     id: '7',
@@ -73,8 +73,8 @@ const recentActivities = ref<RecentActivity[]>([
     details: 'of ₹4.9 Cr completed successfully',
     time: '1 day ago',
     type: 'system',
-    icon: 'notifications'
-  }
+    icon: 'notifications',
+  },
 ])
 
 const getActivityColor = (type: string) => {
@@ -110,14 +110,7 @@ const getActivityColor = (type: string) => {
               <p class="card-subtitle">{{ recentActivities.length }} Recent Actions</p>
             </div>
           </div>
-          <VaButton
-            preset="primary"
-            size="small"
-            class="view-all-btn"
-            icon="visibility"
-          >
-            View Stats
-          </VaButton>
+          <VaButton preset="primary" size="small" class="view-all-btn" icon="visibility"> View Stats </VaButton>
         </div>
       </div>
 
@@ -132,15 +125,8 @@ const getActivityColor = (type: string) => {
           >
             <!-- Activity Icon -->
             <div class="activity-icon-wrapper">
-              <div
-                class="activity-icon"
-                :style="{ backgroundColor: `var(--va-${getActivityColor(activity.type)})` }"
-              >
-                <VaIcon
-                  :name="activity.icon"
-                  size="16px"
-                  color="white"
-                />
+              <div class="activity-icon" :style="{ backgroundColor: `var(--va-${getActivityColor(activity.type)})` }">
+                <VaIcon :name="activity.icon" size="16px" color="white" />
               </div>
               <div v-if="index !== recentActivities.length - 1" class="activity-line"></div>
             </div>
@@ -191,7 +177,7 @@ const getActivityColor = (type: string) => {
 }
 
 /* Light theme header fix */
-[data-theme="light"] .card-header {
+[data-theme='light'] .card-header {
   background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%) !important;
   color: white !important;
 }
@@ -383,15 +369,15 @@ const getActivityColor = (type: string) => {
 }
 
 /* Dark theme adjustments */
-[data-theme="dark"] .recent-activities-card {
+[data-theme='dark'] .recent-activities-card {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-[data-theme="dark"] .recent-activities-card:hover {
+[data-theme='dark'] .recent-activities-card:hover {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
 }
 
-[data-theme="dark"] .activity-icon {
+[data-theme='dark'] .activity-icon {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 </style>

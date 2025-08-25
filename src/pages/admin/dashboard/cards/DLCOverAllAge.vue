@@ -43,7 +43,9 @@
       <!-- Summary Section -->
       <div class="bg-blue-50 p-4 rounded-lg">
         <div class="text-2xl font-bold mb-2">Total Pensioners: {{ totalPensioners.toLocaleString() }}</div>
-        <div class="text-sm text-gray-600">Age distribution based on birth year data from {{ new Date().getFullYear() }}</div>
+        <div class="text-sm text-gray-600">
+          Age distribution based on birth year data from {{ new Date().getFullYear() }}
+        </div>
       </div>
 
       <!-- Main Content -->
@@ -55,8 +57,11 @@
             <VaProgressCircle indeterminate />
           </div>
           <div v-else class="space-y-3">
-            <div v-for="(group, index) in ageGroupsDisplay" :key="group.label" 
-                 class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+            <div
+              v-for="(group, index) in ageGroupsDisplay"
+              :key="group.label"
+              class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+            >
               <div class="flex items-center">
                 <span class="inline-block w-4 h-4 mr-3 rounded" :style="{ backgroundColor: group.color }"></span>
                 <div>
@@ -71,7 +76,7 @@
             </div>
           </div>
         </div>
-        
+
         <!-- Chart Section -->
         <div class="lg:w-1/2 flex flex-col items-center justify-center">
           <h3 class="text-lg font-semibold mb-4">Visual Distribution</h3>
@@ -130,38 +135,40 @@ const ageGroupConfig = [
   { key: '71-75', label: '71-75 years', color: '#FF9800' },
   { key: '76-80', label: '76-80 years', color: '#9C27B0' },
   { key: '81-85', label: '81-85 years', color: '#F44336' },
-  { key: '86+', label: '86+ years', color: '#795548' }
+  { key: '86+', label: '86+ years', color: '#795548' },
 ]
 
 // Computed properties for display
 const ageGroupsDisplay = computed(() => {
-  return ageGroupConfig.map(config => {
-    const count = ageDistribution.value[config.key] || 0
-    const percentage = totalPensioners.value > 0 ? ((count / totalPensioners.value) * 100).toFixed(1) : '0.0'
-    return {
-      ...config,
-      count,
-      percentage
-    }
-  }).filter(group => group.count > 0)
+  return ageGroupConfig
+    .map((config) => {
+      const count = ageDistribution.value[config.key] || 0
+      const percentage = totalPensioners.value > 0 ? ((count / totalPensioners.value) * 100).toFixed(1) : '0.0'
+      return {
+        ...config,
+        count,
+        percentage,
+      }
+    })
+    .filter((group) => group.count > 0)
 })
 
 // Chart data
 const dlcChartData = computed(() => {
   if (Object.keys(ageDistribution.value).length === 0) return null
-  
+
   const validGroups = ageGroupsDisplay.value
   const chartData = {
-    labels: validGroups.map(group => group.label),
+    labels: validGroups.map((group) => group.label),
     datasets: [
       {
-        data: validGroups.map(group => group.count),
-        backgroundColor: validGroups.map(group => group.color),
+        data: validGroups.map((group) => group.count),
+        backgroundColor: validGroups.map((group) => group.color),
         borderWidth: 0,
       },
     ],
   }
-  
+
   return useChartData(chartData).value
 })
 
@@ -178,13 +185,13 @@ const averageAge = computed(() => {
 const oldestAge = computed(() => {
   if (allPensioners.value.length === 0) return 0
   const currentYear = new Date().getFullYear()
-  return Math.max(...allPensioners.value.map(p => currentYear - p.pensioner_YearOfBirth))
+  return Math.max(...allPensioners.value.map((p) => currentYear - p.pensioner_YearOfBirth))
 })
 
 const youngestAge = computed(() => {
   if (allPensioners.value.length === 0) return 0
   const currentYear = new Date().getFullYear()
-  return Math.min(...allPensioners.value.map(p => currentYear - p.pensioner_YearOfBirth))
+  return Math.min(...allPensioners.value.map((p) => currentYear - p.pensioner_YearOfBirth))
 })
 
 // Load real data from API
@@ -193,11 +200,11 @@ const loadAgeData = async () => {
     isLoading.value = true
     const response = await pensionersApi.getPensioners()
     const pensioners = response.DLC_generated_pensioners || []
-    
+
     allPensioners.value = pensioners
     totalPensioners.value = pensioners.length
     ageDistribution.value = pensionersApi.getAgeDistribution(pensioners)
-    
+
     console.log('Age distribution loaded:', ageDistribution.value)
     console.log('Total pensioners:', totalPensioners.value)
   } catch (error) {
@@ -206,11 +213,11 @@ const loadAgeData = async () => {
     // But if it does, set reasonable defaults
     ageDistribution.value = {
       '60-65': 0,
-      '66-70': 0, 
+      '66-70': 0,
       '71-75': 0,
       '76-80': 0,
       '81-85': 0,
-      '86+': 0
+      '86+': 0,
     }
     totalPensioners.value = 0
     allPensioners.value = []
@@ -239,14 +246,14 @@ const options: ChartOptions<'doughnut'> = {
       padding: 3,
       displayColors: false,
       titleFont: {
-        size: 7
+        size: 7,
       },
       bodyFont: {
-        size: 7
+        size: 7,
       },
       caretSize: 3,
       callbacks: {
-        title: function() {
+        title: function () {
           return ''
         },
         label: function (context) {
@@ -284,13 +291,13 @@ const modalOptions: ChartOptions<'doughnut'> = {
       padding: 4,
       displayColors: false,
       titleFont: {
-        size: 10
+        size: 10,
       },
       bodyFont: {
-        size: 10
+        size: 10,
       },
       callbacks: {
-        title: function() {
+        title: function () {
           return ''
         },
         label: function (context) {
@@ -309,9 +316,9 @@ const modalOptions: ChartOptions<'doughnut'> = {
         padding: 15,
         usePointStyle: true,
         font: {
-          size: 12
-        }
-      }
+          size: 12,
+        },
+      },
     },
   },
   circumference: 360,

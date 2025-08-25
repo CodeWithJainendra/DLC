@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Operation Types -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -11,7 +9,7 @@
           <p class="text-secondary mt-2">Upload multiple pensioner records via Excel/CSV</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard class="cursor-pointer hover:shadow-lg transition-shadow" @click="selectOperation('verify')">
         <VaCardContent class="text-center">
           <VaIcon name="verified" size="3xl" color="success" />
@@ -19,7 +17,7 @@
           <p class="text-secondary mt-2">Verify multiple pensioners at once</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard class="cursor-pointer hover:shadow-lg transition-shadow" @click="selectOperation('update')">
         <VaCardContent class="text-center">
           <VaIcon name="edit" size="3xl" color="info" />
@@ -27,7 +25,7 @@
           <p class="text-secondary mt-2">Update pensioner information in bulk</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard class="cursor-pointer hover:shadow-lg transition-shadow" @click="selectOperation('notify')">
         <VaCardContent class="text-center">
           <VaIcon name="send" size="3xl" color="warning" />
@@ -35,7 +33,7 @@
           <p class="text-secondary mt-2">Send notifications to multiple pensioners</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard class="cursor-pointer hover:shadow-lg transition-shadow" @click="selectOperation('deactivate')">
         <VaCardContent class="text-center">
           <VaIcon name="block" size="3xl" color="danger" />
@@ -43,7 +41,7 @@
           <p class="text-secondary mt-2">Deactivate multiple pensioner accounts</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard class="cursor-pointer hover:shadow-lg transition-shadow" @click="selectOperation('report')">
         <VaCardContent class="text-center">
           <VaIcon name="assessment" size="3xl" color="secondary" />
@@ -59,64 +57,48 @@
         <h2 class="text-xl font-semibold">Recent Bulk Operations</h2>
       </VaCardTitle>
       <VaCardContent>
-        <VaDataTable
-          :items="operationHistory"
-          :columns="columns"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="operationHistory" :columns="columns" striped hoverable>
           <template #cell(type)="{ rowData }">
-            <VaBadge
-              :text="rowData.type"
-              :color="getTypeColor(rowData.type)"
-              outline
-            />
+            <VaBadge :text="rowData.type" :color="getTypeColor(rowData.type)" outline />
           </template>
-          
+
           <template #cell(status)="{ rowData }">
-            <VaBadge
-              :text="rowData.status"
-              :color="getStatusColor(rowData.status)"
-            />
+            <VaBadge :text="rowData.status" :color="getStatusColor(rowData.status)" />
           </template>
-          
+
           <template #cell(progress)="{ rowData }">
             <div v-if="rowData.status === 'In Progress'" class="flex items-center gap-2">
-              <VaProgressBar 
-                :model-value="rowData.progress" 
-                size="small" 
-                color="primary"
-              />
+              <VaProgressBar :model-value="rowData.progress" size="small" color="primary" />
               <span class="text-sm">{{ rowData.progress }}%</span>
             </div>
             <span v-else>-</span>
           </template>
-          
+
           <template #cell(actions)="{ rowData }">
             <div class="flex gap-2">
               <VaButton
                 preset="plain"
                 icon="visibility"
-                @click="viewOperation(rowData)"
                 aria-label="View Details"
                 size="small"
+                @click="viewOperation(rowData)"
               />
               <VaButton
                 v-if="rowData.status === 'Completed' && rowData.resultFile"
                 preset="plain"
                 icon="download"
-                @click="downloadResult(rowData)"
                 aria-label="Download Result"
                 size="small"
+                @click="downloadResult(rowData)"
               />
               <VaButton
                 v-if="rowData.status === 'In Progress'"
                 preset="plain"
                 icon="cancel"
-                @click="cancelOperation(rowData)"
                 aria-label="Cancel"
                 size="small"
                 color="danger"
+                @click="cancelOperation(rowData)"
               />
             </div>
           </template>
@@ -137,15 +119,10 @@
       <div v-if="selectedOperationType === 'upload'">
         <h4 class="font-semibold mb-3">Upload Pensioner Data</h4>
         <div class="space-y-4">
-          <VaFileUpload
-            v-model="uploadFiles"
-            type="single"
-            file-types=".xlsx,.csv"
-            dropzone
-          >
+          <VaFileUpload v-model="uploadFiles" type="single" file-types=".xlsx,.csv" dropzone>
             Upload Excel/CSV File
           </VaFileUpload>
-          
+
           <div class="text-sm text-secondary">
             <p>Supported formats: Excel (.xlsx), CSV (.csv)</p>
             <p>Maximum file size: 50MB</p>
@@ -153,7 +130,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Verify Operation -->
       <div v-if="selectedOperationType === 'verify'">
         <h4 class="font-semibold mb-3">Bulk Verification</h4>
@@ -164,7 +141,7 @@
             label="Verification Criteria"
             multiple
           />
-          
+
           <VaTextarea
             v-model="pensionIds"
             label="Pension IDs (one per line)"
@@ -173,35 +150,27 @@
           />
         </div>
       </div>
-      
+
       <!-- Notification Operation -->
       <div v-if="selectedOperationType === 'notify'">
         <h4 class="font-semibold mb-3">Bulk Notifications</h4>
         <div class="space-y-4">
-          <VaSelect
-            v-model="notificationType"
-            :options="notificationTypes"
-            label="Notification Type"
-          />
-          
+          <VaSelect v-model="notificationType" :options="notificationTypes" label="Notification Type" />
+
           <VaTextarea
             v-model="notificationMessage"
             label="Message"
             placeholder="Enter your notification message..."
             rows="4"
           />
-          
-          <VaSelect
-            v-model="targetAudience"
-            :options="audienceOptions"
-            label="Target Audience"
-          />
+
+          <VaSelect v-model="targetAudience" :options="audienceOptions" label="Target Audience" />
         </div>
       </div>
-      
+
       <div class="flex justify-end gap-2 pt-4 border-t">
         <VaButton @click="showOperationModal = false">Cancel</VaButton>
-        <VaButton @click="startOperation" preset="primary">Start Operation</VaButton>
+        <VaButton preset="primary" @click="startOperation">Start Operation</VaButton>
       </div>
     </div>
   </VaModal>
@@ -209,10 +178,19 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaDataTable, VaBadge, 
-  VaModal, VaButton, VaIcon, VaProgressBar, VaFileUpload, 
-  VaSelect, VaTextarea 
+import {
+  VaCard,
+  VaCardContent,
+  VaCardTitle,
+  VaDataTable,
+  VaBadge,
+  VaModal,
+  VaButton,
+  VaIcon,
+  VaProgressBar,
+  VaFileUpload,
+  VaSelect,
+  VaTextarea,
 } from 'vuestic-ui'
 
 interface BulkOperation {
@@ -252,7 +230,7 @@ const columns = [
   { key: 'successCount', label: 'Success' },
   { key: 'errorCount', label: 'Errors' },
   { key: 'startedDate', label: 'Started' },
-  { key: 'actions', label: 'Actions', width: '150px' }
+  { key: 'actions', label: 'Actions', width: '150px' },
 ]
 
 const operationHistory = ref<BulkOperation[]>([
@@ -268,7 +246,7 @@ const operationHistory = ref<BulkOperation[]>([
     errorCount: 144,
     startedDate: '2024-01-20T10:30:00Z',
     completedDate: '2024-01-20T11:15:00Z',
-    resultFile: '/results/upload_20240120.xlsx'
+    resultFile: '/results/upload_20240120.xlsx',
   },
   {
     id: '2',
@@ -280,18 +258,18 @@ const operationHistory = ref<BulkOperation[]>([
     processedRecords: 1675,
     successCount: 1589,
     errorCount: 86,
-    startedDate: '2024-01-20T14:00:00Z'
-  }
+    startedDate: '2024-01-20T14:00:00Z',
+  },
 ])
 
 const getTypeColor = (type: string) => {
   const colors = {
-    'Upload': 'primary',
-    'Verification': 'success',
-    'Update': 'info',
-    'Notification': 'warning',
-    'Deactivation': 'danger',
-    'Report': 'secondary'
+    Upload: 'primary',
+    Verification: 'success',
+    Update: 'info',
+    Notification: 'warning',
+    Deactivation: 'danger',
+    Report: 'secondary',
   }
   return colors[type as keyof typeof colors] || 'secondary'
 }
@@ -299,21 +277,21 @@ const getTypeColor = (type: string) => {
 const getStatusColor = (status: string) => {
   const colors = {
     'In Progress': 'info',
-    'Completed': 'success',
-    'Failed': 'danger',
-    'Cancelled': 'warning'
+    Completed: 'success',
+    Failed: 'danger',
+    Cancelled: 'warning',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }
 
 const getOperationTitle = (type: string) => {
   const titles = {
-    'upload': 'Bulk Upload Pensioners',
-    'verify': 'Bulk Verification',
-    'update': 'Bulk Update',
-    'notify': 'Bulk Notifications',
-    'deactivate': 'Bulk Deactivation',
-    'report': 'Bulk Reports'
+    upload: 'Bulk Upload Pensioners',
+    verify: 'Bulk Verification',
+    update: 'Bulk Update',
+    notify: 'Bulk Notifications',
+    deactivate: 'Bulk Deactivation',
+    report: 'Bulk Reports',
   }
   return titles[type as keyof typeof titles] || 'Bulk Operation'
 }
@@ -334,19 +312,19 @@ const startOperation = () => {
     processedRecords: 0,
     successCount: 0,
     errorCount: 0,
-    startedDate: new Date().toISOString()
+    startedDate: new Date().toISOString(),
   }
-  
+
   operationHistory.value.unshift(newOperation)
   showOperationModal.value = false
-  
+
   // Simulate progress
   const progressInterval = setInterval(() => {
     newOperation.progress += Math.floor(Math.random() * 10) + 5
     newOperation.processedRecords = Math.floor((newOperation.progress / 100) * newOperation.totalRecords)
     newOperation.successCount = Math.floor(newOperation.processedRecords * 0.95)
     newOperation.errorCount = newOperation.processedRecords - newOperation.successCount
-    
+
     if (newOperation.progress >= 100) {
       newOperation.progress = 100
       newOperation.processedRecords = newOperation.totalRecords

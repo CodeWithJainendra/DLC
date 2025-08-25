@@ -1,21 +1,13 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Quick Actions -->
     <VaCard>
       <VaCardContent class="flex flex-col sm:flex-row gap-4 items-end">
-        <VaButton @click="sendBulkReminder" preset="primary">
-          Send Life Certificate Reminders
-        </VaButton>
-        
-        <VaButton @click="sendSystemAlert" preset="secondary">
-          Send System Alert
-        </VaButton>
-        
-        <VaButton @click="markAllRead" preset="plain">
-          Mark All as Read
-        </VaButton>
+        <VaButton preset="primary" @click="sendBulkReminder"> Send Life Certificate Reminders </VaButton>
+
+        <VaButton preset="secondary" @click="sendSystemAlert"> Send System Alert </VaButton>
+
+        <VaButton preset="plain" @click="markAllRead"> Mark All as Read </VaButton>
       </VaCardContent>
     </VaCard>
 
@@ -26,17 +18,13 @@
       </VaCardTitle>
       <VaCardContent>
         <div class="space-y-3">
-          <div 
-            v-for="notification in notifications" 
+          <div
+            v-for="notification in notifications"
             :key="notification.id"
             class="flex items-start gap-3 p-4 border rounded hover:bg-gray-50"
             :class="{ 'bg-blue-50': !notification.read }"
           >
-            <VaIcon 
-              :name="notification.icon" 
-              :color="notification.color" 
-              size="large"
-            />
+            <VaIcon :name="notification.icon" :color="notification.color" size="large" />
             <div class="flex-1">
               <div class="font-semibold">{{ notification.title }}</div>
               <div class="text-secondary mt-1">{{ notification.message }}</div>
@@ -62,7 +50,7 @@ const notifications = ref([
     timestamp: '2 hours ago',
     icon: 'send',
     color: 'success',
-    read: false
+    read: false,
   },
   {
     id: 2,
@@ -71,7 +59,7 @@ const notifications = ref([
     timestamp: '4 hours ago',
     icon: 'person_add',
     color: 'info',
-    read: false
+    read: false,
   },
   {
     id: 3,
@@ -80,8 +68,8 @@ const notifications = ref([
     timestamp: '6 hours ago',
     icon: 'build',
     color: 'warning',
-    read: true
-  }
+    read: true,
+  },
 ])
 
 const sendBulkReminder = () => {
@@ -93,6 +81,6 @@ const sendSystemAlert = () => {
 }
 
 const markAllRead = () => {
-  notifications.value.forEach(n => n.read = true)
+  notifications.value.forEach((n) => (n.read = true))
 }
 </script>

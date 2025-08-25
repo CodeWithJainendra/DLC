@@ -94,8 +94,6 @@ const beforeEditFormModalClose = async (hide: () => unknown) => {
 </script>
 
 <template>
-
-
   <VaCard>
     <VaCardContent>
       <div class="flex flex-col md:flex-row gap-2 mb-2 justify-between">

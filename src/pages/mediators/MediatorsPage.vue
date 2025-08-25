@@ -1,21 +1,14 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Search and Actions -->
     <VaCard>
       <VaCardContent class="flex flex-col sm:flex-row gap-4 items-end">
-        <VaInput
-          v-model="searchQuery"
-          placeholder="Search mediators by name, location, or ID"
-          class="flex-1"
-          clearable
-        >
+        <VaInput v-model="searchQuery" placeholder="Search mediators by name, location, or ID" class="flex-1" clearable>
           <template #prependInner>
             <VaIcon name="search" />
           </template>
         </VaInput>
-        
+
         <VaSelect
           v-model="statusFilter"
           :options="statusOptions"
@@ -23,7 +16,7 @@
           class="w-40"
           clearable
         />
-        
+
         <VaSelect
           v-model="locationFilter"
           :options="locationOptions"
@@ -31,20 +24,14 @@
           class="w-48"
           clearable
         />
-        
-        <VaButton @click="addNewMediator" preset="primary">
-          Add New Mediator
-        </VaButton>
+
+        <VaButton preset="primary" @click="addNewMediator"> Add New Mediator </VaButton>
       </VaCardContent>
     </VaCard>
 
     <!-- Mediators Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <VaCard 
-        v-for="mediator in filteredMediators" 
-        :key="mediator.id"
-        class="hover:shadow-lg transition-shadow"
-      >
+      <VaCard v-for="mediator in filteredMediators" :key="mediator.id" class="hover:shadow-lg transition-shadow">
         <VaCardContent>
           <div class="flex items-start justify-between mb-4">
             <div class="flex items-center gap-3">
@@ -54,12 +41,9 @@
                 <p class="text-sm text-secondary">ID: {{ mediator.id }}</p>
               </div>
             </div>
-            <VaBadge
-              :text="mediator.status"
-              :color="getStatusColor(mediator.status)"
-            />
+            <VaBadge :text="mediator.status" :color="getStatusColor(mediator.status)" />
           </div>
-          
+
           <div class="space-y-2 mb-4">
             <div class="flex items-center gap-2">
               <VaIcon name="location_on" size="small" />
@@ -74,7 +58,7 @@
               <span class="text-sm">{{ mediator.organization }}</span>
             </div>
           </div>
-          
+
           <div class="grid grid-cols-2 gap-4 mb-4">
             <div class="text-center">
               <div class="text-lg font-semibold text-primary">{{ mediator.activeVerifications }}</div>
@@ -85,35 +69,29 @@
               <div class="text-xs text-secondary">Completed</div>
             </div>
           </div>
-          
+
           <div class="flex gap-2">
             <VaButton
               preset="plain"
               icon="visibility"
-              @click="viewMediator(mediator)"
               aria-label="View Details"
               size="small"
+              @click="viewMediator(mediator)"
             />
-            <VaButton
-              preset="plain"
-              icon="edit"
-              @click="editMediator(mediator)"
-              aria-label="Edit"
-              size="small"
-            />
+            <VaButton preset="plain" icon="edit" aria-label="Edit" size="small" @click="editMediator(mediator)" />
             <VaButton
               preset="plain"
               icon="assignment"
-              @click="viewAssignments(mediator)"
               aria-label="View Assignments"
               size="small"
+              @click="viewAssignments(mediator)"
             />
             <VaButton
               preset="plain"
               :icon="mediator.status === 'Active' ? 'pause' : 'play_arrow'"
-              @click="toggleMediatorStatus(mediator)"
               :aria-label="mediator.status === 'Active' ? 'Deactivate' : 'Activate'"
               size="small"
+              @click="toggleMediatorStatus(mediator)"
             />
           </div>
         </VaCardContent>
@@ -132,108 +110,63 @@
   >
     <VaForm ref="form" class="flex flex-col gap-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaInput
-          v-model="currentMediator.name"
-          label="Full Name"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentMediator.phone"
-          label="Phone Number"
-          :rules="[required, phoneValidation]"
-        />
-        
+        <VaInput v-model="currentMediator.name" label="Full Name" :rules="[required]" />
+
+        <VaInput v-model="currentMediator.phone" label="Phone Number" :rules="[required, phoneValidation]" />
+
         <VaInput
           v-model="currentMediator.email"
           label="Email Address"
           type="email"
           :rules="[required, emailValidation]"
         />
-        
+
         <VaSelect
           v-model="currentMediator.organization"
           :options="organizationOptions"
           label="Organization"
           :rules="[required]"
         />
-        
-        <VaInput
-          v-model="currentMediator.location"
-          label="Location"
-          :rules="[required]"
-        />
-        
-        <VaSelect
-          v-model="currentMediator.district"
-          :options="districtOptions"
-          label="District"
-          :rules="[required]"
-        />
-        
+
+        <VaInput v-model="currentMediator.location" label="Location" :rules="[required]" />
+
+        <VaSelect v-model="currentMediator.district" :options="districtOptions" label="District" :rules="[required]" />
+
         <VaInput
           v-model="currentMediator.aadhaarNumber"
           label="Aadhaar Number"
           :rules="[required, aadhaarValidation]"
         />
-        
-        <VaDateInput
-          v-model="currentMediator.joiningDate"
-          label="Joining Date"
-          :rules="[required]"
-        />
+
+        <VaDateInput v-model="currentMediator.joiningDate" label="Joining Date" :rules="[required]" />
       </div>
-      
-      <VaTextarea
-        v-model="currentMediator.address"
-        label="Complete Address"
-        :rules="[required]"
-      />
-      
+
+      <VaTextarea v-model="currentMediator.address" label="Complete Address" :rules="[required]" />
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaCheckbox
-          v-model="currentMediator.canVerifyLifeCertificate"
-          label="Can Verify Life Certificates"
-        />
-        
-        <VaCheckbox
-          v-model="currentMediator.canVerifyAddress"
-          label="Can Verify Address"
-        />
-        
-        <VaCheckbox
-          v-model="currentMediator.canVerifyBankDetails"
-          label="Can Verify Bank Details"
-        />
-        
-        <VaCheckbox
-          v-model="currentMediator.canVerifyDisability"
-          label="Can Verify Disability Certificates"
-        />
+        <VaCheckbox v-model="currentMediator.canVerifyLifeCertificate" label="Can Verify Life Certificates" />
+
+        <VaCheckbox v-model="currentMediator.canVerifyAddress" label="Can Verify Address" />
+
+        <VaCheckbox v-model="currentMediator.canVerifyBankDetails" label="Can Verify Bank Details" />
+
+        <VaCheckbox v-model="currentMediator.canVerifyDisability" label="Can Verify Disability Certificates" />
       </div>
     </VaForm>
   </VaModal>
 
   <!-- Mediator Details Modal -->
-  <VaModal
-    v-model="showDetailsModal"
-    title="Mediator Details"
-    size="large"
-    hide-default-actions
-  >
+  <VaModal v-model="showDetailsModal" title="Mediator Details" size="large" hide-default-actions>
     <div v-if="selectedMediator" class="flex flex-col gap-4">
       <div class="flex items-center gap-4 mb-4">
         <VaAvatar :src="selectedMediator.avatar" size="large" />
         <div>
           <h3 class="text-xl font-semibold">{{ selectedMediator.name }}</h3>
           <p class="text-secondary">{{ selectedMediator.organization }}</p>
-          <VaBadge
-            :text="selectedMediator.status"
-            :color="getStatusColor(selectedMediator.status)"
-          />
+          <VaBadge :text="selectedMediator.status" :color="getStatusColor(selectedMediator.status)" />
         </div>
       </div>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <h4 class="font-semibold mb-3">Contact Information</h4>
@@ -244,7 +177,7 @@
             <p><strong>District:</strong> {{ selectedMediator.district }}</p>
           </div>
         </div>
-        
+
         <div>
           <h4 class="font-semibold mb-3">Performance Metrics</h4>
           <div class="space-y-2">
@@ -255,7 +188,7 @@
           </div>
         </div>
       </div>
-      
+
       <div>
         <h4 class="font-semibold mb-3">Verification Capabilities</h4>
         <div class="flex flex-wrap gap-2">
@@ -265,11 +198,11 @@
           <VaBadge v-if="selectedMediator.canVerifyDisability" text="Disability Certificate" color="primary" />
         </div>
       </div>
-      
+
       <div class="flex justify-end gap-2 pt-4 border-t">
         <VaButton @click="showDetailsModal = false">Close</VaButton>
-        <VaButton @click="editMediator(selectedMediator)" preset="secondary">Edit</VaButton>
-        <VaButton @click="viewAssignments(selectedMediator)" preset="primary">View Assignments</VaButton>
+        <VaButton preset="secondary" @click="editMediator(selectedMediator)">Edit</VaButton>
+        <VaButton preset="primary" @click="viewAssignments(selectedMediator)">View Assignments</VaButton>
       </div>
     </div>
   </VaModal>
@@ -277,9 +210,20 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { 
-  VaCard, VaCardContent, VaInput, VaSelect, VaButton, VaIcon, VaAvatar, 
-  VaBadge, VaModal, VaForm, VaDateInput, VaTextarea, VaCheckbox 
+import {
+  VaCard,
+  VaCardContent,
+  VaInput,
+  VaSelect,
+  VaButton,
+  VaIcon,
+  VaAvatar,
+  VaBadge,
+  VaModal,
+  VaForm,
+  VaDateInput,
+  VaTextarea,
+  VaCheckbox,
 } from 'vuestic-ui'
 
 interface Mediator {
@@ -336,7 +280,7 @@ const currentMediator = ref<Mediator>({
   canVerifyLifeCertificate: false,
   canVerifyAddress: false,
   canVerifyBankDetails: false,
-  canVerifyDisability: false
+  canVerifyDisability: false,
 })
 
 const mediators = ref<Mediator[]>([
@@ -359,7 +303,7 @@ const mediators = ref<Mediator[]>([
     canVerifyLifeCertificate: true,
     canVerifyAddress: true,
     canVerifyBankDetails: true,
-    canVerifyDisability: false
+    canVerifyDisability: false,
   },
   {
     id: 'M002',
@@ -380,38 +324,39 @@ const mediators = ref<Mediator[]>([
     canVerifyLifeCertificate: true,
     canVerifyAddress: true,
     canVerifyBankDetails: false,
-    canVerifyDisability: true
-  }
+    canVerifyDisability: true,
+  },
 ])
 
 const filteredMediators = computed(() => {
   let filtered = mediators.value
-  
+
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(m => 
-      m.name.toLowerCase().includes(query) ||
-      m.location.toLowerCase().includes(query) ||
-      m.id.toLowerCase().includes(query)
+    filtered = filtered.filter(
+      (m) =>
+        m.name.toLowerCase().includes(query) ||
+        m.location.toLowerCase().includes(query) ||
+        m.id.toLowerCase().includes(query),
     )
   }
-  
+
   if (statusFilter.value) {
-    filtered = filtered.filter(m => m.status === statusFilter.value)
+    filtered = filtered.filter((m) => m.status === statusFilter.value)
   }
-  
+
   if (locationFilter.value) {
-    filtered = filtered.filter(m => m.location === locationFilter.value)
+    filtered = filtered.filter((m) => m.location === locationFilter.value)
   }
-  
+
   return filtered
 })
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Active': 'success',
-    'Inactive': 'warning',
-    'Suspended': 'danger'
+    Active: 'success',
+    Inactive: 'warning',
+    Suspended: 'danger',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }
@@ -455,7 +400,7 @@ const addNewMediator = () => {
     canVerifyLifeCertificate: false,
     canVerifyAddress: false,
     canVerifyBankDetails: false,
-    canVerifyDisability: false
+    canVerifyDisability: false,
   }
   showModal.value = true
 }
@@ -483,7 +428,7 @@ const toggleMediatorStatus = (mediator: Mediator) => {
 
 const saveMediator = () => {
   if (editingMediator.value) {
-    const index = mediators.value.findIndex(m => m.id === currentMediator.value.id)
+    const index = mediators.value.findIndex((m) => m.id === currentMediator.value.id)
     if (index !== -1) {
       mediators.value[index] = { ...currentMediator.value }
     }

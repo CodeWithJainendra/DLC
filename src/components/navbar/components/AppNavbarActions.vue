@@ -5,8 +5,8 @@
       preset="secondary"
       color="textPrimary"
       class="app-navbar-actions__item flex-shrink-0 mx-0"
-      @click="toggleTheme"
       :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+      @click="toggleTheme"
     >
       <VaIcon :name="isDark ? 'light_mode' : 'dark_mode'" size="large" />
     </VaButton>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal Test</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal.show {
+            display: block;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin: 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        .card:hover {
+            background: #e9e9e9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modal Test Page</h1>
+    
+    <div class="card" onclick="openModal()">
+        <h3>DLC Status - Overall Analytics</h3>
+        <p>State-wise Total: 0</p>
+        <p>Click for detailed view</p>
+    </div>
+
+    <div id="testModal" class="modal">
+        <div class="modal-content">
+            <h2>DLC Status Modal Test</h2>
+            <p>This is a test modal to verify modal functionality works.</p>
+            <table border="1" style="width: 100%; margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Total Pensioners</th>
+                        <th>Verified</th>
+                        <th>Pending</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Maharashtra</td>
+                        <td>15,000</td>
+                        <td>12,000</td>
+                        <td>3,000</td>
+                    </tr>
+                    <tr>
+                        <td>Uttar Pradesh</td>
+                        <td>18,000</td>
+                        <td>14,000</td>
+                        <td>4,000</td>
+                    </tr>
+                </tbody>
+            </table>
+            <button onclick="closeModal()" style="margin-top: 20px; padding: 10px 20px;">Close</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            console.log('Opening test modal...');
+            document.getElementById('testModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            console.log('Closing test modal...');
+            document.getElementById('testModal').classList.remove('show');
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('testModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>

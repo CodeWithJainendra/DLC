@@ -37,10 +37,7 @@
     <template #header>
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-bold">DLC Status Charts</h2>
-        <button 
-          @click="refreshData" 
-          class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
-        >
+        <button class="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600" @click="refreshData">
           <VaIcon name="refresh" size="14px" class="mr-1" />
           Refresh Data
         </button>
@@ -161,37 +158,36 @@ const loadRealData = async () => {
   try {
     isLoading.value = true
     console.log('🔄 Loading real DLC data from API...')
-    
+
     const response = await pensionersApi.getPensioners()
     const pensioners = response.DLC_generated_pensioners || []
-    
+
     console.log(`📊 Loaded ${pensioners.length} pensioners from API`)
-    
+
     // Get state-wise data
     const stateData = pensionersApi.getStateWiseData(pensioners)
     realStateWiseData.value = stateData
-    
+
     // Calculate total
     totalPensioners.value = pensioners.length
-    
+
     // Generate over all data (same as state-wise for now, but could be different logic)
     realOverAllData.value = { ...stateData }
-    
+
     console.log('📊 Real API data processed:')
     console.log('  Total pensioners:', totalPensioners.value)
     console.log('  State-wise data:', realStateWiseData.value)
     console.log('  Over-all data:', realOverAllData.value)
-    
+
     // Update race data with real data
     stateWiseRaceData.value = getStateWiseRaceData()
-    
+
     console.log('✅ Real DLC data loaded:', {
       totalPensioners: totalPensioners.value,
       stateData: realStateWiseData.value,
       overAllData: realOverAllData.value,
-      raceData: stateWiseRaceData.value
+      raceData: stateWiseRaceData.value,
     })
-    
   } catch (error) {
     console.error('❌ Error loading real DLC data:', error)
     // The API service already handles fallback data, so this shouldn't happen
@@ -228,45 +224,57 @@ const refreshData = async () => {
 }
 
 // Watch for real data changes and update charts
-watch([realStateWiseData, realOverAllData], () => {
-  console.log('🔄 Real data changed, updating charts...')
-  console.log('State-wise data:', realStateWiseData.value)
-  console.log('Over-all data:', realOverAllData.value)
-  
-  // Update race data
-  stateWiseRaceData.value = getStateWiseRaceData()
-  
-  // If modal is open, recreate charts
-  if (showModal.value) {
-    setTimeout(() => {
-      createCharts()
-    }, 100)
-  }
-  
-  // Also update the card display immediately
-  console.log('📊 Updated total pensioners:', totalPensioners.value)
-}, { deep: true })
+watch(
+  [realStateWiseData, realOverAllData],
+  () => {
+    console.log('🔄 Real data changed, updating charts...')
+    console.log('State-wise data:', realStateWiseData.value)
+    console.log('Over-all data:', realOverAllData.value)
+
+    // Update race data
+    stateWiseRaceData.value = getStateWiseRaceData()
+
+    // If modal is open, recreate charts
+    if (showModal.value) {
+      setTimeout(() => {
+        createCharts()
+      }, 100)
+    }
+
+    // Also update the card display immediately
+    console.log('📊 Updated total pensioners:', totalPensioners.value)
+  },
+  { deep: true },
+)
 
 // State-wise DLC Status data for bar chart race - Using Real API Data
 const getStateWiseRaceData = () => {
   const stateData = realStateWiseData.value
   const colors = [
-    '#4FC3F7', '#81C784', '#FFB74D', '#F06292', '#BA68C8',
-    '#FF8A65', '#A1C181', '#F8BBD9', '#B39DDB', '#FFCC02'
+    '#4FC3F7',
+    '#81C784',
+    '#FFB74D',
+    '#F06292',
+    '#BA68C8',
+    '#FF8A65',
+    '#A1C181',
+    '#F8BBD9',
+    '#B39DDB',
+    '#FFCC02',
   ]
-  
+
   // Convert state data to race format
   const sortedStates = Object.entries(stateData)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 10)
     .map(([state, count], index) => ({
       name: state,
       value: count,
-      color: colors[index % colors.length]
+      color: colors[index % colors.length],
     }))
-  
+
   return {
-    'Current Data': sortedStates
+    'Current Data': sortedStates,
   }
 }
 
@@ -293,16 +301,24 @@ const stateWiseRaceData = ref(getStateWiseRaceData())
 const getStateWiseChartData = () => {
   const stateData = realStateWiseData.value
   console.log('🔍 getStateWiseChartData called with stateData:', stateData)
-  
+
   const sortedStates = Object.entries(stateData)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 10) // Top 10 states
-  
+
   const colors = [
-    '#4FC3F7', '#81C784', '#FFB74D', '#F06292', '#BA68C8',
-    '#FF8A65', '#A1C181', '#F8BBD9', '#B39DDB', '#FFCC02'
+    '#4FC3F7',
+    '#81C784',
+    '#FFB74D',
+    '#F06292',
+    '#BA68C8',
+    '#FF8A65',
+    '#A1C181',
+    '#F8BBD9',
+    '#B39DDB',
+    '#FFCC02',
   ]
-  
+
   return {
     labels: sortedStates.map(([state]) => state),
     datasets: [
@@ -321,15 +337,27 @@ const getStateWiseChartData = () => {
 const getOverAllStateChartData = () => {
   const overAllData = realOverAllData.value
   const sortedStates = Object.entries(overAllData)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 15) // Top 15 states
-  
+
   const colors = [
-    '#4FC3F7', '#81C784', '#FFB74D', '#F06292', '#BA68C8',
-    '#FF8A65', '#A1C181', '#F8BBD9', '#B39DDB', '#FFCC02',
-    '#FFAB91', '#C5E1A5', '#F48FB1', '#CE93D8', '#80CBC4'
+    '#4FC3F7',
+    '#81C784',
+    '#FFB74D',
+    '#F06292',
+    '#BA68C8',
+    '#FF8A65',
+    '#A1C181',
+    '#F8BBD9',
+    '#B39DDB',
+    '#FFCC02',
+    '#FFAB91',
+    '#C5E1A5',
+    '#F48FB1',
+    '#CE93D8',
+    '#80CBC4',
   ]
-  
+
   return {
     labels: sortedStates.map(([state]) => state),
     datasets: [
@@ -460,7 +488,7 @@ const createCharts = async () => {
     if (ctx1) {
       const stateWiseData = getStateWiseChartData()
       console.log('State-wise chart data:', stateWiseData)
-      
+
       stateWiseChart = new Chart(ctx1, {
         type: 'bar',
         data: stateWiseData,
@@ -517,7 +545,7 @@ const createCharts = async () => {
       console.log('Over all context created successfully')
       const overAllData = getOverAllStateChartData()
       console.log('Over all chart data:', overAllData)
-      
+
       overAllChart = new Chart(ctx2, {
         type: 'bar',
         data: overAllData,

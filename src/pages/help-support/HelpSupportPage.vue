@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Quick Help Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -11,7 +9,7 @@
           <p class="text-secondary mt-2">Complete guide for using the pension system</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard class="cursor-pointer hover:shadow-lg transition-shadow" @click="openVideoTutorials">
         <VaCardContent class="text-center">
           <VaIcon name="play_circle" size="3xl" color="success" />
@@ -19,7 +17,7 @@
           <p class="text-secondary mt-2">Step-by-step video instructions</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard class="cursor-pointer hover:shadow-lg transition-shadow" @click="openFAQ">
         <VaCardContent class="text-center">
           <VaIcon name="quiz" size="3xl" color="info" />
@@ -53,7 +51,7 @@
               </div>
             </div>
           </div>
-          
+
           <div>
             <h4 class="font-semibold mb-3">Administrative Support</h4>
             <div class="space-y-2">
@@ -89,7 +87,7 @@
               label="Category"
               placeholder="Select category"
             />
-            
+
             <VaSelect
               v-model="ticket.priority"
               :options="priorityOptions"
@@ -97,24 +95,18 @@
               placeholder="Select priority"
             />
           </div>
-          
-          <VaInput
-            v-model="ticket.subject"
-            label="Subject"
-            placeholder="Brief description of the issue"
-          />
-          
+
+          <VaInput v-model="ticket.subject" label="Subject" placeholder="Brief description of the issue" />
+
           <VaTextarea
             v-model="ticket.description"
             label="Description"
             placeholder="Detailed description of the issue"
             rows="4"
           />
-          
+
           <div class="flex justify-end">
-            <VaButton @click="submitTicket" preset="primary">
-              Submit Ticket
-            </VaButton>
+            <VaButton preset="primary" @click="submitTicket"> Submit Ticket </VaButton>
           </div>
         </VaForm>
       </VaCardContent>
@@ -135,7 +127,7 @@
               <div><strong>Last Updated:</strong> {{ systemInfo.lastUpdated }}</div>
             </div>
           </div>
-          
+
           <div>
             <h4 class="font-semibold mb-2">Server Status</h4>
             <div class="space-y-1 text-sm">
@@ -161,16 +153,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaIcon, VaForm, 
-  VaSelect, VaInput, VaTextarea, VaButton 
-} from 'vuestic-ui'
+import { VaCard, VaCardContent, VaCardTitle, VaIcon, VaForm, VaSelect, VaInput, VaTextarea, VaButton } from 'vuestic-ui'
 
 const ticket = ref({
   category: '',
   priority: '',
   subject: '',
-  description: ''
+  description: '',
 })
 
 const ticketCategories = [
@@ -179,7 +168,7 @@ const ticketCategories = [
   'Data Verification',
   'System Bug',
   'Feature Request',
-  'Training Request'
+  'Training Request',
 ]
 
 const priorityOptions = ['Low', 'Medium', 'High', 'Critical']
@@ -187,7 +176,7 @@ const priorityOptions = ['Low', 'Medium', 'High', 'Critical']
 const systemInfo = ref({
   version: '3.1.0',
   build: '2024.01.20',
-  lastUpdated: '20 Jan 2024'
+  lastUpdated: '20 Jan 2024',
 })
 
 const openUserGuide = () => {
@@ -209,7 +198,7 @@ const submitTicket = () => {
     category: '',
     priority: '',
     subject: '',
-    description: ''
+    description: '',
   }
 }
 </script>

@@ -30,18 +30,14 @@
     </svg>
 
     <!-- Tooltip -->
-    <div
-      v-if="tooltip.visible"
-      class="map-tooltip"
-      :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
-    >
+    <div v-if="tooltip.visible" class="map-tooltip" :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }">
       <div class="tooltip-content">
         <h4>{{ tooltip.stateName }}</h4>
         <div class="tooltip-metric">
           <span class="metric-label">{{ formatMetricName(selectedMetric) }}:</span>
           <span class="metric-value">{{ tooltip.value.toLocaleString() }}</span>
         </div>
-        <div class="tooltip-rank" v-if="tooltip.rank">
+        <div v-if="tooltip.rank" class="tooltip-rank">
           <span class="rank-text">Rank: #{{ tooltip.rank }} of {{ totalStates }}</span>
         </div>
       </div>
@@ -64,7 +60,7 @@ const tooltip = ref({
   y: 0,
   stateName: '',
   value: 0,
-  rank: 0
+  rank: 0,
 })
 
 // Computed properties
@@ -85,12 +81,12 @@ const stateRankings = computed(() => {
 
 // Compute color scale dynamically
 const colorScale = computed(() => {
-  const values = Object.values(props.stateData).filter(v => v > 0)
+  const values = Object.values(props.stateData).filter((v) => v > 0)
   if (values.length === 0) return { min: 0, max: 100 }
 
   return {
     min: Math.min(...values),
-    max: Math.max(...values)
+    max: Math.max(...values),
   }
 })
 
@@ -107,13 +103,13 @@ function getStateColor(value: number) {
   if (props.selectedMetric === 'DLC_failed') {
     // Red scale for failures (more red = more failures = worse)
     if (normalized >= 0.75) return '#dc2626' // Dark red
-    if (normalized >= 0.5) return '#ef4444'  // Red
+    if (normalized >= 0.5) return '#ef4444' // Red
     if (normalized >= 0.25) return '#f87171' // Light red
     return '#fecaca' // Very light red
   } else {
     // Green-blue scale for positive metrics (more intense = better)
     if (normalized >= 0.75) return '#059669' // Dark green
-    if (normalized >= 0.5) return '#10b981'  // Green
+    if (normalized >= 0.5) return '#10b981' // Green
     if (normalized >= 0.25) return '#34d399' // Light green
     return '#a7f3d0' // Very light green
   }
@@ -126,80 +122,80 @@ const statePolygons = [
     code: 'UP',
     path: 'M400,200 L550,200 L550,280 L400,280 Z',
     labelX: 475,
-    labelY: 240
+    labelY: 240,
   },
   {
     name: 'Maharashtra',
     code: 'MH',
     path: 'M300,350 L450,350 L450,430 L300,430 Z',
     labelX: 375,
-    labelY: 390
+    labelY: 390,
   },
   {
     name: 'Bihar',
     code: 'BR',
     path: 'M550,200 L650,200 L650,260 L550,260 Z',
     labelX: 600,
-    labelY: 230
+    labelY: 230,
   },
   {
     name: 'West Bengal',
     code: 'WB',
     path: 'M650,200 L750,200 L750,280 L650,280 Z',
     labelX: 700,
-    labelY: 240
+    labelY: 240,
   },
   {
     name: 'Madhya Pradesh',
     code: 'MP',
     path: 'M350,280 L500,280 L500,350 L350,350 Z',
     labelX: 425,
-    labelY: 315
+    labelY: 315,
   },
   {
     name: 'Tamil Nadu',
     code: 'TN',
     path: 'M350,480 L450,480 L450,560 L350,560 Z',
     labelX: 400,
-    labelY: 520
+    labelY: 520,
   },
   {
     name: 'Rajasthan',
     code: 'RJ',
     path: 'M200,150 L350,150 L350,280 L200,280 Z',
     labelX: 275,
-    labelY: 215
+    labelY: 215,
   },
   {
     name: 'Karnataka',
     code: 'KA',
     path: 'M300,430 L400,430 L400,510 L300,510 Z',
     labelX: 350,
-    labelY: 470
+    labelY: 470,
   },
   {
     name: 'Gujarat',
     code: 'GJ',
     path: 'M150,250 L250,250 L250,350 L150,350 Z',
     labelX: 200,
-    labelY: 300
+    labelY: 300,
   },
   {
     name: 'Andhra Pradesh',
     code: 'AP',
     path: 'M450,400 L550,400 L550,500 L450,500 Z',
     labelX: 500,
-    labelY: 450
-  }
+    labelY: 450,
+  },
 ]
 
 // Helper functions
 function formatMetricName(metric: string) {
   const names: Record<string, string> = {
-    'pensioner_count': 'Pensioners',
-    'DLC_potential': 'DLC Potential',
-    'DLC_success': 'DLC Success',
-    'DLC_failed': 'DLC Failed'
+    pensioner_count: 'Pensioners',
+    DLC_potential: 'DLC Potential',
+    DLC_success: 'DLC Success',
+    DLC_failed: 'DLC Failed',
   }
   return names[metric] || metric
 }
@@ -213,7 +209,7 @@ function showTooltip(state: any, event: MouseEvent) {
     y: event.clientY - 10,
     stateName: state.name,
     value: value,
-    rank: stateRankings.value[state.name] || 0
+    rank: stateRankings.value[state.name] || 0,
   }
 }
 
@@ -224,7 +220,9 @@ function hideTooltip() {
 function selectState(state: any) {
   const value = props.stateData[state.name] || 0
   const rank = stateRankings.value[state.name] || 0
-  console.log(`Selected: ${state.name} | ${formatMetricName(props.selectedMetric)}: ${value.toLocaleString()} | Rank: #${rank}`)
+  console.log(
+    `Selected: ${state.name} | ${formatMetricName(props.selectedMetric)}: ${value.toLocaleString()} | Rank: #${rank}`,
+  )
 }
 </script>
 

@@ -55,12 +55,15 @@ export interface PensionersResponse {
 }
 
 export interface DLCBankData {
-  state_wise_data: Record<string, {
-    total_pensioners: number
-    age_groups: Record<string, number>
-    bank_locations: Record<string, number>
-    pincode_counts: Record<string, number>
-  }>
+  state_wise_data: Record<
+    string,
+    {
+      total_pensioners: number
+      age_groups: Record<string, number>
+      bank_locations: Record<string, number>
+      pincode_counts: Record<string, number>
+    }
+  >
   bank_pincode_data: Record<string, any>
   total_records: number
   total_states: number
@@ -120,12 +123,12 @@ class StatsApiService {
   async getFormattedStats(): Promise<FormattedStats> {
     try {
       const stats = await this.getDashboardStats()
-      
+
       return {
         totalPensioners: this.formatNumber(stats.totalPensioners),
         verifiedThisMonth: this.formatNumber(stats.verifiedThisMonth),
         pendingVerifications: this.formatNumber(stats.pendingVerifications),
-        totalAmount: this.formatCurrency(stats.totalAmount)
+        totalAmount: this.formatCurrency(stats.totalAmount),
       }
     } catch (error) {
       console.error('Error fetching formatted stats, using fallback:', error)
@@ -133,7 +136,7 @@ class StatsApiService {
         totalPensioners: '0',
         verifiedThisMonth: '0',
         pendingVerifications: '0',
-        totalAmount: '₹0'
+        totalAmount: '₹0',
       }
     }
   }
@@ -201,12 +204,12 @@ class StatsApiService {
       if (status) {
         url += `&status=${status}`
       }
-      
+
       const response = await fetch(url)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       const data = await response.json()
       console.log('👥 Pensioners Response:', data)
       return data
@@ -225,7 +228,7 @@ class StatsApiService {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       const data = await response.json()
       console.log('🏦 DLC Bank Data Response:', data)
       return data
@@ -244,7 +247,7 @@ class StatsApiService {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       const data = await response.json()
       console.log('📈 Analytics Trends Response:', data)
       return data
@@ -259,7 +262,7 @@ class StatsApiService {
    */
   private formatNumber(num: number): string {
     if (!num || num === 0) return '0'
-    
+
     // Convert to Indian number format (lakhs, crores)
     if (num >= 10000000) {
       return (num / 10000000).toFixed(1) + ' Cr'
@@ -268,7 +271,7 @@ class StatsApiService {
     } else if (num >= 1000) {
       return num.toLocaleString('en-IN')
     }
-    
+
     return num.toString()
   }
 
@@ -277,7 +280,7 @@ class StatsApiService {
    */
   private formatCurrency(amount: number): string {
     if (!amount || amount === 0) return '₹0'
-    
+
     const formatted = this.formatNumber(amount)
     return `₹${formatted}`
   }
@@ -291,7 +294,7 @@ class StatsApiService {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
+
       const data = await response.json()
       console.log('📊 Excel Pensioner Data Response:', data)
       return data
@@ -308,12 +311,12 @@ class StatsApiService {
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 5000)
-      
+
       const response = await fetch(`${this.baseUrl}/api/dashboard/stats`, {
         method: 'GET',
         signal: controller.signal,
       })
-      
+
       clearTimeout(timeoutId)
       return response.ok
     } catch (error) {

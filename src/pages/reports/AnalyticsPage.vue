@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Key Metrics -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -12,7 +10,7 @@
           <div class="text-xs text-success mt-1">+2.5% from last month</div>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="verified" size="2xl" color="success" />
@@ -21,7 +19,7 @@
           <div class="text-xs text-success mt-1">+5.2% from last month</div>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="schedule" size="2xl" color="info" />
@@ -30,7 +28,7 @@
           <div class="text-xs text-danger mt-1">+0.3h from last month</div>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="support_agent" size="2xl" color="warning" />
@@ -53,7 +51,7 @@
           </div>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardTitle>
           <h2 class="text-xl font-semibold">Verification Types Distribution</h2>
@@ -74,8 +72,8 @@
         </VaCardTitle>
         <VaCardContent>
           <div class="space-y-3">
-            <div 
-              v-for="mediator in topMediators" 
+            <div
+              v-for="mediator in topMediators"
               :key="mediator.id"
               class="flex items-center justify-between p-3 bg-gray-50 rounded"
             >
@@ -94,15 +92,15 @@
           </div>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardTitle>
           <h2 class="text-xl font-semibold">Regional Performance</h2>
         </VaCardTitle>
         <VaCardContent>
           <div class="space-y-3">
-            <div 
-              v-for="region in regionalData" 
+            <div
+              v-for="region in regionalData"
               :key="region.name"
               class="flex items-center justify-between p-3 bg-gray-50 rounded"
             >
@@ -127,8 +125,8 @@
       </VaCardTitle>
       <VaCardContent>
         <div class="space-y-3">
-          <div 
-            v-for="activity in recentActivity" 
+          <div
+            v-for="activity in recentActivity"
             :key="activity.id"
             class="flex items-center gap-3 p-3 border-l-4 border-primary bg-gray-50"
           >
@@ -152,7 +150,7 @@ const metrics = ref({
   totalPensioners: 45248,
   verificationRate: 87.3,
   avgProcessingTime: 4.2,
-  mediatorEfficiency: 92.1
+  mediatorEfficiency: 92.1,
 })
 
 const topMediators = ref([
@@ -161,45 +159,45 @@ const topMediators = ref([
     name: 'अजय कुमार',
     location: 'Meerut',
     completedVerifications: 234,
-    avatar: '/api/placeholder/32/32'
+    avatar: '/api/placeholder/32/32',
   },
   {
     id: 'M002',
     name: 'प्रिया शर्मा',
     location: 'Noida',
     completedVerifications: 198,
-    avatar: '/api/placeholder/32/32'
+    avatar: '/api/placeholder/32/32',
   },
   {
     id: 'M003',
     name: 'राजेश गुप्ता',
     location: 'Ghaziabad',
     completedVerifications: 176,
-    avatar: '/api/placeholder/32/32'
-  }
+    avatar: '/api/placeholder/32/32',
+  },
 ])
 
 const regionalData = ref([
   {
     name: 'Meerut',
     mediators: 25,
-    verificationRate: 89.2
+    verificationRate: 89.2,
   },
   {
     name: 'Noida',
     mediators: 18,
-    verificationRate: 91.5
+    verificationRate: 91.5,
   },
   {
     name: 'Ghaziabad',
     mediators: 22,
-    verificationRate: 85.7
+    verificationRate: 85.7,
   },
   {
     name: 'Lucknow',
     mediators: 31,
-    verificationRate: 88.3
-  }
+    verificationRate: 88.3,
+  },
 ])
 
 const recentActivity = ref([
@@ -208,29 +206,29 @@ const recentActivity = ref([
     description: 'New mediator registered: सुमित्रा देवी (Kanpur)',
     timestamp: '2 hours ago',
     icon: 'person_add',
-    color: 'success'
+    color: 'success',
   },
   {
     id: 2,
     description: 'Bulk verification completed for 156 pensioners',
     timestamp: '4 hours ago',
     icon: 'verified',
-    color: 'info'
+    color: 'info',
   },
   {
     id: 3,
     description: 'System maintenance completed successfully',
     timestamp: '6 hours ago',
     icon: 'build',
-    color: 'warning'
+    color: 'warning',
   },
   {
     id: 4,
     description: 'Monthly report generated and sent to administrators',
     timestamp: '1 day ago',
     icon: 'assessment',
-    color: 'primary'
-  }
+    color: 'primary',
+  },
 ])
 
 onMounted(() => {

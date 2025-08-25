@@ -14,31 +14,11 @@
             </div>
           </div>
           <div class="flex gap-2">
-            <VaButton
-              preset="primary"
-              size="small"
-              class="zoom-btn"
-              icon="zoom_in"
-              @click="zoomIn"
-            >
-              Zoom In
-            </VaButton>
-            <VaButton
-              preset="primary"
-              size="small"
-              class="zoom-btn"
-              icon="zoom_out"
-              @click="zoomOut"
-            >
+            <VaButton preset="primary" size="small" class="zoom-btn" icon="zoom_in" @click="zoomIn"> Zoom In </VaButton>
+            <VaButton preset="primary" size="small" class="zoom-btn" icon="zoom_out" @click="zoomOut">
               Zoom Out
             </VaButton>
-            <VaButton
-              preset="primary"
-              size="small"
-              class="zoom-btn"
-              icon="my_location"
-              @click="centerOnIndia"
-            >
+            <VaButton preset="primary" size="small" class="zoom-btn" icon="my_location" @click="centerOnIndia">
               Center India
             </VaButton>
           </div>
@@ -49,11 +29,7 @@
       <div class="map-container">
         <!-- India SVG Map -->
         <div class="india-map-wrapper" :style="{ transform: `scale(${zoomLevel})` }">
-          <svg
-            viewBox="0 0 1000 700"
-            class="india-map"
-            @wheel="handleWheel"
-          >
+          <svg viewBox="0 0 1000 700" class="india-map" @wheel="handleWheel">
             <!-- India Map Path -->
             <path
               d="M300,100 Q350,80 400,90 Q450,85 500,95 Q550,90 600,100 Q650,95 700,110 L720,130 Q740,150 750,180 Q760,210 770,240 Q780,270 790,300 Q800,330 810,360 Q820,390 830,420 Q840,450 850,480 L860,510 Q850,540 840,570 Q830,600 820,630 L800,650 Q780,670 760,690 Q740,710 720,730 Q700,750 680,770 Q660,790 640,810 Q620,830 600,850 Q580,870 560,890 Q540,910 520,930 Q500,950 480,970 Q460,990 440,1010 Q420,1030 400,1050 Q380,1030 360,1010 Q340,990 320,970 Q300,950 280,930 Q260,910 240,890 Q220,870 200,850 Q180,830 160,810 Q140,790 120,770 Q100,750 80,730 Q60,710 40,690 Q20,670 10,650 Q5,630 10,610 Q15,590 25,570 Q35,550 45,530 Q55,510 65,490 Q75,470 85,450 Q95,430 105,410 Q115,390 125,370 Q135,350 145,330 Q155,310 165,290 Q175,270 185,250 Q195,230 205,210 Q215,190 225,170 Q235,150 245,130 L300,100 Z"
@@ -62,7 +38,7 @@
               stroke-width="2"
               class="india-outline"
             />
-            
+
             <!-- Verification Markers -->
             <g v-for="marker in verificationMarkers" :key="marker.id">
               <circle
@@ -77,7 +53,7 @@
                 @mouseenter="showTooltip(marker, $event)"
                 @mouseleave="hideTooltip"
               />
-              
+
               <!-- Marker Label -->
               <text
                 :x="marker.x"
@@ -103,12 +79,7 @@
             @keyup.enter="searchLocation"
           >
             <template #appendInner>
-              <VaButton
-                preset="primary"
-                size="small"
-                icon="search"
-                @click="searchLocation"
-              />
+              <VaButton preset="primary" size="small" icon="search" @click="searchLocation" />
             </template>
           </VaInput>
         </div>
@@ -154,7 +125,7 @@
               </div>
             </div>
           </div>
-          
+
           <div class="legend-section">
             <h4>Verification Mode</h4>
             <div class="legend-items">
@@ -176,11 +147,7 @@
       </div>
 
       <!-- Tooltip -->
-      <div
-        v-if="tooltip.show"
-        class="map-tooltip"
-        :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }"
-      >
+      <div v-if="tooltip.show" class="map-tooltip" :style="{ left: tooltip.x + 'px', top: tooltip.y + 'px' }">
         <h5>{{ tooltip.data?.district }}</h5>
         <p><strong>Verifications:</strong> {{ tooltip.data?.verifications }}</p>
         <p><strong>Mode:</strong> {{ tooltip.data?.mode }}</p>
@@ -244,7 +211,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 180,
     verifications: 1247,
     mode: 'Online',
-    status: 'Verified'
+    status: 'Verified',
   },
   {
     id: '2',
@@ -253,7 +220,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 350,
     verifications: 892,
     mode: 'Offline',
-    status: 'Pending'
+    status: 'Pending',
   },
   {
     id: '3',
@@ -262,7 +229,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 480,
     verifications: 654,
     mode: 'Biometric',
-    status: 'Verified'
+    status: 'Verified',
   },
   {
     id: '4',
@@ -271,7 +238,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 520,
     verifications: 543,
     mode: 'Online',
-    status: 'Rejected'
+    status: 'Rejected',
   },
   {
     id: '5',
@@ -280,7 +247,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 280,
     verifications: 789,
     mode: 'Offline',
-    status: 'Verified'
+    status: 'Verified',
   },
   {
     id: '6',
@@ -289,7 +256,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 420,
     verifications: 432,
     mode: 'Biometric',
-    status: 'Pending'
+    status: 'Pending',
   },
   {
     id: '7',
@@ -298,7 +265,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 380,
     verifications: 321,
     mode: 'Online',
-    status: 'Verified'
+    status: 'Verified',
   },
   {
     id: '8',
@@ -307,7 +274,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 280,
     verifications: 567,
     mode: 'Offline',
-    status: 'Pending'
+    status: 'Pending',
   },
   {
     id: '9',
@@ -316,7 +283,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 220,
     verifications: 445,
     mode: 'Biometric',
-    status: 'Verified'
+    status: 'Verified',
   },
   {
     id: '10',
@@ -325,7 +292,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 240,
     verifications: 678,
     mode: 'Online',
-    status: 'Pending'
+    status: 'Pending',
   },
   {
     id: '11',
@@ -334,7 +301,7 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 320,
     verifications: 234,
     mode: 'Offline',
-    status: 'Verified'
+    status: 'Verified',
   },
   {
     id: '12',
@@ -343,46 +310,36 @@ const verificationMarkers = ref<VerificationMarker[]>([
     y: 140,
     verifications: 189,
     mode: 'Biometric',
-    status: 'Pending'
-  }
+    status: 'Pending',
+  },
 ])
 
 const totalMarkers = computed(() => verificationMarkers.value.length)
 
 // Computed statistics
-const totalVerifications = computed(() =>
-  verificationMarkers.value.reduce((sum, item) => sum + item.verifications, 0)
-)
+const totalVerifications = computed(() => verificationMarkers.value.reduce((sum, item) => sum + item.verifications, 0))
 
 const onlineVerifications = computed(() =>
-  verificationMarkers.value
-    .filter(item => item.mode === 'Online')
-    .reduce((sum, item) => sum + item.verifications, 0)
+  verificationMarkers.value.filter((item) => item.mode === 'Online').reduce((sum, item) => sum + item.verifications, 0),
 )
 
 const offlineVerifications = computed(() =>
   verificationMarkers.value
-    .filter(item => item.mode === 'Offline')
-    .reduce((sum, item) => sum + item.verifications, 0)
+    .filter((item) => item.mode === 'Offline')
+    .reduce((sum, item) => sum + item.verifications, 0),
 )
 
 const biometricVerifications = computed(() =>
   verificationMarkers.value
-    .filter(item => item.mode === 'Biometric')
-    .reduce((sum, item) => sum + item.verifications, 0)
+    .filter((item) => item.mode === 'Biometric')
+    .reduce((sum, item) => sum + item.verifications, 0),
 )
 
-const verifiedCount = computed(() =>
-  verificationMarkers.value.filter(item => item.status === 'Verified').length
-)
+const verifiedCount = computed(() => verificationMarkers.value.filter((item) => item.status === 'Verified').length)
 
-const pendingCount = computed(() =>
-  verificationMarkers.value.filter(item => item.status === 'Pending').length
-)
+const pendingCount = computed(() => verificationMarkers.value.filter((item) => item.status === 'Pending').length)
 
-const rejectedCount = computed(() =>
-  verificationMarkers.value.filter(item => item.status === 'Rejected').length
-)
+const rejectedCount = computed(() => verificationMarkers.value.filter((item) => item.status === 'Rejected').length)
 
 // Marker styling functions
 const getMarkerSize = (verifications: number) => {
@@ -394,19 +351,27 @@ const getMarkerSize = (verifications: number) => {
 
 const getMarkerColor = (status: string) => {
   switch (status) {
-    case 'Verified': return '#4caf50'
-    case 'Pending': return '#ff9800'
-    case 'Rejected': return '#f44336'
-    default: return '#9e9e9e'
+    case 'Verified':
+      return '#4caf50'
+    case 'Pending':
+      return '#ff9800'
+    case 'Rejected':
+      return '#f44336'
+    default:
+      return '#9e9e9e'
   }
 }
 
 const getMarkerBorderColor = (mode: string) => {
   switch (mode) {
-    case 'Online': return '#2196f3'
-    case 'Offline': return '#9c27b0'
-    case 'Biometric': return '#ff5722'
-    default: return '#757575'
+    case 'Online':
+      return '#2196f3'
+    case 'Offline':
+      return '#9c27b0'
+    case 'Biometric':
+      return '#ff5722'
+    default:
+      return '#757575'
   }
 }
 
@@ -415,7 +380,7 @@ const tooltip = ref({
   show: false,
   x: 0,
   y: 0,
-  data: null as VerificationMarker | null
+  data: null as VerificationMarker | null,
 })
 
 const showTooltip = (marker: VerificationMarker, event: MouseEvent) => {
@@ -423,7 +388,7 @@ const showTooltip = (marker: VerificationMarker, event: MouseEvent) => {
     show: true,
     x: event.clientX + 10,
     y: event.clientY - 10,
-    data: marker
+    data: marker,
   }
 }
 
@@ -439,8 +404,8 @@ const searchLocation = () => {
   if (searchQuery.value.trim()) {
     console.log('Searching for:', searchQuery.value)
     // Simple search simulation
-    const foundMarker = verificationMarkers.value.find(m =>
-      m.district.toLowerCase().includes(searchQuery.value.toLowerCase())
+    const foundMarker = verificationMarkers.value.find((m) =>
+      m.district.toLowerCase().includes(searchQuery.value.toLowerCase()),
     )
     if (foundMarker) {
       showTooltip(foundMarker, { clientX: foundMarker.x, clientY: foundMarker.y } as MouseEvent)

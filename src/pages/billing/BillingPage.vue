@@ -1,6 +1,4 @@
 <template>
-
-
   <VaSkeletonGroup v-if="cardStore.loading">
     <VaSkeleton class="mb-4" height="160px" variant="squared" />
     <VaSkeleton class="mb-4" height="160px" variant="squared" />

@@ -13,22 +13,23 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://100.113.47.45:8080',
+        target: 'http://localhost:5000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
+        // Preserve /api path because Flask serves endpoints under /api
+        // rewrite: (path) => path, // no rewrite
         configure: (proxy, _options) => {
           proxy.on('error', (err, _req, _res) => {
-            console.log('proxy error', err);
-          });
+            console.log('proxy error', err)
+          })
           proxy.on('proxyReq', (proxyReq, req, _res) => {
-            console.log('Sending Request to the Target:', req.method, req.url);
-          });
+            console.log('Sending Request to the Target:', req.method, req.url)
+          })
           proxy.on('proxyRes', (proxyRes, req, _res) => {
-            console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
-          });
+            console.log('Received Response from the Target:', proxyRes.statusCode, req.url)
+          })
         },
-      }
-    }
+      },
+    },
   },
   resolve: {
     alias: {

@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Security Overview -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -11,7 +9,7 @@
           <p class="text-secondary">System Status</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="login" size="2xl" color="info" />
@@ -19,7 +17,7 @@
           <p class="text-secondary">Active Logins</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="warning" size="2xl" color="warning" />
@@ -27,7 +25,7 @@
           <p class="text-secondary">Failed Attempts (24h)</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="update" size="2xl" color="primary" />
@@ -51,19 +49,15 @@
             </div>
             <VaSwitch v-model="securitySettings.twoFactorAuth" />
           </div>
-          
+
           <div class="flex items-center justify-between">
             <div>
               <h4 class="font-semibold">Session Timeout</h4>
               <p class="text-secondary text-sm">Auto-logout after inactivity</p>
             </div>
-            <VaSelect
-              v-model="securitySettings.sessionTimeout"
-              :options="timeoutOptions"
-              class="w-32"
-            />
+            <VaSelect v-model="securitySettings.sessionTimeout" :options="timeoutOptions" class="w-32" />
           </div>
-          
+
           <div class="flex items-center justify-between">
             <div>
               <h4 class="font-semibold">Password Policy</h4>
@@ -71,17 +65,13 @@
             </div>
             <VaSwitch v-model="securitySettings.strongPasswordPolicy" />
           </div>
-          
+
           <div class="flex items-center justify-between">
             <div>
               <h4 class="font-semibold">Login Attempt Limit</h4>
               <p class="text-secondary text-sm">Maximum failed login attempts</p>
             </div>
-            <VaSelect
-              v-model="securitySettings.maxLoginAttempts"
-              :options="attemptOptions"
-              class="w-24"
-            />
+            <VaSelect v-model="securitySettings.maxLoginAttempts" :options="attemptOptions" class="w-24" />
           </div>
         </div>
       </VaCardContent>
@@ -93,24 +83,13 @@
         <h2 class="text-xl font-semibold">Recent Security Events</h2>
       </VaCardTitle>
       <VaCardContent>
-        <VaDataTable
-          :items="securityEvents"
-          :columns="eventColumns"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="securityEvents" :columns="eventColumns" striped hoverable>
           <template #cell(type)="{ rowData }">
-            <VaBadge
-              :text="rowData.type"
-              :color="getEventTypeColor(rowData.type)"
-            />
+            <VaBadge :text="rowData.type" :color="getEventTypeColor(rowData.type)" />
           </template>
-          
+
           <template #cell(severity)="{ rowData }">
-            <VaBadge
-              :text="rowData.severity"
-              :color="getSeverityColor(rowData.severity)"
-            />
+            <VaBadge :text="rowData.severity" :color="getSeverityColor(rowData.severity)" />
           </template>
         </VaDataTable>
       </VaCardContent>
@@ -120,22 +99,19 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaIcon, VaSwitch, 
-  VaSelect, VaDataTable, VaBadge 
-} from 'vuestic-ui'
+import { VaCard, VaCardContent, VaCardTitle, VaIcon, VaSwitch, VaSelect, VaDataTable, VaBadge } from 'vuestic-ui'
 
 const securityStats = ref({
   activeLogins: 23,
   failedAttempts: 7,
-  lastUpdate: '2 days'
+  lastUpdate: '2 days',
 })
 
 const securitySettings = ref({
   twoFactorAuth: true,
   sessionTimeout: '30 min',
   strongPasswordPolicy: true,
-  maxLoginAttempts: 3
+  maxLoginAttempts: 3,
 })
 
 const timeoutOptions = ['15 min', '30 min', '1 hour', '2 hours', '4 hours']
@@ -147,7 +123,7 @@ const eventColumns = [
   { key: 'user', label: 'User' },
   { key: 'ipAddress', label: 'IP Address' },
   { key: 'severity', label: 'Severity' },
-  { key: 'description', label: 'Description' }
+  { key: 'description', label: 'Description' },
 ]
 
 const securityEvents = ref([
@@ -157,7 +133,7 @@ const securityEvents = ref([
     user: 'admin@pension.gov.in',
     ipAddress: '192.168.1.100',
     severity: 'Info',
-    description: 'Successful admin login'
+    description: 'Successful admin login',
   },
   {
     timestamp: '2024-01-20 09:45:00',
@@ -165,7 +141,7 @@ const securityEvents = ref([
     user: 'unknown',
     ipAddress: '203.45.67.89',
     severity: 'Warning',
-    description: 'Multiple failed login attempts'
+    description: 'Multiple failed login attempts',
   },
   {
     timestamp: '2024-01-20 08:15:00',
@@ -173,8 +149,8 @@ const securityEvents = ref([
     user: 'mediator@pension.gov.in',
     ipAddress: '192.168.1.105',
     severity: 'Info',
-    description: 'User changed password'
-  }
+    description: 'User changed password',
+  },
 ])
 
 const getEventTypeColor = (type: string) => {
@@ -182,16 +158,16 @@ const getEventTypeColor = (type: string) => {
     'Login Success': 'success',
     'Failed Login': 'danger',
     'Password Change': 'info',
-    'Account Locked': 'warning'
+    'Account Locked': 'warning',
   }
   return colors[type as keyof typeof colors] || 'secondary'
 }
 
 const getSeverityColor = (severity: string) => {
   const colors = {
-    'Info': 'info',
-    'Warning': 'warning',
-    'Critical': 'danger'
+    Info: 'info',
+    Warning: 'warning',
+    Critical: 'danger',
   }
   return colors[severity as keyof typeof colors] || 'secondary'
 }

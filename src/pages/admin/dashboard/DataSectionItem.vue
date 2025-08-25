@@ -1,12 +1,20 @@
 <template>
   <VaCard
     :class="['cardview', isClickable ? 'cardview-clickable' : '', { 'cardview-hovered': hovered }]"
-    style="height: 100px; min-height: 100px; max-height: 100px; display: flex; flex-direction: column; justify-content: center; transition: all 0.3s ease;"
+    style="
+      height: 100px;
+      min-height: 100px;
+      max-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transition: all 0.3s ease;
+    "
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
   >
-    <VaCardContent style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
-      <section style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+    <VaCardContent style="height: 100%; display: flex; flex-direction: column; justify-content: center">
+      <section style="height: 100%; display: flex; flex-direction: column; justify-content: center">
         <header class="flex items-center justify-between">
           <div v-if="value" class="text-lg font-semibold grow">{{ value }}</div>
           <div
@@ -19,9 +27,9 @@
             <slot name="icon"></slot>
           </div>
         </header>
-        <div style="flex: 1; overflow: hidden;">
+        <div style="flex: 1; overflow: hidden">
           <p v-if="title" class="mb-2">{{ title }}</p>
-          <div style="height: 32px; overflow: visible;">
+          <div style="height: 32px; overflow: visible">
             <slot name="chart"></slot>
           </div>
         </div>
@@ -67,7 +75,9 @@ const isClickable = computed(() => props.title === '' && props.value === '') // 
 
 .cardview-clickable {
   cursor: pointer;
-  transition: box-shadow 0.2s, transform 0.2s;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s;
 }
 
 .cardview-clickable:hover {

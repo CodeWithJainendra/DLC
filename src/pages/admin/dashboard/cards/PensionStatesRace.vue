@@ -4,7 +4,10 @@
       <!-- Header Section -->
       <div
         class="card-header"
-        style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1d4ed8 100%) !important; color: white !important"
+        style="
+          background: linear-gradient(135deg, #1e40af 0%, #3b82f6 50%, #1d4ed8 100%) !important;
+          color: white !important;
+        "
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
@@ -25,16 +28,10 @@
               preset="plain"
               color="white"
               size="small"
-              @click="toggleAnimation"
               :icon="isPlaying ? 'pause' : 'play_arrow'"
+              @click="toggleAnimation"
             />
-            <VaButton
-              preset="plain"
-              color="white"
-              size="small"
-              @click="resetAnimation"
-              icon="replay"
-            />
+            <VaButton preset="plain" color="white" size="small" icon="replay" @click="resetAnimation" />
           </div>
         </div>
       </div>
@@ -77,7 +74,7 @@ const pensionRaceData = ref({
     { name: 'Rajasthan', value: 20000, color: '#84cc16' },
     { name: 'Karnataka', value: 18000, color: '#f97316' },
     { name: 'Gujarat', value: 15000, color: '#ec4899' },
-    { name: 'Andhra Pradesh', value: 12000, color: '#6366f1' }
+    { name: 'Andhra Pradesh', value: 12000, color: '#6366f1' },
   ],
   'Feb 2024': [
     { name: 'Uttar Pradesh', value: 48000, color: '#3b82f6' },
@@ -89,7 +86,7 @@ const pensionRaceData = ref({
     { name: 'Rajasthan', value: 23000, color: '#84cc16' },
     { name: 'Karnataka', value: 21000, color: '#f97316' },
     { name: 'Gujarat', value: 18000, color: '#ec4899' },
-    { name: 'Andhra Pradesh', value: 15000, color: '#6366f1' }
+    { name: 'Andhra Pradesh', value: 15000, color: '#6366f1' },
   ],
   'Mar 2024': [
     { name: 'Uttar Pradesh', value: 52000, color: '#3b82f6' },
@@ -101,7 +98,7 @@ const pensionRaceData = ref({
     { name: 'Rajasthan', value: 27000, color: '#84cc16' },
     { name: 'Karnataka', value: 25000, color: '#f97316' },
     { name: 'Gujarat', value: 22000, color: '#ec4899' },
-    { name: 'Andhra Pradesh', value: 19000, color: '#6366f1' }
+    { name: 'Andhra Pradesh', value: 19000, color: '#6366f1' },
   ],
   'Apr 2024': [
     { name: 'Uttar Pradesh', value: 55000, color: '#3b82f6' },
@@ -113,7 +110,7 @@ const pensionRaceData = ref({
     { name: 'Karnataka', value: 30000, color: '#f97316' },
     { name: 'Rajasthan', value: 28000, color: '#84cc16' },
     { name: 'Gujarat', value: 26000, color: '#ec4899' },
-    { name: 'Andhra Pradesh', value: 23000, color: '#6366f1' }
+    { name: 'Andhra Pradesh', value: 23000, color: '#6366f1' },
   ],
   'May 2024': [
     { name: 'Uttar Pradesh', value: 58000, color: '#3b82f6' },
@@ -125,7 +122,7 @@ const pensionRaceData = ref({
     { name: 'Karnataka', value: 34000, color: '#f97316' },
     { name: 'Rajasthan', value: 31000, color: '#84cc16' },
     { name: 'Gujarat', value: 29000, color: '#ec4899' },
-    { name: 'Andhra Pradesh', value: 27000, color: '#6366f1' }
+    { name: 'Andhra Pradesh', value: 27000, color: '#6366f1' },
   ],
   'Jun 2024': [
     { name: 'Uttar Pradesh', value: 62000, color: '#3b82f6' },
@@ -137,8 +134,8 @@ const pensionRaceData = ref({
     { name: 'Madhya Pradesh', value: 38000, color: '#8b5cf6' },
     { name: 'Rajasthan', value: 35000, color: '#84cc16' },
     { name: 'Gujarat', value: 33000, color: '#ec4899' },
-    { name: 'Andhra Pradesh', value: 31000, color: '#6366f1' }
-  ]
+    { name: 'Andhra Pradesh', value: 31000, color: '#6366f1' },
+  ],
 })
 
 const toggleAnimation = () => {
@@ -170,18 +167,18 @@ const loadPythonData = async () => {
       const raceData = await PythonApiService.getBarChartRaceData()
 
       // Convert Python data format to component format
-      const convertedData: Record<string, Array<{name: string, value: number, color: string}>> = {}
+      const convertedData: Record<string, Array<{ name: string; value: number; color: string }>> = {}
       const stateColors: Record<string, string> = {
         'Uttar Pradesh': '#3b82f6',
-        'Maharashtra': '#ef4444',
-        'Bihar': '#10b981',
+        Maharashtra: '#ef4444',
+        Bihar: '#10b981',
         'West Bengal': '#f59e0b',
         'Madhya Pradesh': '#8b5cf6',
         'Tamil Nadu': '#06b6d4',
-        'Rajasthan': '#84cc16',
-        'Karnataka': '#f97316',
-        'Gujarat': '#ec4899',
-        'Andhra Pradesh': '#6366f1'
+        Rajasthan: '#84cc16',
+        Karnataka: '#f97316',
+        Gujarat: '#ec4899',
+        'Andhra Pradesh': '#6366f1',
       }
 
       for (const [period, stateData] of Object.entries(raceData.data)) {
@@ -189,7 +186,7 @@ const loadPythonData = async () => {
           .map(([state, value]) => ({
             name: state,
             value: value,
-            color: stateColors[state] || '#95A5A6'
+            color: stateColors[state] || '#95A5A6',
           }))
           .sort((a, b) => b.value - a.value)
           .slice(0, 10)

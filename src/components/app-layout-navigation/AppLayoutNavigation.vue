@@ -22,7 +22,7 @@
     </div>
 
     <!-- Filter Button -->
-    <button 
+    <button
       v-if="route.name === 'dashboard'"
       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg"
       @click="toggleFilter"

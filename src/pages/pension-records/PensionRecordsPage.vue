@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Search and Filter Section -->
     <VaCard>
@@ -15,7 +13,7 @@
             <VaIcon name="search" />
           </template>
         </VaInput>
-        
+
         <VaSelect
           v-model="statusFilter"
           :options="statusOptions"
@@ -23,14 +21,10 @@
           class="w-48"
           clearable
         />
-        
-        <VaButton @click="searchPensioners" preset="primary">
-          Search
-        </VaButton>
-        
-        <VaButton @click="addNewPensioner" preset="secondary">
-          Add New Pensioner
-        </VaButton>
+
+        <VaButton preset="primary" @click="searchPensioners"> Search </VaButton>
+
+        <VaButton preset="secondary" @click="addNewPensioner"> Add New Pensioner </VaButton>
       </VaCardContent>
     </VaCard>
 
@@ -38,52 +32,31 @@
     <VaCard>
       <VaCardTitle>
         <h2 class="text-xl font-semibold">Pensioner Records</h2>
-        <div class="text-sm text-secondary">
-          Total: {{ pensioners.length }} records
-        </div>
+        <div class="text-sm text-secondary">Total: {{ pensioners.length }} records</div>
       </VaCardTitle>
-      
+
       <VaCardContent>
-        <VaDataTable
-          :items="filteredPensioners"
-          :columns="columns"
-          :loading="loading"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="filteredPensioners" :columns="columns" :loading="loading" striped hoverable>
           <template #cell(status)="{ rowData }">
-            <VaBadge
-              :text="rowData.status"
-              :color="getStatusColor(rowData.status)"
-            />
+            <VaBadge :text="rowData.status" :color="getStatusColor(rowData.status)" />
           </template>
-          
+
           <template #cell(lastVerification)="{ rowData }">
             <span :class="getVerificationClass(rowData.lastVerification)">
               {{ formatDate(rowData.lastVerification) }}
             </span>
           </template>
-          
+
           <template #cell(actions)="{ rowData }">
             <div class="flex gap-2">
-              <VaButton
-                preset="plain"
-                icon="visibility"
-                @click="viewPensioner(rowData)"
-                aria-label="View Details"
-              />
-              <VaButton
-                preset="plain"
-                icon="edit"
-                @click="editPensioner(rowData)"
-                aria-label="Edit"
-              />
+              <VaButton preset="plain" icon="visibility" aria-label="View Details" @click="viewPensioner(rowData)" />
+              <VaButton preset="plain" icon="edit" aria-label="Edit" @click="editPensioner(rowData)" />
               <VaButton
                 preset="plain"
                 icon="verified"
-                @click="verifyPensioner(rowData)"
                 aria-label="Verify"
                 :disabled="rowData.status === 'Verified'"
+                @click="verifyPensioner(rowData)"
               />
             </div>
           </template>
@@ -103,70 +76,59 @@
   >
     <VaForm ref="form" class="flex flex-col gap-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaInput
-          v-model="currentPensioner.pensionNumber"
-          label="Pension Number"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentPensioner.name"
-          label="Full Name"
-          :rules="[required]"
-        />
-        
+        <VaInput v-model="currentPensioner.pensionNumber" label="Pension Number" :rules="[required]" />
+
+        <VaInput v-model="currentPensioner.name" label="Full Name" :rules="[required]" />
+
         <VaInput
           v-model="currentPensioner.aadhaarNumber"
           label="Aadhaar Number"
           :rules="[required, aadhaarValidation]"
         />
-        
-        <VaDateInput
-          v-model="currentPensioner.dateOfBirth"
-          label="Date of Birth"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentPensioner.mobileNumber"
-          label="Mobile Number"
-          :rules="[required, mobileValidation]"
-        />
-        
+
+        <VaDateInput v-model="currentPensioner.dateOfBirth" label="Date of Birth" :rules="[required]" />
+
+        <VaInput v-model="currentPensioner.mobileNumber" label="Mobile Number" :rules="[required, mobileValidation]" />
+
         <VaSelect
           v-model="currentPensioner.pensionType"
           :options="pensionTypes"
           label="Pension Type"
           :rules="[required]"
         />
-        
+
         <VaInput
           v-model="currentPensioner.monthlyAmount"
           label="Monthly Pension Amount"
           type="number"
           :rules="[required]"
         />
-        
-        <VaSelect
-          v-model="currentPensioner.bankName"
-          :options="bankOptions"
-          label="Bank Name"
-          :rules="[required]"
-        />
+
+        <VaSelect v-model="currentPensioner.bankName" :options="bankOptions" label="Bank Name" :rules="[required]" />
       </div>
-      
-      <VaTextarea
-        v-model="currentPensioner.address"
-        label="Address"
-        :rules="[required]"
-      />
+
+      <VaTextarea v-model="currentPensioner.address" label="Address" :rules="[required]" />
     </VaForm>
   </VaModal>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { VaCard, VaCardContent, VaCardTitle, VaInput, VaSelect, VaButton, VaDataTable, VaBadge, VaModal, VaForm, VaDateInput, VaTextarea, VaIcon } from 'vuestic-ui'
+import {
+  VaCard,
+  VaCardContent,
+  VaCardTitle,
+  VaInput,
+  VaSelect,
+  VaButton,
+  VaDataTable,
+  VaBadge,
+  VaModal,
+  VaForm,
+  VaDateInput,
+  VaTextarea,
+  VaIcon,
+} from 'vuestic-ui'
 
 interface Pensioner {
   id: string
@@ -205,7 +167,7 @@ const currentPensioner = ref<Pensioner>({
   bankName: '',
   address: '',
   status: 'Pending',
-  lastVerification: ''
+  lastVerification: '',
 })
 
 const pensioners = ref<Pensioner[]>([
@@ -221,7 +183,7 @@ const pensioners = ref<Pensioner[]>([
     bankName: 'SBI',
     address: 'Village Rampur, District Meerut, UP',
     status: 'Active',
-    lastVerification: '2024-01-15'
+    lastVerification: '2024-01-15',
   },
   {
     id: '2',
@@ -235,8 +197,8 @@ const pensioners = ref<Pensioner[]>([
     bankName: 'PNB',
     address: 'Sector 15, Noida, UP',
     status: 'Pending',
-    lastVerification: '2023-11-20'
-  }
+    lastVerification: '2023-11-20',
+  },
 ])
 
 const columns = [
@@ -246,34 +208,35 @@ const columns = [
   { key: 'monthlyAmount', label: 'Amount' },
   { key: 'status', label: 'Status' },
   { key: 'lastVerification', label: 'Last Verification' },
-  { key: 'actions', label: 'Actions', width: '120px' }
+  { key: 'actions', label: 'Actions', width: '120px' },
 ]
 
 const filteredPensioners = computed(() => {
   let filtered = pensioners.value
-  
+
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(p => 
-      p.pensionNumber.toLowerCase().includes(query) ||
-      p.name.toLowerCase().includes(query) ||
-      p.aadhaarNumber.includes(query)
+    filtered = filtered.filter(
+      (p) =>
+        p.pensionNumber.toLowerCase().includes(query) ||
+        p.name.toLowerCase().includes(query) ||
+        p.aadhaarNumber.includes(query),
     )
   }
-  
+
   if (statusFilter.value) {
-    filtered = filtered.filter(p => p.status === statusFilter.value)
+    filtered = filtered.filter((p) => p.status === statusFilter.value)
   }
-  
+
   return filtered
 })
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Active': 'success',
-    'Verified': 'info',
-    'Pending': 'warning',
-    'Suspended': 'danger'
+    Active: 'success',
+    Verified: 'info',
+    Pending: 'warning',
+    Suspended: 'danger',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }
@@ -282,7 +245,7 @@ const getVerificationClass = (date: string) => {
   const verificationDate = new Date(date)
   const now = new Date()
   const daysDiff = Math.floor((now.getTime() - verificationDate.getTime()) / (1000 * 60 * 60 * 24))
-  
+
   if (daysDiff > 365) return 'text-danger'
   if (daysDiff > 300) return 'text-warning'
   return 'text-success'
@@ -324,7 +287,7 @@ const addNewPensioner = () => {
     bankName: '',
     address: '',
     status: 'Pending',
-    lastVerification: ''
+    lastVerification: '',
   }
   showModal.value = true
 }
@@ -347,7 +310,7 @@ const verifyPensioner = (pensioner: Pensioner) => {
 
 const savePensioner = () => {
   if (editingPensioner.value) {
-    const index = pensioners.value.findIndex(p => p.id === currentPensioner.value.id)
+    const index = pensioners.value.findIndex((p) => p.id === currentPensioner.value.id)
     if (index !== -1) {
       pensioners.value[index] = { ...currentPensioner.value }
     }

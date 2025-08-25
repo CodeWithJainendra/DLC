@@ -1,36 +1,17 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Filters -->
     <VaCard>
       <VaCardContent class="flex flex-col sm:flex-row gap-4 items-end">
-        <VaDateInput
-          v-model="dateRange.start"
-          label="From Date"
-          class="w-48"
-        />
-        
-        <VaDateInput
-          v-model="dateRange.end"
-          label="To Date"
-          class="w-48"
-        />
-        
-        <VaSelect
-          v-model="reportType"
-          :options="reportTypes"
-          label="Report Type"
-          class="w-48"
-        />
-        
-        <VaButton @click="generateReport" preset="primary">
-          Generate Report
-        </VaButton>
-        
-        <VaButton @click="exportReport" preset="secondary">
-          Export CSV
-        </VaButton>
+        <VaDateInput v-model="dateRange.start" label="From Date" class="w-48" />
+
+        <VaDateInput v-model="dateRange.end" label="To Date" class="w-48" />
+
+        <VaSelect v-model="reportType" :options="reportTypes" label="Report Type" class="w-48" />
+
+        <VaButton preset="primary" @click="generateReport"> Generate Report </VaButton>
+
+        <VaButton preset="secondary" @click="exportReport"> Export CSV </VaButton>
       </VaCardContent>
     </VaCard>
 
@@ -43,7 +24,7 @@
           <p class="text-secondary">Completed Verifications</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="pending" size="2xl" color="warning" />
@@ -51,7 +32,7 @@
           <p class="text-secondary">Pending Verifications</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="cancel" size="2xl" color="danger" />
@@ -59,7 +40,7 @@
           <p class="text-secondary">Rejected Verifications</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="schedule" size="2xl" color="info" />
@@ -87,20 +68,11 @@
         <h2 class="text-xl font-semibold">Detailed Report</h2>
       </VaCardTitle>
       <VaCardContent>
-        <VaDataTable
-          :items="reportData"
-          :columns="columns"
-          :loading="loading"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="reportData" :columns="columns" :loading="loading" striped hoverable>
           <template #cell(status)="{ rowData }">
-            <VaBadge
-              :text="rowData.status"
-              :color="getStatusColor(rowData.status)"
-            />
+            <VaBadge :text="rowData.status" :color="getStatusColor(rowData.status)" />
           </template>
-          
+
           <template #cell(processingTime)="{ rowData }">
             <span>{{ rowData.processingTime }}h</span>
           </template>
@@ -112,14 +84,21 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaDateInput, VaSelect, 
-  VaButton, VaIcon, VaDataTable, VaBadge 
+import {
+  VaCard,
+  VaCardContent,
+  VaCardTitle,
+  VaDateInput,
+  VaSelect,
+  VaButton,
+  VaIcon,
+  VaDataTable,
+  VaBadge,
 } from 'vuestic-ui'
 
 const dateRange = ref({
   start: new Date(new Date().setDate(new Date().getDate() - 30)),
-  end: new Date()
+  end: new Date(),
 })
 
 const reportType = ref('All')
@@ -131,7 +110,7 @@ const summary = ref({
   completed: 1256,
   pending: 347,
   rejected: 89,
-  avgTime: 4.2
+  avgTime: 4.2,
 })
 
 const columns = [
@@ -141,7 +120,7 @@ const columns = [
   { key: 'verificationType', label: 'Type' },
   { key: 'mediator', label: 'Mediator' },
   { key: 'status', label: 'Status' },
-  { key: 'processingTime', label: 'Processing Time' }
+  { key: 'processingTime', label: 'Processing Time' },
 ]
 
 const reportData = ref([
@@ -152,7 +131,7 @@ const reportData = ref([
     verificationType: 'Life Certificate',
     mediator: 'अजय कुमार',
     status: 'Completed',
-    processingTime: 3.5
+    processingTime: 3.5,
   },
   {
     date: '2024-01-19',
@@ -161,15 +140,15 @@ const reportData = ref([
     verificationType: 'Address Verification',
     mediator: 'प्रिया शर्मा',
     status: 'Pending',
-    processingTime: 0
-  }
+    processingTime: 0,
+  },
 ])
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Completed': 'success',
-    'Pending': 'warning',
-    'Rejected': 'danger'
+    Completed: 'success',
+    Pending: 'warning',
+    Rejected: 'danger',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }

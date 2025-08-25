@@ -17,7 +17,7 @@ import {
   Legend,
   Filler,
   ChartOptions,
-  ChartData
+  ChartData,
 } from 'chart.js'
 import annotationPlugin from 'chartjs-plugin-annotation'
 
@@ -31,7 +31,7 @@ ChartJS.register(
   Tooltip,
   Legend,
   Filler,
-  annotationPlugin
+  annotationPlugin,
 )
 
 interface Props {
@@ -48,7 +48,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   height: 300,
-  annotations: () => []
+  annotations: () => [],
 })
 
 const chartCanvas = ref<HTMLCanvasElement>()
@@ -56,7 +56,7 @@ let chartInstance: ChartJS | null = null
 
 const createChart = async () => {
   await nextTick()
-  
+
   if (!chartCanvas.value) return
 
   // Destroy existing chart
@@ -78,11 +78,11 @@ const createChart = async () => {
     maintainAspectRatio: false,
     interaction: {
       intersect: false,
-      mode: 'index'
+      mode: 'index',
     },
     plugins: {
       legend: {
-        display: false
+        display: false,
       },
       tooltip: {
         enabled: true,
@@ -96,10 +96,10 @@ const createChart = async () => {
         displayColors: false,
         titleFont: {
           size: 14,
-          weight: '600'
+          weight: '600',
         },
         bodyFont: {
-          size: 13
+          size: 13,
         },
         callbacks: {
           title: (context) => {
@@ -107,8 +107,8 @@ const createChart = async () => {
           },
           label: (context) => {
             return `${context.parsed.y.toLocaleString()} verifications`
-          }
-        }
+          },
+        },
       },
       annotation: {
         annotations: {
@@ -130,9 +130,9 @@ const createChart = async () => {
               cornerRadius: 6,
               font: {
                 size: 12,
-                weight: '600'
-              }
-            }
+                weight: '600',
+              },
+            },
           },
           // Point annotation for significant events
           pointAnnotation: {
@@ -153,10 +153,10 @@ const createChart = async () => {
               cornerRadius: 6,
               font: {
                 size: 12,
-                weight: '600'
+                weight: '600',
               },
-              yAdjust: -10
-            }
+              yAdjust: -10,
+            },
           },
           // New beginning annotation
           newBeginning: {
@@ -176,13 +176,13 @@ const createChart = async () => {
               cornerRadius: 6,
               font: {
                 size: 12,
-                weight: '600'
+                weight: '600',
               },
-              yAdjust: -20
-            }
-          }
-        }
-      }
+              yAdjust: -20,
+            },
+          },
+        },
+      },
     },
     scales: {
       x: {
@@ -190,19 +190,19 @@ const createChart = async () => {
         grid: {
           display: true,
           color: 'rgba(0, 0, 0, 0.05)',
-          drawBorder: false
+          drawBorder: false,
         },
         ticks: {
           color: '#6b7280',
           font: {
             size: 12,
-            weight: '500'
+            weight: '500',
           },
-          padding: 10
+          padding: 10,
         },
         border: {
-          display: false
-        }
+          display: false,
+        },
       },
       y: {
         display: true,
@@ -210,45 +210,45 @@ const createChart = async () => {
         grid: {
           display: true,
           color: 'rgba(0, 0, 0, 0.05)',
-          drawBorder: false
+          drawBorder: false,
         },
         ticks: {
           color: '#6b7280',
           font: {
             size: 12,
-            weight: '500'
+            weight: '500',
           },
           padding: 15,
-          callback: function(value) {
+          callback: function (value) {
             return (value as number).toLocaleString()
-          }
+          },
         },
         border: {
-          display: false
-        }
-      }
+          display: false,
+        },
+      },
     },
     elements: {
       line: {
         tension: 0.4,
         borderWidth: 3,
         borderCapStyle: 'round',
-        borderJoinStyle: 'round'
+        borderJoinStyle: 'round',
       },
       point: {
         radius: 0,
         hoverRadius: 8,
         hitRadius: 10,
         borderWidth: 3,
-        hoverBorderWidth: 3
-      }
-    }
+        hoverBorderWidth: 3,
+      },
+    },
   }
 
   // Enhanced data with gradient fill
   const enhancedData = {
     ...props.data,
-    datasets: props.data.datasets.map(dataset => ({
+    datasets: props.data.datasets.map((dataset) => ({
       ...dataset,
       backgroundColor: gradient,
       borderColor: '#667eea',
@@ -257,14 +257,14 @@ const createChart = async () => {
       pointHoverBackgroundColor: '#667eea',
       pointHoverBorderColor: '#ffffff',
       fill: true,
-      tension: 0.4
-    }))
+      tension: 0.4,
+    })),
   }
 
   chartInstance = new ChartJS(ctx, {
     type: 'line',
     data: enhancedData,
-    options
+    options,
   })
 }
 
@@ -281,7 +281,7 @@ onMounted(() => {
   position: relative;
   width: 100%;
   height: 100%;
-  
+
   canvas {
     border-radius: 12px;
   }

@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -11,7 +9,7 @@
           <p class="text-secondary">Total Verified</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="schedule" size="2xl" color="warning" />
@@ -19,7 +17,7 @@
           <p class="text-secondary">Pending</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="cancel" size="2xl" color="danger" />
@@ -27,7 +25,7 @@
           <p class="text-secondary">Rejected</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="analytics" size="2xl" color="info" />
@@ -55,18 +53,13 @@
         <h2 class="text-xl font-semibold">District-wise Summary</h2>
       </VaCardTitle>
       <VaCardContent>
-        <VaDataTable
-          :items="districtSummary"
-          :columns="columns"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="districtSummary" :columns="columns" striped hoverable>
           <template #cell(successRate)="{ rowData }">
             <div class="flex items-center gap-2">
               <span>{{ rowData.successRate }}%</span>
-              <VaProgressBar 
-                :model-value="rowData.successRate" 
-                size="small" 
+              <VaProgressBar
+                :model-value="rowData.successRate"
+                size="small"
                 :color="getProgressColor(rowData.successRate)"
               />
             </div>
@@ -79,16 +72,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaDataTable, 
-  VaIcon, VaProgressBar 
-} from 'vuestic-ui'
+import { VaCard, VaCardContent, VaCardTitle, VaDataTable, VaIcon, VaProgressBar } from 'vuestic-ui'
 
 const summary = ref({
   totalVerified: '1,89,234',
   pending: '4,892',
   rejected: '2,156',
-  successRate: 94.2
+  successRate: 94.2,
 })
 
 const columns = [
@@ -97,7 +87,7 @@ const columns = [
   { key: 'verified', label: 'Verified' },
   { key: 'pending', label: 'Pending' },
   { key: 'rejected', label: 'Rejected' },
-  { key: 'successRate', label: 'Success Rate' }
+  { key: 'successRate', label: 'Success Rate' },
 ]
 
 const districtSummary = ref([
@@ -107,7 +97,7 @@ const districtSummary = ref([
     verified: 24156,
     pending: 1247,
     rejected: 444,
-    successRate: 93.5
+    successRate: 93.5,
   },
   {
     district: 'Noida',
@@ -115,7 +105,7 @@ const districtSummary = ref([
     verified: 17892,
     pending: 456,
     rejected: 108,
-    successRate: 97.0
+    successRate: 97.0,
   },
   {
     district: 'Lucknow',
@@ -123,8 +113,8 @@ const districtSummary = ref([
     verified: 32456,
     pending: 1567,
     rejected: 544,
-    successRate: 93.9
-  }
+    successRate: 93.9,
+  },
 ])
 
 const getProgressColor = (rate: number) => {

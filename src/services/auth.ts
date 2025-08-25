@@ -20,7 +20,7 @@ export const authService = {
   logout(): void {
     localStorage.removeItem('isAuthenticated')
     localStorage.removeItem('userEmail')
-  }
+  },
 }
 
 // Route guard for authentication

@@ -112,11 +112,7 @@ const getSchemeIcon = (status: string) => {
       <!-- Content Section -->
       <div class="card-content">
         <div v-if="pensionSchemes.length > 0">
-          <VaDataTable
-            :items="pensionSchemes"
-            :columns="columns"
-            class="pension-table"
-          >
+          <VaDataTable :items="pensionSchemes" :columns="columns" class="pension-table">
             <template #cell(schemeName)="{ rowData }">
               <div class="scheme-name">
                 <VaIcon

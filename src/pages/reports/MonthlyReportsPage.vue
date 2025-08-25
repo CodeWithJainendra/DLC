@@ -1,38 +1,17 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Report Generation -->
     <VaCard>
       <VaCardContent class="flex flex-col sm:flex-row gap-4 items-end">
-        <VaSelect
-          v-model="selectedMonth"
-          :options="monthOptions"
-          label="Select Month"
-          class="w-48"
-        />
-        
-        <VaSelect
-          v-model="selectedYear"
-          :options="yearOptions"
-          label="Select Year"
-          class="w-32"
-        />
-        
-        <VaSelect
-          v-model="reportType"
-          :options="reportTypes"
-          label="Report Type"
-          class="w-48"
-        />
-        
-        <VaButton @click="generateReport" preset="primary">
-          Generate Report
-        </VaButton>
-        
-        <VaButton @click="exportReport" preset="secondary">
-          Export PDF
-        </VaButton>
+        <VaSelect v-model="selectedMonth" :options="monthOptions" label="Select Month" class="w-48" />
+
+        <VaSelect v-model="selectedYear" :options="yearOptions" label="Select Year" class="w-32" />
+
+        <VaSelect v-model="reportType" :options="reportTypes" label="Report Type" class="w-48" />
+
+        <VaButton preset="primary" @click="generateReport"> Generate Report </VaButton>
+
+        <VaButton preset="secondary" @click="exportReport"> Export PDF </VaButton>
       </VaCardContent>
     </VaCard>
 
@@ -45,7 +24,7 @@
           <p class="text-secondary">Total Verifications</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="computer" size="2xl" color="success" />
@@ -53,7 +32,7 @@
           <p class="text-secondary">Online Verifications</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="business" size="2xl" color="info" />
@@ -61,7 +40,7 @@
           <p class="text-secondary">Offline Verifications</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="trending_up" size="2xl" color="warning" />
@@ -77,18 +56,9 @@
         <h2 class="text-xl font-semibold">{{ selectedMonth }} {{ selectedYear }} - Detailed Report</h2>
       </VaCardTitle>
       <VaCardContent>
-        <VaDataTable
-          :items="reportData"
-          :columns="columns"
-          :loading="loading"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="reportData" :columns="columns" :loading="loading" striped hoverable>
           <template #cell(status)="{ rowData }">
-            <VaBadge
-              :text="rowData.status"
-              :color="getStatusColor(rowData.status)"
-            />
+            <VaBadge :text="rowData.status" :color="getStatusColor(rowData.status)" />
           </template>
         </VaDataTable>
       </VaCardContent>
@@ -98,10 +68,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaSelect, VaButton, 
-  VaDataTable, VaBadge, VaIcon 
-} from 'vuestic-ui'
+import { VaCard, VaCardContent, VaCardTitle, VaSelect, VaButton, VaDataTable, VaBadge, VaIcon } from 'vuestic-ui'
 import { statsApi } from '@/services/statsApi'
 
 const selectedMonth = ref('January')
@@ -110,8 +77,18 @@ const reportType = ref('All Verifications')
 const loading = ref(false)
 
 const monthOptions = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ]
 const yearOptions = [2024, 2023, 2022]
 const reportTypes = ['All Verifications', 'Life Certificates', 'Document Verifications', 'Failed Verifications']
@@ -120,7 +97,7 @@ const monthlyStats = ref({
   totalVerifications: '0',
   onlineVerifications: '0',
   offlineVerifications: '0',
-  successRate: 0
+  successRate: 0,
 })
 
 const columns = [
@@ -130,7 +107,7 @@ const columns = [
   { key: 'verificationType', label: 'Type' },
   { key: 'mode', label: 'Mode' },
   { key: 'status', label: 'Status' },
-  { key: 'verifier', label: 'Verified By' }
+  { key: 'verifier', label: 'Verified By' },
 ]
 
 const reportData = ref([
@@ -141,7 +118,7 @@ const reportData = ref([
     verificationType: 'Life Certificate',
     mode: 'Online',
     status: 'Approved',
-    verifier: 'System Auto-Verification'
+    verifier: 'System Auto-Verification',
   },
   {
     date: '2024-01-19',
@@ -150,15 +127,15 @@ const reportData = ref([
     verificationType: 'Document Verification',
     mode: 'Offline',
     status: 'Approved',
-    verifier: 'अजय कुमार (SBI)'
-  }
+    verifier: 'अजय कुमार (SBI)',
+  },
 ])
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Approved': 'success',
-    'Pending': 'warning',
-    'Rejected': 'danger'
+    Approved: 'success',
+    Pending: 'warning',
+    Rejected: 'danger',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }

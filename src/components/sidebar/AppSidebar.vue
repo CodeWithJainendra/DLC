@@ -8,7 +8,7 @@
     class="relative"
   >
     <!-- Collapse/Expand Handle -->
-    <div 
+    <div
       class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-16 bg-gray-200 dark:bg-gray-700 rounded-r-lg flex items-center justify-center cursor-pointer z-30 hover:bg-primary-500 hover:text-white transition-colors"
       @click="toggleSidebar"
     >
@@ -20,9 +20,8 @@
       class="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary-500 active:bg-primary-600 transition-colors z-10"
       @mousedown="startResize"
     />
-    
-    <div class="flex flex-col h-full">
 
+    <div class="flex flex-col h-full">
       <!-- Navigation Menu -->
       <div class="flex-1">
         <VaAccordion v-model="value" multiple>
@@ -45,7 +44,10 @@
                     size="20px"
                     :color="iconColor(route)"
                   />
-                  <VaSidebarItemTitle v-if="!localMinimized" class="flex justify-between items-center leading-5 font-semibold">
+                  <VaSidebarItemTitle
+                    v-if="!localMinimized"
+                    class="flex justify-between items-center leading-5 font-semibold"
+                  >
                     {{ t(route.displayName) }}
                     <VaIcon v-if="route.children" :name="arrowDirection(isCollapsed)" size="20px" />
                   </VaSidebarItemTitle>
@@ -53,7 +55,7 @@
               </VaSidebarItem>
             </template>
             <template #body>
-              <div v-if="!localMinimized" v-for="(childRoute, index2) in route.children" :key="index2">
+              <div v-for="(childRoute, index2) in route.children" v-if="!localMinimized" :key="index2">
                 <VaSidebarItem
                   :to="{ name: childRoute.name }"
                   :active="isActiveChildRoute(childRoute)"
@@ -76,9 +78,7 @@
 
       <!-- Footer: Version -->
       <div class="p-4 border-t border-[color:var(--va-border)] mt-auto">
-        <div class="text-center text-sm text-secondary">
-          v4.0.0
-        </div>
+        <div class="text-center text-sm text-secondary">v4.0.0</div>
       </div>
     </div>
   </VaSidebar>

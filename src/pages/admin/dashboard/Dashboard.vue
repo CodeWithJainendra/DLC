@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-
 import RevenueByLocationMap from './cards/RevenueByLocationMap.vue'
 import DataSection from './DataSection.vue'
 import YearlyBreakup from './cards/YearlyBreakup.vue'
@@ -13,8 +12,8 @@ import { storeToRefs } from 'pinia'
 // If you want dark mode detection, use useColors from vuestic-ui or use a custom solution
 // Chatbot message state
 interface ChatMessage {
-  text: string;
-  from: 'user' | 'bot';
+  text: string
+  from: 'user' | 'bot'
 }
 const chatMessages = ref<ChatMessage[]>([])
 const chatInput = ref('')
@@ -44,20 +43,24 @@ const { showFilterPanel, selectedStateInfo } = storeToRefs(globalStore)
 const isDistrictView = ref(false)
 
 // Watch for changes in selectedStateInfo to determine view state
-watch(selectedStateInfo, (newValue) => {
-  // If selectedStateInfo is cleared, we're likely in district view
-  if (!newValue) {
-    isDistrictView.value = true
-  } else {
-    isDistrictView.value = false
-  }
-}, { immediate: true })
+watch(
+  selectedStateInfo,
+  (newValue) => {
+    // If selectedStateInfo is cleared, we're likely in district view
+    if (!newValue) {
+      isDistrictView.value = true
+    } else {
+      isDistrictView.value = false
+    }
+  },
+  { immediate: true },
+)
 const filterOptions = ref({
   chooseDate: '',
   verificationMode: '',
   department: '',
   typeOfPensioner: '',
-  disbursingAuthority: ''
+  disbursingAuthority: '',
 })
 
 function applyFilters() {
@@ -73,10 +76,9 @@ function clearFilters() {
     verificationMode: '',
     department: '',
     typeOfPensioner: '',
-    disbursingAuthority: ''
+    disbursingAuthority: '',
   }
 }
-
 </script>
 
 <template>
@@ -90,97 +92,99 @@ function clearFilters() {
       leave-from-class="opacity-100 transform translate-y-0 scale-100"
       leave-to-class="opacity-0 transform -translate-y-4 scale-95"
     >
-      <div v-if="showFilterPanel" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg p-3 mb-3 z-10 transform-gpu">
-      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 items-end">
-        <!-- Choose Date -->
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">CHOOSE DATE</label>
-          <input 
-            type="date" 
-            v-model="filterOptions.chooseDate"
-            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          />
+      <div
+        v-if="showFilterPanel"
+        class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg p-3 mb-3 z-10 transform-gpu"
+      >
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 items-end">
+          <!-- Choose Date -->
+          <div>
+            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">CHOOSE DATE</label>
+            <input
+              v-model="filterOptions.chooseDate"
+              type="date"
+              class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            />
+          </div>
+
+          <!-- Verification Mode -->
+          <div>
+            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">VERIFICATION MODE</label>
+            <select
+              v-model="filterOptions.verificationMode"
+              class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            >
+              <option value="">All Modes</option>
+              <option value="face">Face Verification</option>
+              <option value="digital">Digital LC</option>
+              <option value="video">Video LC</option>
+              <option value="manual">Manual LC</option>
+            </select>
+          </div>
+
+          <!-- Department -->
+          <div>
+            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">DEPARTMENT</label>
+            <select
+              v-model="filterOptions.department"
+              class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            >
+              <option value="">All Departments</option>
+              <option value="defence">Defence</option>
+              <option value="railways">Railways</option>
+              <option value="civil">Civil</option>
+              <option value="post">Post</option>
+              <option value="telecom">Telecom</option>
+            </select>
+          </div>
+
+          <!-- Type of Pensioner -->
+          <div>
+            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">TYPE OF PENSIONER</label>
+            <select
+              v-model="filterOptions.typeOfPensioner"
+              class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            >
+              <option value="">All Types</option>
+              <option value="central">Central</option>
+              <option value="state">State</option>
+              <option value="epfo">EPFO</option>
+              <option value="others">Others</option>
+            </select>
+          </div>
+
+          <!-- Disbursing Authority -->
+          <div>
+            <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">DISBURSING AUTHORITY</label>
+            <select
+              v-model="filterOptions.disbursingAuthority"
+              class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            >
+              <option value="">All Authorities</option>
+              <option value="bank">Bank</option>
+              <option value="post_office">Post Office</option>
+              <option value="epfo">EPFO</option>
+              <option value="treasury">Treasury</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Verification Mode -->
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">VERIFICATION MODE</label>
-          <select 
-            v-model="filterOptions.verificationMode"
-            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+        <!-- Action Buttons -->
+        <div class="flex justify-end gap-2 mt-3">
+          <button
+            class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+            @click="clearFilters"
           >
-            <option value="">All Modes</option>
-            <option value="face">Face Verification</option>
-            <option value="digital">Digital LC</option>
-            <option value="video">Video LC</option>
-            <option value="manual">Manual LC</option>
-          </select>
-        </div>
-
-
-        <!-- Department -->
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">DEPARTMENT</label>
-          <select 
-            v-model="filterOptions.department"
-            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+            Clear
+          </button>
+          <button
+            class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-1"
+            @click="applyFilters"
           >
-            <option value="">All Departments</option>
-            <option value="defence">Defence</option>
-            <option value="railways">Railways</option>
-            <option value="civil">Civil</option>
-            <option value="post">Post</option>
-            <option value="telecom">Telecom</option>
-          </select>
+            <VaIcon name="check" size="14px" />
+            Apply Filters
+          </button>
         </div>
-
-        <!-- Type of Pensioner -->
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">TYPE OF PENSIONER</label>
-          <select 
-            v-model="filterOptions.typeOfPensioner"
-            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          >
-            <option value="">All Types</option>
-            <option value="central">Central</option>
-            <option value="state">State</option>
-            <option value="epfo">EPFO</option>
-            <option value="others">Others</option>
-          </select>
-        </div>
-
-        <!-- Disbursing Authority -->
-        <div>
-          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">DISBURSING AUTHORITY</label>
-          <select 
-            v-model="filterOptions.disbursingAuthority"
-            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-          >
-            <option value="">All Authorities</option>
-            <option value="bank">Bank</option>
-            <option value="post_office">Post Office</option>
-            <option value="epfo">EPFO</option>
-            <option value="treasury">Treasury</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="flex justify-end gap-2 mt-3">
-        <button 
-          @click="clearFilters"
-          class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-        >
-          Clear
-        </button>
-        <button 
-          @click="applyFilters"
-          class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-1"
-        >
-          <VaIcon name="check" size="14px" />
-          Apply Filters
-        </button>
-      </div>
       </div>
     </Transition>
 
@@ -195,15 +199,15 @@ function clearFilters() {
     </div>
 
     <!-- Map Section - Moved up for better positioning -->
-    <div class="flex flex-col sm:flex-row gap-2 -mt-[33.3rem] mb-0 relative z-20">
+    <div class="flex flex-col sm:flex-row gap-2 -mt-[21.9rem] mb-0 relative z-20">
       <RevenueByLocationMap class="w-full sm:w-[69%]" />
-      
+
       <!-- Floating State Info Card - Outside map, positioned on dashboard -->
-      <transition name="state-info-slide">
+      <Transition name="state-info-slide">
         <div v-if="selectedStateInfo && !isDistrictView" class="dashboard-floating-state-card">
           <div class="state-info-header">
             <h3>{{ selectedStateInfo.name }}</h3>
-            <button @click="globalStore.clearSelectedStateInfo()" class="close-state-info">
+            <button class="close-state-info" @click="globalStore.clearSelectedStateInfo()">
               <VaIcon name="close" size="16px" />
             </button>
           </div>
@@ -231,18 +235,16 @@ function clearFilters() {
             </div>
           </div>
         </div>
-      </transition>
+      </Transition>
     </div>
-
-
   </section>
   <!-- Floating Ask AI Button (fixed to bottom right) -->
   <button
     v-if="!showChatbot"
     class="fixed bottom-6 right-6 z-50 bg-white text-blue-600 border border-blue-200 rounded-full shadow-lg px-5 py-3 flex items-center gap-2 hover:bg-blue-50 transition-all ask-ai-float"
-    @click="showChatbot = true"
-    style="font-weight: 600; font-size: 1rem;"
+    style="font-weight: 600; font-size: 1rem"
     aria-label="Ask AI Chatbot"
+    @click="showChatbot = true"
   >
     <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 mr-2">
       <span class="ai-logo flex items-center justify-center w-7 h-7 rounded-full bg-blue-100">
@@ -252,91 +254,119 @@ function clearFilters() {
     Ask AI
   </button>
   <!-- Chatbot Popup Cardview -->
-  <transition name="ask-ai-popup">
+  <Transition name="ask-ai-popup">
     <div
       v-if="showChatbot"
       :class="[
         'fixed bottom-24 right-6 z-50 rounded-xl shadow-lg p-0 w-[28rem] h-[32rem] flex flex-col chatbot-popup border border-blue-100',
-        isDark ? 'bg-gray-900' : 'bg-white'
+        isDark ? 'bg-gray-900' : 'bg-white',
       ]"
-      style="overflow: hidden;"
+      style="overflow: hidden"
     >
-      <div :class="[
-        'flex items-center justify-between px-5 py-3',
-        isDark ? 'bg-gray-900 text-white' : 'bg-blue-600 text-white'
-      ]">
+      <div
+        :class="[
+          'flex items-center justify-between px-5 py-3',
+          isDark ? 'bg-gray-900 text-white' : 'bg-blue-600 text-white',
+        ]"
+      >
         <div class="flex items-center gap-2">
           <img
             src="/ai-logo-purple.png"
             alt="AI Logo"
             class="ask-ai-avatar"
-            style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 10px;"
+            style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; margin-right: 10px"
           />
           <span class="font-semibold">Virtual Assistant</span>
         </div>
         <button class="text-white text-xl" @click="showChatbot = false">×</button>
       </div>
-      <div :class="[
-        'flex-1 px-5 py-4 flex flex-col justify-between',
-        isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'
-      ]" style="min-height: 220px;">
-        <div :class="[
-          'chatbot-message-bubble rounded-lg px-4 py-2 mb-2 w-fit max-w-[80%] shadow-sm',
-          isDark ? 'bg-gray-800 text-white' : 'bg-blue-50 text-blue-900'
-        ]">
-          👋 Welcome! I'm your Virtual Assistant.<br>
+      <div
+        :class="[
+          'flex-1 px-5 py-4 flex flex-col justify-between',
+          isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900',
+        ]"
+        style="min-height: 220px"
+      >
+        <div
+          :class="[
+            'chatbot-message-bubble rounded-lg px-4 py-2 mb-2 w-fit max-w-[80%] shadow-sm',
+            isDark ? 'bg-gray-800 text-white' : 'bg-blue-50 text-blue-900',
+          ]"
+        >
+          👋 Welcome! I'm your Virtual Assistant.<br />
           Ask me anything or let me know how I can help you today.
         </div>
-        <div class="mb-3 flex flex-col gap-2 flex-1" id="chat-messages">
+        <div id="chat-messages" class="mb-3 flex flex-col gap-2 flex-1">
           <!-- Chat messages will appear here dynamically -->
-          <div v-for="(message, index) in chatMessages" :key="index" class="flex" :class="{'justify-end': message.from === 'user', 'justify-start': message.from !== 'user'}">
-            <div v-if="message.from === 'user'" :class="[
-              'rounded-lg px-4 py-2 mb-2 max-w-[80%] shadow-sm user-message',
-              isDark ? 'bg-blue-700 text-white' : 'bg-blue-600 text-white'
-            ]">
+          <div
+            v-for="(message, index) in chatMessages"
+            :key="index"
+            class="flex"
+            :class="{ 'justify-end': message.from === 'user', 'justify-start': message.from !== 'user' }"
+          >
+            <div
+              v-if="message.from === 'user'"
+              :class="[
+                'rounded-lg px-4 py-2 mb-2 max-w-[80%] shadow-sm user-message',
+                isDark ? 'bg-blue-700 text-white' : 'bg-blue-600 text-white',
+              ]"
+            >
               {{ message.text }}
             </div>
-            <div v-else :class="[
-              'rounded-lg px-4 py-2 mb-2 max-w-[80%] shadow-sm bot-message',
-              isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900'
-            ]">
+            <div
+              v-else
+              :class="[
+                'rounded-lg px-4 py-2 mb-2 max-w-[80%] shadow-sm bot-message',
+                isDark ? 'bg-gray-700 text-white' : 'bg-gray-200 text-gray-900',
+              ]"
+            >
               {{ message.text }}
             </div>
           </div>
         </div>
         <div class="mt-4">
-         <div class="relative flex items-center">
-           <textarea
-             v-model="chatInput"
-             rows="1"
-             :class="[
-               'w-full border rounded-lg px-3 py-2 pr-12 resize-none focus:outline-none focus:ring-2',
-               isDark ? 'bg-gray-900 text-white border-gray-700 focus:ring-blue-400' : 'border-blue-200 focus:ring-blue-400 bg-white text-gray-900'
-             ]"
-             placeholder="Write a question..."
-             style="min-height: 40px; max-height: 120px; overflow-y: auto;"
-             oninput="this.style.height = '40px'; this.style.height = (this.scrollHeight)+'px';"
-           ></textarea>
-           <button
-             :class="[
-               'absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 shadow transition-all',
-               isDark ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-600 text-white hover:bg-blue-700'
-             ]"
-             aria-label="Send message"
-             @click="sendMessage"
-           >
-             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="20" height="20">
-               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-             </svg>
-           </button>
-         </div>
+          <div class="relative flex items-center">
+            <textarea
+              v-model="chatInput"
+              rows="1"
+              :class="[
+                'w-full border rounded-lg px-3 py-2 pr-12 resize-none focus:outline-none focus:ring-2',
+                isDark
+                  ? 'bg-gray-900 text-white border-gray-700 focus:ring-blue-400'
+                  : 'border-blue-200 focus:ring-blue-400 bg-white text-gray-900',
+              ]"
+              placeholder="Write a question..."
+              style="min-height: 40px; max-height: 120px; overflow-y: auto"
+              oninput="this.style.height = '40px'; this.style.height = (this.scrollHeight)+'px';"
+            ></textarea>
+            <button
+              :class="[
+                'absolute right-3 top-1/2 -translate-y-1/2 rounded-full px-3 py-1 shadow transition-all',
+                isDark ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-blue-600 text-white hover:bg-blue-700',
+              ]"
+              aria-label="Send message"
+              @click="sendMessage"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                width="20"
+                height="20"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </transition>
- </template>
+  </Transition>
+</template>
 <style>
-.ask-ai-popup-enter-active, .ask-ai-popup-leave-active {
+.ask-ai-popup-enter-active,
+.ask-ai-popup-leave-active {
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .ask-ai-popup-enter-from {

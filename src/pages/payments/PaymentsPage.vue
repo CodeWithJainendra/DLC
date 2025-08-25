@@ -1,6 +1,4 @@
 <template>
-
-
   <VaCard class="mb-6">
     <VaCardContent>
       <div class="text-2xl font-bold leading-5 mb-6">My cards</div>

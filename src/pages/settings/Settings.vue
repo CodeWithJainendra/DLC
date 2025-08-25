@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col space-y-6 md:space-y-4">
-
     <div class="flex flex-col p-4 space-y-4 bg-backgroundSecondary rounded-lg">
       <h3 class="h3">Theme</h3>
       <ThemeSwitcher />

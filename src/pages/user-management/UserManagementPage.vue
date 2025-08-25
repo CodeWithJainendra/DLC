@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- User Stats -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -11,7 +9,7 @@
           <p class="text-secondary">Total Users</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="verified_user" size="2xl" color="success" />
@@ -19,7 +17,7 @@
           <p class="text-secondary">Active Users</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="supervisor_account" size="2xl" color="info" />
@@ -27,7 +25,7 @@
           <p class="text-secondary">Administrators</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="schedule" size="2xl" color="warning" />
@@ -42,13 +40,7 @@
       <VaCardTitle>
         <h2 class="text-xl font-semibold">System Users</h2>
         <div class="flex gap-2">
-          <VaSelect
-            v-model="roleFilter"
-            :options="roleOptions"
-            placeholder="Filter by Role"
-            class="w-48"
-            clearable
-          />
+          <VaSelect v-model="roleFilter" :options="roleOptions" placeholder="Filter by Role" class="w-48" clearable />
           <VaSelect
             v-model="statusFilter"
             :options="statusOptions"
@@ -56,39 +48,24 @@
             class="w-40"
             clearable
           />
-          <VaButton @click="addNewUser" preset="primary">
-            Add New User
-          </VaButton>
+          <VaButton preset="primary" @click="addNewUser"> Add New User </VaButton>
         </div>
       </VaCardTitle>
-      
+
       <VaCardContent>
-        <VaDataTable
-          :items="users"
-          :columns="columns"
-          :loading="loading"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="users" :columns="columns" :loading="loading" striped hoverable>
           <template #cell(avatar)="{ rowData }">
             <VaAvatar :src="rowData.avatar" size="small" />
           </template>
-          
+
           <template #cell(role)="{ rowData }">
-            <VaBadge
-              :text="rowData.role"
-              :color="getRoleColor(rowData.role)"
-              outline
-            />
+            <VaBadge :text="rowData.role" :color="getRoleColor(rowData.role)" outline />
           </template>
-          
+
           <template #cell(status)="{ rowData }">
-            <VaBadge
-              :text="rowData.status"
-              :color="getStatusColor(rowData.status)"
-            />
+            <VaBadge :text="rowData.status" :color="getStatusColor(rowData.status)" />
           </template>
-          
+
           <template #cell(lastLogin)="{ rowData }">
             <div>
               <div>{{ formatDate(rowData.lastLogin) }}</div>
@@ -97,37 +74,31 @@
               </div>
             </div>
           </template>
-          
+
           <template #cell(actions)="{ rowData }">
             <div class="flex gap-2">
               <VaButton
                 preset="plain"
                 icon="visibility"
-                @click="viewUser(rowData)"
                 aria-label="View Details"
                 size="small"
+                @click="viewUser(rowData)"
               />
-              <VaButton
-                preset="plain"
-                icon="edit"
-                @click="editUser(rowData)"
-                aria-label="Edit"
-                size="small"
-              />
+              <VaButton preset="plain" icon="edit" aria-label="Edit" size="small" @click="editUser(rowData)" />
               <VaButton
                 preset="plain"
                 :icon="rowData.status === 'Active' ? 'block' : 'check'"
-                @click="toggleUserStatus(rowData)"
                 :aria-label="rowData.status === 'Active' ? 'Deactivate' : 'Activate'"
                 size="small"
                 :color="rowData.status === 'Active' ? 'danger' : 'success'"
+                @click="toggleUserStatus(rowData)"
               />
               <VaButton
                 preset="plain"
                 icon="key"
-                @click="resetPassword(rowData)"
                 aria-label="Reset Password"
                 size="small"
+                @click="resetPassword(rowData)"
               />
             </div>
           </template>
@@ -147,39 +118,21 @@
   >
     <VaForm ref="form" class="flex flex-col gap-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaInput
-          v-model="currentUser.name"
-          label="Full Name"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentUser.email"
-          label="Email Address"
-          type="email"
-          :rules="[required, emailValidation]"
-        />
-        
-        <VaInput
-          v-model="currentUser.phone"
-          label="Phone Number"
-          :rules="[required, phoneValidation]"
-        />
-        
-        <VaSelect
-          v-model="currentUser.role"
-          :options="roleOptions"
-          label="User Role"
-          :rules="[required]"
-        />
-        
+        <VaInput v-model="currentUser.name" label="Full Name" :rules="[required]" />
+
+        <VaInput v-model="currentUser.email" label="Email Address" type="email" :rules="[required, emailValidation]" />
+
+        <VaInput v-model="currentUser.phone" label="Phone Number" :rules="[required, phoneValidation]" />
+
+        <VaSelect v-model="currentUser.role" :options="roleOptions" label="User Role" :rules="[required]" />
+
         <VaSelect
           v-model="currentUser.department"
           :options="departmentOptions"
           label="Department"
           :rules="[required]"
         />
-        
+
         <VaSelect
           v-model="currentUser.district"
           :options="districtOptions"
@@ -187,29 +140,17 @@
           :rules="[required]"
         />
       </div>
-      
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaCheckbox
-          v-model="currentUser.canManagePensioners"
-          label="Can Manage Pensioners"
-        />
-        
-        <VaCheckbox
-          v-model="currentUser.canVerifyDocuments"
-          label="Can Verify Documents"
-        />
-        
-        <VaCheckbox
-          v-model="currentUser.canGenerateReports"
-          label="Can Generate Reports"
-        />
-        
-        <VaCheckbox
-          v-model="currentUser.canManageUsers"
-          label="Can Manage Users"
-        />
+        <VaCheckbox v-model="currentUser.canManagePensioners" label="Can Manage Pensioners" />
+
+        <VaCheckbox v-model="currentUser.canVerifyDocuments" label="Can Verify Documents" />
+
+        <VaCheckbox v-model="currentUser.canGenerateReports" label="Can Generate Reports" />
+
+        <VaCheckbox v-model="currentUser.canManageUsers" label="Can Manage Users" />
       </div>
-      
+
       <VaTextarea
         v-model="currentUser.notes"
         label="Notes (Optional)"
@@ -221,10 +162,21 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaSelect, VaButton, 
-  VaDataTable, VaBadge, VaModal, VaForm, VaInput, VaCheckbox, 
-  VaTextarea, VaIcon, VaAvatar 
+import {
+  VaCard,
+  VaCardContent,
+  VaCardTitle,
+  VaSelect,
+  VaButton,
+  VaDataTable,
+  VaBadge,
+  VaModal,
+  VaForm,
+  VaInput,
+  VaCheckbox,
+  VaTextarea,
+  VaIcon,
+  VaAvatar,
 } from 'vuestic-ui'
 
 interface User {
@@ -256,7 +208,7 @@ const userStats = ref({
   totalUsers: '156',
   activeUsers: '142',
   admins: '12',
-  pendingApproval: '8'
+  pendingApproval: '8',
 })
 
 const roleOptions = ['Super Admin', 'State Admin', 'District Admin', 'Data Entry Operator', 'Verifier', 'Auditor']
@@ -280,7 +232,7 @@ const currentUser = ref<User>({
   canVerifyDocuments: false,
   canGenerateReports: false,
   canManageUsers: false,
-  notes: ''
+  notes: '',
 })
 
 const columns = [
@@ -292,7 +244,7 @@ const columns = [
   { key: 'district', label: 'District' },
   { key: 'status', label: 'Status' },
   { key: 'lastLogin', label: 'Last Login' },
-  { key: 'actions', label: 'Actions', width: '180px' }
+  { key: 'actions', label: 'Actions', width: '180px' },
 ]
 
 const users = ref<User[]>([
@@ -312,7 +264,7 @@ const users = ref<User[]>([
     canVerifyDocuments: true,
     canGenerateReports: true,
     canManageUsers: true,
-    notes: 'Senior administrator with full access'
+    notes: 'Senior administrator with full access',
   },
   {
     id: '2',
@@ -330,8 +282,8 @@ const users = ref<User[]>([
     canVerifyDocuments: true,
     canGenerateReports: true,
     canManageUsers: false,
-    notes: 'District level administrator for Meerut'
-  }
+    notes: 'District level administrator for Meerut',
+  },
 ])
 
 const getRoleColor = (role: string) => {
@@ -340,17 +292,17 @@ const getRoleColor = (role: string) => {
     'State Admin': 'primary',
     'District Admin': 'info',
     'Data Entry Operator': 'success',
-    'Verifier': 'warning',
-    'Auditor': 'secondary'
+    Verifier: 'warning',
+    Auditor: 'secondary',
   }
   return colors[role as keyof typeof colors] || 'secondary'
 }
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Active': 'success',
-    'Inactive': 'warning',
-    'Pending': 'info'
+    Active: 'success',
+    Inactive: 'warning',
+    Pending: 'info',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }
@@ -363,7 +315,7 @@ const getTimeAgo = (dateString: string) => {
   const date = new Date(dateString)
   const now = new Date()
   const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
-  
+
   if (diffInHours < 1) return 'Just now'
   if (diffInHours < 24) return `${diffInHours}h ago`
   const diffInDays = Math.floor(diffInHours / 24)
@@ -398,7 +350,7 @@ const addNewUser = () => {
     canVerifyDocuments: false,
     canGenerateReports: false,
     canManageUsers: false,
-    notes: ''
+    notes: '',
   }
   showModal.value = true
 }
@@ -424,7 +376,7 @@ const resetPassword = (user: User) => {
 
 const saveUser = () => {
   if (editingUser.value) {
-    const index = users.value.findIndex(u => u.id === currentUser.value.id)
+    const index = users.value.findIndex((u) => u.id === currentUser.value.id)
     if (index !== -1) {
       users.value[index] = { ...currentUser.value }
     }

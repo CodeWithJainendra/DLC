@@ -107,7 +107,7 @@ const handleLogout = () => {
     message: 'You have been logged out successfully.',
     color: 'success',
     duration: 3000,
-    position: 'top-right'
+    position: 'top-right',
   })
   router.push({ name: 'login' })
 }

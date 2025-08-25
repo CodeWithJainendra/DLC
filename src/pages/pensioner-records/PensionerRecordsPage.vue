@@ -1,6 +1,4 @@
 <template>
-
-  
   <div class="flex flex-col gap-4">
     <!-- Quick Stats -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -11,7 +9,7 @@
           <p class="text-secondary">Total Registered</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="verified" size="2xl" color="success" />
@@ -19,7 +17,7 @@
           <p class="text-secondary">Verified This Year</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="schedule" size="2xl" color="warning" />
@@ -27,7 +25,7 @@
           <p class="text-secondary">Pending Verification</p>
         </VaCardContent>
       </VaCard>
-      
+
       <VaCard>
         <VaCardContent class="text-center">
           <VaIcon name="flag" size="2xl" color="danger" />
@@ -50,7 +48,7 @@
             <VaIcon name="search" />
           </template>
         </VaInput>
-        
+
         <VaSelect
           v-model="statusFilter"
           :options="statusOptions"
@@ -58,7 +56,7 @@
           class="w-48"
           clearable
         />
-        
+
         <VaSelect
           v-model="districtFilter"
           :options="districtOptions"
@@ -66,18 +64,12 @@
           class="w-48"
           clearable
         />
-        
-        <VaButton @click="searchPensioners" preset="primary">
-          Search
-        </VaButton>
-        
-        <VaButton @click="addNewPensioner" preset="secondary">
-          Add New Pensioner
-        </VaButton>
-        
-        <VaButton @click="bulkUpload" preset="plain" icon="cloud_upload">
-          Bulk Upload
-        </VaButton>
+
+        <VaButton preset="primary" @click="searchPensioners"> Search </VaButton>
+
+        <VaButton preset="secondary" @click="addNewPensioner"> Add New Pensioner </VaButton>
+
+        <VaButton preset="plain" icon="cloud_upload" @click="bulkUpload"> Bulk Upload </VaButton>
       </VaCardContent>
     </VaCard>
 
@@ -89,26 +81,17 @@
           Total: {{ filteredPensioners.length }} records | Showing: {{ Math.min(filteredPensioners.length, 50) }}
         </div>
       </VaCardTitle>
-      
+
       <VaCardContent>
-        <VaDataTable
-          :items="paginatedPensioners"
-          :columns="columns"
-          :loading="loading"
-          striped
-          hoverable
-        >
+        <VaDataTable :items="paginatedPensioners" :columns="columns" :loading="loading" striped hoverable>
           <template #cell(photo)="{ rowData }">
             <VaAvatar :src="rowData.photo" size="small" />
           </template>
-          
+
           <template #cell(verificationStatus)="{ rowData }">
-            <VaBadge
-              :text="rowData.verificationStatus"
-              :color="getStatusColor(rowData.verificationStatus)"
-            />
+            <VaBadge :text="rowData.verificationStatus" :color="getStatusColor(rowData.verificationStatus)" />
           </template>
-          
+
           <template #cell(lastVerification)="{ rowData }">
             <div>
               <div :class="getVerificationClass(rowData.lastVerification)">
@@ -119,53 +102,44 @@
               </div>
             </div>
           </template>
-          
+
           <template #cell(actions)="{ rowData }">
             <div class="flex gap-2">
               <VaButton
                 preset="plain"
                 icon="visibility"
-                @click="viewPensioner(rowData)"
                 aria-label="View Profile"
                 size="small"
+                @click="viewPensioner(rowData)"
               />
-              <VaButton
-                preset="plain"
-                icon="edit"
-                @click="editPensioner(rowData)"
-                aria-label="Edit"
-                size="small"
-              />
+              <VaButton preset="plain" icon="edit" aria-label="Edit" size="small" @click="editPensioner(rowData)" />
               <VaButton
                 preset="plain"
                 icon="verified"
-                @click="verifyPensioner(rowData)"
                 aria-label="Verify"
                 size="small"
                 :disabled="rowData.verificationStatus === 'Verified'"
+                @click="verifyPensioner(rowData)"
               />
               <VaButton
                 preset="plain"
                 icon="flag"
-                @click="flagPensioner(rowData)"
                 aria-label="Flag Profile"
                 size="small"
                 color="danger"
+                @click="flagPensioner(rowData)"
               />
             </div>
           </template>
         </VaDataTable>
-        
+
         <!-- Pagination -->
         <div class="flex justify-between items-center mt-4">
           <div class="text-sm text-secondary">
-            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, filteredPensioners.length) }} of {{ filteredPensioners.length }} entries
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to
+            {{ Math.min(currentPage * pageSize, filteredPensioners.length) }} of {{ filteredPensioners.length }} entries
           </div>
-          <VaPagination
-            v-model="currentPage"
-            :pages="totalPages"
-            :visible-pages="5"
-          />
+          <VaPagination v-model="currentPage" :pages="totalPages" :visible-pages="5" />
         </div>
       </VaCardContent>
     </VaCard>
@@ -182,93 +156,49 @@
   >
     <VaForm ref="form" class="flex flex-col gap-4">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaInput
-          v-model="currentPensioner.pensionId"
-          label="Pension ID"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentPensioner.name"
-          label="Full Name"
-          :rules="[required]"
-        />
-        
+        <VaInput v-model="currentPensioner.pensionId" label="Pension ID" :rules="[required]" />
+
+        <VaInput v-model="currentPensioner.name" label="Full Name" :rules="[required]" />
+
         <VaInput
           v-model="currentPensioner.aadhaarNumber"
           label="Aadhaar Number"
           :rules="[required, aadhaarValidation]"
         />
-        
-        <VaDateInput
-          v-model="currentPensioner.dateOfBirth"
-          label="Date of Birth"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentPensioner.mobileNumber"
-          label="Mobile Number"
-          :rules="[required, mobileValidation]"
-        />
-        
+
+        <VaDateInput v-model="currentPensioner.dateOfBirth" label="Date of Birth" :rules="[required]" />
+
+        <VaInput v-model="currentPensioner.mobileNumber" label="Mobile Number" :rules="[required, mobileValidation]" />
+
         <VaSelect
           v-model="currentPensioner.pensionType"
           :options="pensionTypes"
           label="Pension Type"
           :rules="[required]"
         />
-        
+
         <VaInput
           v-model="currentPensioner.monthlyAmount"
           label="Monthly Pension Amount"
           type="number"
           :rules="[required]"
         />
-        
-        <VaSelect
-          v-model="currentPensioner.bankName"
-          :options="bankOptions"
-          label="Bank Name"
-          :rules="[required]"
-        />
-        
-        <VaInput
-          v-model="currentPensioner.accountNumber"
-          label="Bank Account Number"
-          :rules="[required]"
-        />
-        
-        <VaSelect
-          v-model="currentPensioner.district"
-          :options="districtOptions"
-          label="District"
-          :rules="[required]"
-        />
+
+        <VaSelect v-model="currentPensioner.bankName" :options="bankOptions" label="Bank Name" :rules="[required]" />
+
+        <VaInput v-model="currentPensioner.accountNumber" label="Bank Account Number" :rules="[required]" />
+
+        <VaSelect v-model="currentPensioner.district" :options="districtOptions" label="District" :rules="[required]" />
       </div>
-      
-      <VaTextarea
-        v-model="currentPensioner.address"
-        label="Complete Address"
-        :rules="[required]"
-      />
-      
+
+      <VaTextarea v-model="currentPensioner.address" label="Complete Address" :rules="[required]" />
+
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <VaFileUpload
-          v-model="currentPensioner.photoFile"
-          type="single"
-          file-types="image/*"
-          dropzone
-        >
+        <VaFileUpload v-model="currentPensioner.photoFile" type="single" file-types="image/*" dropzone>
           Upload Photo
         </VaFileUpload>
-        
-        <VaFileUpload
-          v-model="currentPensioner.documentsFile"
-          type="gallery"
-          file-types="image/*,.pdf"
-          dropzone
-        >
+
+        <VaFileUpload v-model="currentPensioner.documentsFile" type="gallery" file-types="image/*,.pdf" dropzone>
           Upload Documents
         </VaFileUpload>
       </div>
@@ -278,10 +208,23 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { 
-  VaCard, VaCardContent, VaCardTitle, VaInput, VaSelect, VaButton, 
-  VaDataTable, VaBadge, VaModal, VaForm, VaDateInput, VaTextarea, 
-  VaIcon, VaAvatar, VaPagination, VaFileUpload 
+import {
+  VaCard,
+  VaCardContent,
+  VaCardTitle,
+  VaInput,
+  VaSelect,
+  VaButton,
+  VaDataTable,
+  VaBadge,
+  VaModal,
+  VaForm,
+  VaDateInput,
+  VaTextarea,
+  VaIcon,
+  VaAvatar,
+  VaPagination,
+  VaFileUpload,
 } from 'vuestic-ui'
 import { statsApi } from '@/services/statsApi'
 
@@ -319,7 +262,7 @@ const stats = ref({
   totalPensioners: '0',
   verifiedThisYear: '0',
   pendingVerification: '0',
-  flaggedProfiles: '0'
+  flaggedProfiles: '0',
 })
 
 const statusOptions = ['Verified', 'Pending', 'Expired', 'Flagged']
@@ -343,7 +286,7 @@ const currentPensioner = ref<Pensioner>({
   photo: '/api/placeholder/40/40',
   verificationStatus: 'Pending',
   lastVerification: '',
-  verificationMode: 'Online'
+  verificationMode: 'Online',
 })
 
 const pensioners = ref<Pensioner[]>([
@@ -363,7 +306,7 @@ const pensioners = ref<Pensioner[]>([
     photo: '/api/placeholder/40/40',
     verificationStatus: 'Verified',
     lastVerification: '2024-01-15',
-    verificationMode: 'Online'
+    verificationMode: 'Online',
   },
   {
     id: '2',
@@ -381,8 +324,8 @@ const pensioners = ref<Pensioner[]>([
     photo: '/api/placeholder/40/40',
     verificationStatus: 'Pending',
     lastVerification: '2023-11-20',
-    verificationMode: 'Offline'
-  }
+    verificationMode: 'Offline',
+  },
 ])
 
 const columns = [
@@ -395,30 +338,31 @@ const columns = [
   { key: 'monthlyAmount', label: 'Amount' },
   { key: 'verificationStatus', label: 'Status' },
   { key: 'lastVerification', label: 'Last Verification' },
-  { key: 'actions', label: 'Actions', width: '180px' }
+  { key: 'actions', label: 'Actions', width: '180px' },
 ]
 
 const filteredPensioners = computed(() => {
   let filtered = pensioners.value
-  
+
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase()
-    filtered = filtered.filter(p => 
-      p.pensionId.toLowerCase().includes(query) ||
-      p.name.toLowerCase().includes(query) ||
-      p.aadhaarNumber.includes(query) ||
-      p.mobileNumber.includes(query)
+    filtered = filtered.filter(
+      (p) =>
+        p.pensionId.toLowerCase().includes(query) ||
+        p.name.toLowerCase().includes(query) ||
+        p.aadhaarNumber.includes(query) ||
+        p.mobileNumber.includes(query),
     )
   }
-  
+
   if (statusFilter.value) {
-    filtered = filtered.filter(p => p.verificationStatus === statusFilter.value)
+    filtered = filtered.filter((p) => p.verificationStatus === statusFilter.value)
   }
-  
+
   if (districtFilter.value) {
-    filtered = filtered.filter(p => p.district === districtFilter.value)
+    filtered = filtered.filter((p) => p.district === districtFilter.value)
   }
-  
+
   return filtered
 })
 
@@ -432,10 +376,10 @@ const paginatedPensioners = computed(() => {
 
 const getStatusColor = (status: string) => {
   const colors = {
-    'Verified': 'success',
-    'Pending': 'warning',
-    'Expired': 'danger',
-    'Flagged': 'danger'
+    Verified: 'success',
+    Pending: 'warning',
+    Expired: 'danger',
+    Flagged: 'danger',
   }
   return colors[status as keyof typeof colors] || 'secondary'
 }
@@ -444,7 +388,7 @@ const getVerificationClass = (date: string) => {
   const verificationDate = new Date(date)
   const now = new Date()
   const daysDiff = Math.floor((now.getTime() - verificationDate.getTime()) / (1000 * 60 * 60 * 24))
-  
+
   if (daysDiff > 365) return 'text-danger font-semibold'
   if (daysDiff > 300) return 'text-warning'
   return 'text-success'
@@ -489,7 +433,7 @@ const addNewPensioner = () => {
     photo: '/api/placeholder/40/40',
     verificationStatus: 'Pending',
     lastVerification: '',
-    verificationMode: 'Online'
+    verificationMode: 'Online',
   }
   showModal.value = true
 }
@@ -518,7 +462,7 @@ const bulkUpload = () => {
 
 const savePensioner = () => {
   if (editingPensioner.value) {
-    const index = pensioners.value.findIndex(p => p.id === currentPensioner.value.id)
+    const index = pensioners.value.findIndex((p) => p.id === currentPensioner.value.id)
     if (index !== -1) {
       pensioners.value[index] = { ...currentPensioner.value }
     }
@@ -541,7 +485,7 @@ async function fetchStats() {
       totalPensioners: apiStats.totalPensioners,
       verifiedThisYear: apiStats.verifiedThisMonth, // Using monthly data as yearly placeholder
       pendingVerification: apiStats.pendingVerification,
-      flaggedProfiles: apiStats.flaggedProfiles
+      flaggedProfiles: apiStats.flaggedProfiles,
     }
     console.log('📊 Updated pensioner records stats:', stats.value)
   } catch (error) {
