@@ -4,7 +4,7 @@ Pension Management System - Python Backend API
 Integrates with Vue.js Dashboard for real-time data processing
 """
 
-from flask import Flask, jsonify, request, cors
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
 import random
@@ -15,6 +15,7 @@ from typing import Dict, List, Any
 import pandas as pd
 import numpy as np
 import bar_chart_race as bcr
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for Vue.js frontend
@@ -314,6 +315,126 @@ def get_pensioners():
         'total': len(pensioners)
     })
 
+@app.route('/pensioners', methods=['GET'])
+def get_excel_pensioners():
+    try:
+        excel_folder = "../XLSx data"
+        pensioners = []
+        state_summary = {}
+        
+        # Get all Excel files
+        excel_files = [f for f in os.listdir(excel_folder) if f.endswith('.xlsx')]
+        print(f"Found {len(excel_files)} Excel files")
+        
+        # Process ALL 5 files
+        for file_index, excel_file in enumerate(excel_files):
+            file_path = os.path.join(excel_folder, excel_file)
+            print(f"Processing file {file_index + 1}/{len(excel_files)}: {excel_file}")
+            
+            try:
+                # Read Excel file (process more rows for comprehensive data)
+                df = pd.read_excel(file_path, nrows=2000)
+                print(f"File shape: {df.shape}")
+                
+                for index, row in df.iterrows():
+                    try:
+                        # Extract data from row
+                        pensioner_pincode = str(row['PENSIONER_PINCODE']) if pd.notna(row['PENSIONER_PINCODE']) else ''
+                        branch_pincode = str(row['BRANCH_PINCODE']) if pd.notna(row['BRANCH_PINCODE']) else ''
+                        
+                        # Clean pincode data
+                        if pensioner_pincode.endswith('.0'):
+                            pensioner_pincode = pensioner_pincode[:-2]
+                        if branch_pincode.endswith('.0'):
+                            branch_pincode = branch_pincode[:-2]
+                        
+                        # Skip if no valid pincode
+                        if not pensioner_pincode or pensioner_pincode == 'nan':
+                            continue
+                            
+                        # Get state and district from pincodes
+                        pensioner_state = get_state_from_pincode(pensioner_pincode)
+                        branch_state = get_state_from_pincode(branch_pincode)
+                        pensioner_district = get_district_from_pincode(pensioner_pincode)
+                        branch_district = get_district_from_pincode(branch_pincode)
+                        
+                        # Skip unknown states
+                        if pensioner_state == 'Unknown' or pensioner_state == 'Other States':
+                            continue
+                        
+                        # Initialize state summary if not exists
+                        if pensioner_state not in state_summary:
+                            state_summary[pensioner_state] = {
+                                'total_pensioners': 0,
+                                'districts': set(),
+                                'pincodes': set(),
+                                'banks': set()
+                            }
+                        
+                        # Update state summary
+                        state_summary[pensioner_state]['total_pensioners'] += 1
+                        state_summary[pensioner_state]['districts'].add(pensioner_district)
+                        state_summary[pensioner_state]['pincodes'].add(pensioner_pincode)
+                        if pd.notna(row.get('BANK_NAME')):
+                            state_summary[pensioner_state]['banks'].add(str(row['BANK_NAME']))
+                        
+                        # Create pensioner record
+                        pensioner = {
+                            'id': f"{file_index}_{index}",
+                            'name': f"Pensioner {len(pensioners) + 1}",
+                            'pensioner_pincode': pensioner_pincode,
+                            'branch_pincode': branch_pincode,
+                            'pensioner_state': pensioner_state,
+                            'branch_state': branch_state,
+                            'pensioner_district': pensioner_district,
+                            'branch_district': branch_district,
+                            'bank': str(row.get('BANK_NAME', 'Unknown Bank')),
+                            'amount': float(row.get('PENSION_AMOUNT', 0)) if pd.notna(row.get('PENSION_AMOUNT')) else 0,
+                            'verification_date': datetime.now().strftime('%Y-%m-%d')
+                        }
+                        
+                        pensioners.append(pensioner)
+                        
+                    except Exception as e:
+                        print(f"Error processing row {index} in file {excel_file}: {e}")
+                        continue
+                        
+            except Exception as e:
+                print(f"Error reading file {excel_file}: {e}")
+                continue
+        
+        # Convert sets to counts for JSON serialization
+        final_state_summary = {}
+        for state, data in state_summary.items():
+            final_state_summary[state] = {
+                'total_pensioners': data['total_pensioners'],
+                'total_districts': len(data['districts']),
+                'total_pincodes': len(data['pincodes']),
+                'total_banks': len(data['banks']),
+                'districts': list(data['districts']),
+                'pincodes': list(data['pincodes']),
+                'banks': list(data['banks'])
+            }
+        
+        print(f"Processed {len(pensioners)} pensioner records from {len(excel_files)} files")
+        print(f"States found: {list(final_state_summary.keys())}")
+        
+        return jsonify({
+            'pensioners': pensioners,
+            'total': len(pensioners),
+            'processed_files': len(excel_files),
+            'state_summary': final_state_summary
+        })
+        
+    except Exception as e:
+        print(f"Error in get_pensioners: {e}")
+        return jsonify({
+            'error': str(e),
+            'pensioners': [],
+            'total': 0,
+            'state_summary': {}
+        }), 500
+
 @app.route('/api/analytics/trends', methods=['GET'])
 def get_analytics_trends():
     """Get analytics trends data"""
@@ -370,6 +491,283 @@ def get_bar_chart_race_data():
         'title': 'State-wise Pension Verifications Over Time',
         'periods': months
     })
+
+def get_state_from_pincode(pincode):
+    """Get state from pincode using first 3 digits"""
+    try:
+        pin_num = int(str(pincode)[:3])
+        
+        if 110 <= pin_num <= 140:
+            return 'Delhi'
+        elif 121 <= pin_num <= 136:
+            return 'Haryana'
+        elif 140 <= pin_num <= 160:
+            return 'Punjab'
+        elif 301 <= pin_num <= 345:
+            return 'Rajasthan'
+        elif 201 <= pin_num <= 285:
+            return 'Uttar Pradesh'
+        elif 800 <= pin_num <= 855:
+            return 'Bihar'
+        elif 700 <= pin_num <= 743:
+            return 'West Bengal'
+        elif 400 <= pin_num <= 445:
+            return 'Maharashtra'
+        elif 380 <= pin_num <= 396:
+            return 'Gujarat'
+        elif 560 <= pin_num <= 591:
+            return 'Karnataka'
+        elif 600 <= pin_num <= 643:
+            return 'Tamil Nadu'
+        elif 500 <= pin_num <= 509:
+            return 'Telangana'
+        elif 515 <= pin_num <= 535:
+            return 'Andhra Pradesh'
+        elif 450 <= pin_num <= 492:
+            return 'Madhya Pradesh'
+        elif 751 <= pin_num <= 770:
+            return 'Odisha'
+        elif 781 <= pin_num <= 788:
+            return 'Assam'
+        elif 682 <= pin_num <= 695:
+            return 'Kerala'
+        elif 831 <= pin_num <= 835:
+            return 'Jharkhand'
+        elif 248 <= pin_num <= 263:
+            return 'Uttarakhand'
+        elif 171 <= pin_num <= 177:
+            return 'Himachal Pradesh'
+        else:
+            return 'Other States'
+    except:
+        return 'Unknown'
+
+def get_district_from_pincode(pincode):
+    """Get district from pincode using simplified mapping"""
+    try:
+        pin_num = int(str(pincode)[:3])
+        
+        # Gujarat districts
+        if 360 <= pin_num <= 370:
+            return 'Rajkot'
+        elif 380 <= pin_num <= 382:
+            return 'Ahmedabad'
+        elif 390 <= pin_num <= 396:
+            return 'Vadodara'
+        elif 360 <= pin_num <= 365:
+            return 'Rajkot'
+        elif 370 <= pin_num <= 375:
+            return 'Jamnagar'
+        elif 383 <= pin_num <= 389:
+            return 'Gandhinagar'
+        
+        # Maharashtra districts
+        elif 400 <= pin_num <= 421:
+            return 'Mumbai'
+        elif 411 <= pin_num <= 414:
+            return 'Pune'
+        elif 440 <= pin_num <= 445:
+            return 'Nagpur'
+        elif 422 <= pin_num <= 425:
+            return 'Nashik'
+        
+        # Karnataka districts
+        elif 560 <= pin_num <= 562:
+            return 'Bangalore'
+        elif 570 <= pin_num <= 571:
+            return 'Mysore'
+        elif 580 <= pin_num <= 582:
+            return 'Hubli'
+        elif 575 <= pin_num <= 576:
+            return 'Mangalore'
+        
+        # Tamil Nadu districts
+        elif 600 <= pin_num <= 603:
+            return 'Chennai'
+        elif 641 <= pin_num <= 642:
+            return 'Coimbatore'
+        elif 625 <= pin_num <= 626:
+            return 'Madurai'
+        elif 620 <= pin_num <= 621:
+            return 'Tiruchirappalli'
+        
+        # Uttar Pradesh districts
+        elif 226 <= pin_num <= 227:
+            return 'Lucknow'
+        elif 208 <= pin_num <= 209:
+            return 'Kanpur'
+        elif 282 <= pin_num <= 283:
+            return 'Agra'
+        elif 221 <= pin_num <= 222:
+            return 'Varanasi'
+        
+        # West Bengal districts
+        elif 700 <= pin_num <= 711:
+            return 'Kolkata'
+        elif 711 <= pin_num <= 712:
+            return 'Howrah'
+        elif 713 <= pin_num <= 714:
+            return 'Hooghly'
+        
+        # Rajasthan districts
+        elif 302 <= pin_num <= 303:
+            return 'Jaipur'
+        elif 342 <= pin_num <= 344:
+            return 'Jodhpur'
+        elif 324 <= pin_num <= 325:
+            return 'Kota'
+        elif 334 <= pin_num <= 335:
+            return 'Bikaner'
+        
+        # Bihar districts
+        elif 800 <= pin_num <= 801:
+            return 'Patna'
+        elif 823 <= pin_num <= 824:
+            return 'Gaya'
+        elif 812 <= pin_num <= 813:
+            return 'Bhagalpur'
+        elif 842 <= pin_num <= 843:
+            return 'Muzaffarpur'
+        
+        else:
+            return 'Other District'
+    except:
+        return 'Unknown District'
+
+def get_age_group(birth_year):
+    """Get age group from birth year"""
+    try:
+        current_year = datetime.now().year
+        age = current_year - int(birth_year)
+        
+        if age < 60:
+            return 'Below 60'
+        elif 60 <= age <= 65:
+            return '60-65'
+        elif 66 <= age <= 70:
+            return '66-70'
+        elif 71 <= age <= 75:
+            return '71-75'
+        elif 76 <= age <= 80:
+            return '76-80'
+        else:
+            return '80+'
+    except:
+        return 'Unknown'
+
+@app.route('/api/dlc-bank-pincode-data', methods=['GET'])
+def get_dlc_bank_pincode_data():
+    """API endpoint to get DLC completion data by bank pincode from analysis files"""
+    try:
+        # Find the latest analysis file (should be dlc_bank_analysis_20250825_120946.json)
+        analysis_files = [f for f in os.listdir('.') if f.startswith('dlc_bank_analysis_') and f.endswith('.json')]
+        if not analysis_files:
+            return jsonify({'error': 'No DLC analysis data found'}), 404
+        
+        latest_file = sorted(analysis_files)[-1]
+        print(f"📊 Loading DLC analysis from: {latest_file}")
+        
+        with open(latest_file, 'r') as f:
+            analysis_data = json.load(f)
+        
+        # Process data for frontend consumption
+        bank_pincode_data = analysis_data.get('bank_pincode_data', {})
+        
+        # Aggregate by pensioner residence state (where pensioners live)
+        state_wise_data = defaultdict(lambda: {
+            'total_pensioners': 0,
+            'age_groups': defaultdict(int),
+            'bank_locations': defaultdict(int),
+            'pincode_counts': defaultdict(int),
+            'pensioner_pincodes': defaultdict(int)  # Track where pensioners actually live
+        })
+        
+        print(f"🏦 Processing {len(bank_pincode_data)} bank pincodes...")
+        
+        # Process each bank pincode and distribute pensioners to their residence states
+        for bank_pincode, data in bank_pincode_data.items():
+            bank_state = data['state']  # Where the bank is located
+            
+            # Distribute pensioners to their residence states
+            for pensioner_state, pensioner_count in data.get('pensioner_states', {}).items():
+                if pensioner_state and pensioner_state != 'Invalid Pincode' and pensioner_state != 'Other State':
+                    # Add pensioners to their residence state
+                    state_wise_data[pensioner_state]['total_pensioners'] += pensioner_count
+                    
+                    # Track which bank processed their DLC (for reference)
+                    state_wise_data[pensioner_state]['bank_locations'][bank_state] += pensioner_count
+                    
+                    # Distribute age groups proportionally
+                    total_bank_dlc = data['total_dlc_completed']
+                    if total_bank_dlc > 0:
+                        for age_group, age_count in data['age_groups'].items():
+                            proportional_count = int((age_count * pensioner_count) / total_bank_dlc)
+                            state_wise_data[pensioner_state]['age_groups'][age_group] += proportional_count
+        
+        # Convert defaultdicts to regular dicts
+        state_final = {}
+        for state, data in state_wise_data.items():
+            state_final[state] = {
+                'total_pensioners': data['total_pensioners'],
+                'age_groups': dict(data['age_groups']),
+                'bank_locations': dict(data['bank_locations']),
+                'pincode_counts': dict(data['pincode_counts'])
+            }
+        
+        # Log Rajasthan data for debugging
+        raj_data = state_final.get('Rajasthan', {})
+        print(f"🎯 Rajasthan DLC Total: {raj_data.get('total_pensioners', 0):,}")
+        print(f"🏦 Rajasthan Bank Pincodes: {len(raj_data.get('pincode_counts', {}))}")
+        
+        return jsonify({
+            'state_wise_data': state_final,
+            'bank_pincode_data': bank_pincode_data,  
+            'total_records': len(bank_pincode_data),
+            'total_states': len(state_final),
+            'processed_at': analysis_data.get('analysis_timestamp', 'Unknown')
+        })
+        
+    except Exception as e:
+        print(f"❌ API Error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/excel-pensioner-data', methods=['GET'])
+def get_excel_pensioner_data():
+    """DEPRECATED: Use /api/dlc-bank-pincode-data instead - this endpoint now redirects to use analysis data"""
+    print("⚠️  Deprecated Excel API called - redirecting to DLC analysis data")
+    
+    # Redirect to use the pre-analyzed data instead of processing Excel files
+    return get_dlc_bank_pincode_data()
+
+
+@app.route('/api/excel-age-group-summary', methods=['GET'])
+def get_excel_age_group_summary():
+    """Get age group summary from Excel data"""
+    try:
+        excel_folder = "../XLSx data"
+        age_groups = defaultdict(int)
+        
+        excel_files = [f for f in os.listdir(excel_folder) if f.endswith('.xlsx')]
+        
+        if excel_files:
+            file_path = os.path.join(excel_folder, excel_files[0])
+            df = pd.read_excel(file_path, nrows=50000)
+            
+            for _, row in df.iterrows():
+                try:
+                    birth_year = int(row['YOB']) if pd.notna(row['YOB']) else 1960
+                    age_group = get_age_group(birth_year)
+                    age_groups[age_group] += 1
+                except:
+                    continue
+        
+        return jsonify([
+            {'ageGroup': group, 'count': count} 
+            for group, count in age_groups.items()
+        ])
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     # Initialize database and generate sample data

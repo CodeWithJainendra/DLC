@@ -53,10 +53,7 @@ const isClickable = computed(() => props.title === '' && props.value === '') // 
 }
 
 .cardview:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  z-index: 2;
+  /* Removed transform and enhanced shadow effects */
 }
 
 /* Dark theme border support */
@@ -65,7 +62,7 @@ const isClickable = computed(() => props.title === '' && props.value === '') // 
 }
 
 :deep(.va-card:hover) {
-  border: 1px solid var(--va-background-border-hover, rgba(255, 255, 255, 0.12));
+  /* Removed hover border changes */
 }
 
 .cardview-clickable {
@@ -74,8 +71,6 @@ const isClickable = computed(() => props.title === '' && props.value === '') // 
 }
 
 .cardview-clickable:hover {
-  box-shadow: 0 0 0 2px #ffd600, 0 8px 25px rgba(0,0,0,0.15);
-  transform: translateY(-4px) scale(1.02);
-  z-index: 3;
+  /* Removed transform and enhanced shadow effects */
 }
 </style>

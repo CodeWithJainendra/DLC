@@ -1,0 +1,129 @@
+{
+  "pincode_data": [
+    {
+      "pincode": "262501.0",
+      "total_pensioners": 148,
+      "age_groups": {
+        "60-65": 31,
+        "66-70": 25,
+        "71-75": 30,
+        "76-80": 33,
+        "80+": 29
+      },
+      "dominant_age_group": "76-80",
+      "percentage_dominant": 22.3
+    },
+    {
+      "pincode": "272002.0",
+      "total_pensioners": 50,
+      "age_groups": {
+        "60-65": 7,
+        "66-70": 8,
+        "71-75": 6,
+        "76-80": 13,
+        "80+": 16
+      },
+      "dominant_age_group": "80+",
+      "percentage_dominant": 32.0
+    },
+    {
+      "pincode": "500059.0",
+      "total_pensioners": 1,
+      "age_groups": {
+        "60-65": 0,
+        "66-70": 0,
+        "71-75": 1,
+        "76-80": 0,
+        "80+": 0
+      },
+      "dominant_age_group": "71-75",
+      "percentage_dominant": 100.0
+    },
+    {
+      "pincode": "500095.0",
+      "total_pensioners": 256,
+      "age_groups": {
+        "60-65": 66,
+        "66-70": 51,
+        "71-75": 43,
+        "76-80": 45,
+        "80+": 51
+      },
+      "dominant_age_group": "60-65",
+      "percentage_dominant": 25.8
+    },
+    {
+      "pincode": "686121.0",
+      "total_pensioners": 46,
+      "age_groups": {
+        "60-65": 9,
+        "66-70": 7,
+        "71-75": 6,
+        "76-80": 13,
+        "80+": 11
+      },
+      "dominant_age_group": "76-80",
+      "percentage_dominant": 28.3
+    },
+    {
+      "pincode": "700056.0",
+      "total_pensioners": 337,
+      "age_groups": {
+        "60-65": 73,
+        "66-70": 74,
+        "71-75": 74,
+        "76-80": 63,
+        "80+": 53
+      },
+      "dominant_age_group": "66-70",
+      "percentage_dominant": 22.0
+    },
+    {
+      "pincode": "721166.0",
+      "total_pensioners": 16,
+      "age_groups": {
+        "60-65": 3,
+        "66-70": 3,
+        "71-75": 2,
+        "76-80": 3,
+        "80+": 5
+      },
+      "dominant_age_group": "80+",
+      "percentage_dominant": 31.2
+    },
+    {
+      "pincode": "770075.0",
+      "total_pensioners": 28,
+      "age_groups": {
+        "60-65": 6,
+        "66-70": 11,
+        "71-75": 3,
+        "76-80": 3,
+        "80+": 5
+      },
+      "dominant_age_group": "66-70",
+      "percentage_dominant": 39.3
+    },
+    {
+      "pincode": "847303.0",
+      "total_pensioners": 117,
+      "age_groups": {
+        "60-65": 24,
+        "66-70": 24,
+        "71-75": 24,
+        "76-80": 17,
+        "80+": 28
+      },
+      "dominant_age_group": "80+",
+      "percentage_dominant": 23.9
+    }
+  ],
+  "age_distribution": {
+    "60-65": 220,
+    "66-70": 203,
+    "80+": 198,
+    "76-80": 190,
+    "71-75": 189
+  },
+  "total_records": 1000
+}

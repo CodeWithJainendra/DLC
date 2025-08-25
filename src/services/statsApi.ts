@@ -1,63 +1,100 @@
 /**
- * Stats API Service for Jeevan Pramaan Dashboard
- * Integrates with the running API server at localhost:8080
+ * Stats API Service for Pension Management System Dashboard
+ * Integrates with the Flask backend running on localhost:5000
  */
 
-export interface StatsResponse {
-  total_pensioners: number
-  verified_this_month: number
-  pending_verification: number
-  flagged_profiles: number
-  total_verifications: number
-  online_verifications: number
-  offline_verifications: number
-  success_rate: number
-  last_updated: string
+export interface DashboardStats {
+  totalPensioners: number
+  verifiedThisMonth: number
+  pendingVerifications: number
+  totalAmount: number
+  lastUpdated: string
 }
 
-export interface PensionerStats {
+export interface AgeDistribution {
+  ageGroup: string
+  count: number
+}
+
+export interface StateWiseData {
+  state: string
+  totalPensioners: number
+  verified: number
+  pending: number
+  avgAmount: number
+}
+
+export interface VerificationLocation {
+  district: string
+  state: string
+  coordinates: [number, number]
+  total: number
+  verified: number
+  pending: number
+  status: string
+}
+
+export interface PensionerRecord {
+  id: number
+  pension_id: string
+  name: string
+  age: number
+  district: string
+  state: string
+  status: string
+  amount: number
+  last_verification: string
+  created_at: string
+}
+
+export interface PensionersResponse {
+  data: PensionerRecord[]
+  page: number
+  per_page: number
+  total: number
+}
+
+export interface DLCBankData {
+  state_wise_data: Record<string, {
+    total_pensioners: number
+    age_groups: Record<string, number>
+    bank_locations: Record<string, number>
+    pincode_counts: Record<string, number>
+  }>
+  bank_pincode_data: Record<string, any>
+  total_records: number
+  total_states: number
+  processed_at: string
+}
+
+export interface FormattedStats {
   totalPensioners: string
   verifiedThisMonth: string
-  pendingVerification: string
-  flaggedProfiles: string
+  pendingVerifications: string
+  totalAmount: string
 }
 
-export interface MonthlyStats {
-  totalVerifications: string
-  onlineVerifications: string
-  offlineVerifications: string
-  successRate: number
-}
-
-export interface BankWiseData {
-  bankName: string
-  totalPensioners: number
-  dlcGenerated: number
-  dlcPending: number
-  percentage: number
-}
-
-export interface DLCStatusData {
-  stateName: string
-  bankWiseData: BankWiseData[]
-  totalPensioners: number
-  totalDLCGenerated: number
+export interface AnalyticsTrends {
+  verifications: number[]
+  registrations: number[]
+  disbursements: number[]
+  dates: string[]
 }
 
 class StatsApiService {
   private baseUrl: string
 
   constructor() {
-    // Use your running Jeevan Pramaan API Server
-    this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'
+    // Connect to Flask backend running on port 5000
+    this.baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
   }
 
   /**
-   * Get statistics from the /stats endpoint
+   * Get dashboard statistics from Flask backend
    */
-  async getStats(): Promise<StatsResponse> {
+  async getDashboardStats(): Promise<DashboardStats> {
     try {
-      const response = await fetch(`${this.baseUrl}/stats`, {
+      const response = await fetch(`${this.baseUrl}/api/dashboard/stats`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -69,104 +106,151 @@ class StatsApiService {
       }
 
       const data = await response.json()
-      console.log('📊 Stats API Response:', data)
+      console.log('📊 Dashboard Stats API Response:', data)
       return data
     } catch (error) {
-      console.error('Error fetching stats data:', error)
+      console.error('Error fetching dashboard stats:', error)
       throw error
     }
   }
 
   /**
-   * Get pensioner statistics formatted for dashboard cards
+   * Get formatted dashboard statistics for cards
    */
-  async getPensionerStats(): Promise<PensionerStats> {
+  async getFormattedStats(): Promise<FormattedStats> {
     try {
-      const stats = await this.getStats()
+      const stats = await this.getDashboardStats()
       
       return {
-        totalPensioners: this.formatNumber(stats.total_pensioners),
-        verifiedThisMonth: this.formatNumber(stats.verified_this_month),
-        pendingVerification: this.formatNumber(stats.pending_verification),
-        flaggedProfiles: this.formatNumber(stats.flagged_profiles)
+        totalPensioners: this.formatNumber(stats.totalPensioners),
+        verifiedThisMonth: this.formatNumber(stats.verifiedThisMonth),
+        pendingVerifications: this.formatNumber(stats.pendingVerifications),
+        totalAmount: this.formatCurrency(stats.totalAmount)
       }
     } catch (error) {
-      console.error('Error fetching pensioner stats, using fallback:', error)
-      // Return fallback data when API is not available
+      console.error('Error fetching formatted stats, using fallback:', error)
       return {
         totalPensioners: '0',
         verifiedThisMonth: '0',
-        pendingVerification: '0',
-        flaggedProfiles: '0'
+        pendingVerifications: '0',
+        totalAmount: '₹0'
       }
     }
   }
 
   /**
-   * Get monthly statistics formatted for reports
+   * Get age distribution data
    */
-  async getMonthlyStats(): Promise<MonthlyStats> {
+  async getAgeDistribution(): Promise<AgeDistribution[]> {
     try {
-      const stats = await this.getStats()
-      
-      return {
-        totalVerifications: this.formatNumber(stats.total_verifications || stats.verified_this_month),
-        onlineVerifications: this.formatNumber(stats.online_verifications || Math.floor((stats.verified_this_month || 0) * 0.68)),
-        offlineVerifications: this.formatNumber(stats.offline_verifications || Math.floor((stats.verified_this_month || 0) * 0.32)),
-        successRate: stats.success_rate || 94.2
+      const response = await fetch(`${this.baseUrl}/api/dashboard/age-distribution`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
+      const data = await response.json()
+      console.log('📊 Age Distribution Response:', data)
+      return data
     } catch (error) {
-      console.error('Error fetching monthly stats, using fallback:', error)
-      return {
-        totalVerifications: '0',
-        onlineVerifications: '0',
-        offlineVerifications: '0',
-        successRate: 0
-      }
+      console.error('Error fetching age distribution:', error)
+      return []
     }
   }
 
   /**
-   * Calculate derived statistics from pensioner data
+   * Get state-wise pension data
    */
-  async getDerivedStats(): Promise<any> {
+  async getStateWiseData(): Promise<StateWiseData[]> {
     try {
-      // Get pensioners data to calculate additional stats
-      const pensionersResponse = await fetch(`${this.baseUrl}/pensioners`)
-      if (!pensionersResponse.ok) {
-        throw new Error(`HTTP error! status: ${pensionersResponse.status}`)
+      const response = await fetch(`${this.baseUrl}/api/dashboard/state-wise-data`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
-      
-      const pensionersData = await pensionersResponse.json()
-      const pensioners = pensionersData.DLC_generated_pensioners || []
-      
-      // Calculate verification trends and other derived metrics
-      const currentMonth = new Date().getMonth()
-      const currentYear = new Date().getFullYear()
-      
-      // Filter for this month's verifications (if timestamp available)
-      const thisMonthVerifications = pensioners.filter((p: any) => {
-        if (p.timestamp || p.created_at || p.updated_at) {
-          const date = new Date(p.timestamp || p.created_at || p.updated_at)
-          return date.getMonth() === currentMonth && date.getFullYear() === currentYear
-        }
-        return false
-      })
-
-      return {
-        totalPensioners: pensioners.length,
-        verifiedThisMonth: thisMonthVerifications.length,
-        pendingVerification: Math.max(0, pensioners.length - thisMonthVerifications.length),
-        flaggedProfiles: Math.floor(pensioners.length * 0.001), // Assume 0.1% flagged
-        totalVerifications: thisMonthVerifications.length,
-        onlineVerifications: Math.floor(thisMonthVerifications.length * 0.68),
-        offlineVerifications: Math.floor(thisMonthVerifications.length * 0.32),
-        successRate: 94.2,
-        last_updated: new Date().toISOString()
-      }
+      const data = await response.json()
+      console.log('📊 State-wise Data Response:', data)
+      return data
     } catch (error) {
-      console.error('Error calculating derived stats:', error)
-      throw error
+      console.error('Error fetching state-wise data:', error)
+      return []
+    }
+  }
+
+  /**
+   * Get verification locations for map
+   */
+  async getVerificationLocations(): Promise<VerificationLocation[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/dashboard/verification-locations`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.json()
+      console.log('🗺️ Verification Locations Response:', data)
+      return data
+    } catch (error) {
+      console.error('Error fetching verification locations:', error)
+      return []
+    }
+  }
+
+  /**
+   * Get pensioners list with pagination
+   */
+  async getPensioners(page: number = 1, perPage: number = 50, status?: string): Promise<PensionersResponse> {
+    try {
+      let url = `${this.baseUrl}/api/pensioners?page=${page}&per_page=${perPage}`
+      if (status) {
+        url += `&status=${status}`
+      }
+      
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      console.log('👥 Pensioners Response:', data)
+      return data
+    } catch (error) {
+      console.error('Error fetching pensioners:', error)
+      return { data: [], page: 1, per_page: perPage, total: 0 }
+    }
+  }
+
+  /**
+   * Get DLC bank pincode data from Excel analysis
+   */
+  async getDLCBankData(): Promise<DLCBankData | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/dlc-bank-pincode-data`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      console.log('🏦 DLC Bank Data Response:', data)
+      return data
+    } catch (error) {
+      console.error('Error fetching DLC bank data:', error)
+      return null
+    }
+  }
+
+  /**
+   * Get analytics trends data
+   */
+  async getAnalyticsTrends(days: number = 30): Promise<AnalyticsTrends> {
+    try {
+      const response = await fetch(`${this.baseUrl}/api/analytics/trends?days=${days}`)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      console.log('📈 Analytics Trends Response:', data)
+      return data
+    } catch (error) {
+      console.error('Error fetching analytics trends:', error)
+      return { verifications: [], registrations: [], disbursements: [], dates: [] }
     }
   }
 
@@ -189,118 +273,43 @@ class StatsApiService {
   }
 
   /**
-   * Get bank-wise DLC status data for all states
+   * Format currency amounts
    */
-  async getBankWiseDLCStatus(): Promise<DLCStatusData[]> {
+  private formatCurrency(amount: number): string {
+    if (!amount || amount === 0) return '₹0'
+    
+    const formatted = this.formatNumber(amount)
+    return `₹${formatted}`
+  }
+
+  /**
+   * Get Excel pensioner data (uses DLC analysis data)
+   */
+  async getExcelPensionerData(): Promise<any> {
     try {
-      const response = await fetch(`${this.baseUrl}/pensioners`)
+      const response = await fetch(`${this.baseUrl}/api/excel-pensioner-data`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
       
       const data = await response.json()
-      const pensioners = data.DLC_generated_pensioners || []
-      
-      // Group by state and bank
-      const stateGroups: Record<string, any[]> = {}
-      pensioners.forEach((pensioner: any) => {
-        const state = pensioner.state || 'Unknown'
-        if (!stateGroups[state]) {
-          stateGroups[state] = []
-        }
-        stateGroups[state].push(pensioner)
-      })
-      
-      // Generate bank-wise data for each state
-      const result: DLCStatusData[] = []
-      
-      Object.entries(stateGroups).forEach(([stateName, statePensioners]) => {
-        // Group by bank within state
-        const bankGroups: Record<string, any[]> = {}
-        statePensioners.forEach((pensioner: any) => {
-          const bank = pensioner.bank || pensioner.bankName || 'Unknown Bank'
-          if (!bankGroups[bank]) {
-            bankGroups[bank] = []
-          }
-          bankGroups[bank].push(pensioner)
-        })
-        
-        // Create bank-wise data
-        const bankWiseData: BankWiseData[] = Object.entries(bankGroups).map(([bankName, bankPensioners]) => {
-          const totalPensioners = bankPensioners.length
-          const dlcGenerated = bankPensioners.filter(p => p.dlc_status === 'generated' || p.status === 'active').length
-          const dlcPending = totalPensioners - dlcGenerated
-          const percentage = totalPensioners > 0 ? (dlcGenerated / totalPensioners) * 100 : 0
-          
-          return {
-            bankName,
-            totalPensioners,
-            dlcGenerated,
-            dlcPending,
-            percentage: Math.round(percentage * 100) / 100
-          }
-        }).sort((a, b) => b.totalPensioners - a.totalPensioners)
-        
-        const totalPensioners = statePensioners.length
-        const totalDLCGenerated = bankWiseData.reduce((sum, bank) => sum + bank.dlcGenerated, 0)
-        
-        result.push({
-          stateName,
-          bankWiseData,
-          totalPensioners,
-          totalDLCGenerated
-        })
-      })
-      
-      // Sort states by total pensioners
-      return result.sort((a, b) => b.totalPensioners - a.totalPensioners)
-      
+      console.log('📊 Excel Pensioner Data Response:', data)
+      return data
     } catch (error) {
-      console.error('Error fetching bank-wise DLC status:', error)
-      return this.getFallbackBankWiseData()
+      console.error('Error fetching Excel pensioner data:', error)
+      return null
     }
-  }
-  
-  /**
-   * Get fallback bank-wise data when API is unavailable
-   */
-  private getFallbackBankWiseData(): DLCStatusData[] {
-    return [
-      {
-        stateName: 'Maharashtra',
-        totalPensioners: 45000,
-        totalDLCGenerated: 42000,
-        bankWiseData: [
-          { bankName: 'State Bank of India', totalPensioners: 15000, dlcGenerated: 14200, dlcPending: 800, percentage: 94.67 },
-          { bankName: 'Bank of Maharashtra', totalPensioners: 12000, dlcGenerated: 11400, dlcPending: 600, percentage: 95.00 },
-          { bankName: 'Punjab National Bank', totalPensioners: 8000, dlcGenerated: 7600, dlcPending: 400, percentage: 95.00 },
-          { bankName: 'HDFC Bank', totalPensioners: 6000, dlcGenerated: 5700, dlcPending: 300, percentage: 95.00 },
-          { bankName: 'ICICI Bank', totalPensioners: 4000, dlcGenerated: 3100, dlcPending: 900, percentage: 77.50 }
-        ]
-      },
-      {
-        stateName: 'Uttar Pradesh',
-        totalPensioners: 38000,
-        totalDLCGenerated: 35000,
-        bankWiseData: [
-          { bankName: 'State Bank of India', totalPensioners: 18000, dlcGenerated: 16500, dlcPending: 1500, percentage: 91.67 },
-          { bankName: 'Punjab National Bank', totalPensioners: 10000, dlcGenerated: 9200, dlcPending: 800, percentage: 92.00 },
-          { bankName: 'Bank of Baroda', totalPensioners: 6000, dlcGenerated: 5500, dlcPending: 500, percentage: 91.67 },
-          { bankName: 'Canara Bank', totalPensioners: 4000, dlcGenerated: 3800, dlcPending: 200, percentage: 95.00 }
-        ]
-      }
-    ]
   }
 
   /**
-   * Check if the API server is available
+   * Check if the Flask backend is available
    */
   async checkHealth(): Promise<boolean> {
     try {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), 5000)
       
-      const response = await fetch(`${this.baseUrl}/health`, {
+      const response = await fetch(`${this.baseUrl}/api/dashboard/stats`, {
         method: 'GET',
         signal: controller.signal,
       })
@@ -308,7 +317,7 @@ class StatsApiService {
       clearTimeout(timeoutId)
       return response.ok
     } catch (error) {
-      console.warn('API health check failed:', error)
+      console.warn('Backend health check failed:', error)
       return false
     }
   }

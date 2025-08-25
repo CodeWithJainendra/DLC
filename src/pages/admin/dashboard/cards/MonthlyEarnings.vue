@@ -289,8 +289,23 @@ import { ref, computed, nextTick, onMounted } from 'vue'
 import { VaCard, VaModal } from 'vuestic-ui'
 import VaChart from '../../../../components/va-charts/VaChart.vue'
 import { ChartOptions, Chart, registerables } from 'chart.js'
-import { pensionersApi } from '../../../../services/pensionersApi'
-import { statsApi, type DLCStatusData, type BankWiseData } from '../../../../services/statsApi'
+import { statsApi } from '@/services/statsApi'
+
+// Local types for bank-wise view
+interface BankWiseData {
+  bankName: string
+  totalPensioners: number
+  dlcGenerated: number
+  dlcPending: number
+  percentage: number
+}
+
+interface DLCStatusData {
+  stateName: string
+  bankWiseData: BankWiseData[]
+  totalPensioners: number
+  totalDLCGenerated: number
+}
 
 // Register Chart.js components
 Chart.register(...registerables)
@@ -313,6 +328,9 @@ const bankWiseData = ref<DLCStatusData[]>([])
 const isLoading = ref(false)
 const totalPensioners = ref(0)
 const showBankWiseView = ref(false)
+
+// Raw pensioner data cache (for bank-wise processing)
+const rawPensionerData = ref<any[]>([])
 
 // Filter controls - ensure they are numbers
 const stateLimit = ref<number>(5)
@@ -416,44 +434,43 @@ const onLeave = () => {
   isPressed.value = false
 }
 
+// Helper: process state-wise data from API
+const processStateWiseDataFromAPI = (stateWiseData: Array<{ state: string; totalPensioners: number }>) => {
+  const stateMap: Record<string, number> = {}
+  let total = 0
+  stateWiseData.forEach((item) => {
+    const count = Number(item.totalPensioners) || 0
+    stateMap[item.state] = (stateMap[item.state] || 0) + count
+    total += count
+  })
+  realStateWiseData.value = stateMap
+  totalPensioners.value = total
+}
+
 // Load real data from API
-const loadRealData = async () => {
+const loadPensionerData = async () => {
   try {
     isLoading.value = true
-    console.log('🔄 Loading real DLC data from API in MonthlyEarnings...')
     
-    const response = await pensionersApi.getPensioners()
-    const pensioners = response.DLC_generated_pensioners || []
+    console.log('🔄 Loading state-wise data from Flask backend...')
+    const stateWiseData = await statsApi.getStateWiseData()
     
-    console.log(`📊 Loaded ${pensioners.length} pensioners from API`)
+    console.log(`✅ Loaded state-wise data:`, stateWiseData)
     
-    // Get state-wise data
-    const stateData = pensionersApi.getStateWiseData(pensioners)
-    realStateWiseData.value = stateData
+    // Process state-wise data from Flask backend
+    processStateWiseDataFromAPI(stateWiseData)
     
-    // Calculate total
-    totalPensioners.value = pensioners.length
-    
-    // Generate over all data - multiply state-wise data by a factor to show different values
-    // This represents total pensioners including all categories, not just DLC
-    const overAllData: Record<string, number> = {}
-    Object.entries(stateData).forEach(([state, count]) => {
-      // Multiply by a factor to show "over all" data as higher numbers
-      // This represents total pensioners in the state, not just DLC ones
-      overAllData[state] = count * 50 // 50x multiplier to show different scale and avoid 0K
-    })
-    realOverAllData.value = overAllData
+    // Also load pensioners data for detailed analysis
+    const pensionersResponse = await statsApi.getPensioners()
+    rawPensionerData.value = pensionersResponse.data || []
     
     console.log('📊 Real API data processed in MonthlyEarnings:')
     console.log('  Total pensioners:', totalPensioners.value)
     console.log('  State-wise data:', realStateWiseData.value)
-    console.log('  Over-all data:', realOverAllData.value)
-    
   } catch (error) {
     console.error('❌ Error loading real DLC data in MonthlyEarnings:', error)
     // Show zeros instead of fallback hardcoded data
     realStateWiseData.value = {}
-    realOverAllData.value = {}
     totalPensioners.value = 0
   } finally {
     isLoading.value = false
@@ -467,8 +484,8 @@ const loadBankWiseData = async () => {
     console.log('🔄 Loading bank-wise DLC data from real API...')
     
     // Get pensioners data from real API
-    const response = await pensionersApi.getPensioners()
-    const pensioners = response.DLC_generated_pensioners || []
+    const response = await statsApi.getPensioners()
+    const pensioners: any[] = response.data || []
     
     console.log(`📊 Processing ${pensioners.length} pensioners for bank-wise data`)
     
@@ -506,10 +523,13 @@ const loadBankWiseData = async () => {
       // Create bank-wise data for this state
       const bankWiseData: BankWiseData[] = Object.entries(bankGroups).map(([bankName, bankPensioners]) => {
         const totalPensioners = bankPensioners.length
-        // Assume all pensioners have DLC generated (since they're in DLC_generated_pensioners)
-        const dlcGenerated = totalPensioners
-        const dlcPending = 0
-        const percentage = 100 // Since all are DLC generated
+        // Determine DLC generated based on status if available
+        const dlcGenerated = bankPensioners.filter((p: any) => {
+          const s = (p.status || '').toString().toLowerCase()
+          return s.includes('verified') || s.includes('generated') || s.includes('done')
+        }).length
+        const dlcPending = Math.max(0, totalPensioners - dlcGenerated)
+        const percentage = totalPensioners > 0 ? (dlcGenerated / totalPensioners) * 100 : 0
         
         return {
           bankName,
@@ -523,7 +543,10 @@ const loadBankWiseData = async () => {
       console.log(`📊 ${stateName} - Generated ${bankWiseData.length} banks, sorted by pensioner count`)
       
       const totalPensioners = statePensioners.length
-      const totalDLCGenerated = totalPensioners // All are DLC generated
+      const totalDLCGenerated = statePensioners.filter((p: any) => {
+        const s = (p.status || '').toString().toLowerCase()
+        return s.includes('verified') || s.includes('generated') || s.includes('done')
+      }).length
       
       result.push({
         stateName,
@@ -540,8 +563,8 @@ const loadBankWiseData = async () => {
     
   } catch (error) {
     console.error('❌ Error loading bank-wise data from real API:', error)
-    // Use fallback data if API fails
-    bankWiseData.value = await statsApi.getBankWiseDLCStatus()
+    // Fallback: empty list if API fails
+    bankWiseData.value = []
   } finally {
     isLoading.value = false
   }
@@ -553,8 +576,6 @@ onMounted(async () => {
   await loadRealData()
   console.log('✅ Real data loaded in MonthlyEarnings component')
 })
-
-// const chartData = useChartData(lineChartData)
 
 // Mini bar chart data for the card - showing top 6 states
 // Mini bar chart data for the card - showing top states from API
@@ -826,6 +847,11 @@ const openModal = async () => {
     }
   }, 150)
 }
+
+// Public loader used across component
+const loadRealData = async () => {
+  await loadPensionerData()
+}
 </script>
 
 <style scoped>
@@ -837,8 +863,7 @@ const openModal = async () => {
 }
 
 .monthly-earnings-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  /* Removed transform and shadow effects */
 }
 
 .chart-container {

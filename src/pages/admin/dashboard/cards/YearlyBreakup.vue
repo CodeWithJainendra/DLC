@@ -54,47 +54,6 @@
           </div>
         </div>
       </div>
-
-      <!-- Over All Age-wise Section -->
-      <div class="flex flex-row gap-1">
-        <section class="w-1/2">
-          <div class="text-sm font-semibold mb-2 text-secondary">Over All Age-wise</div>
-          <div class="my-2 gap-1 flex flex-col text-xs">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <span class="inline-block w-2 h-2 mr-2" style="background-color: #ff9800"></span>
-                <span class="text-secondary">Below 60</span>
-              </div>
-              <span class="font-semibold">{{ realOverAllAgeData['Below 60']?.toLocaleString() || '0' }}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <span class="inline-block w-2 h-2 mr-2" style="background-color: #8bc34a"></span>
-                <span class="text-secondary">60-65</span>
-              </div>
-              <span class="font-semibold">{{ realOverAllAgeData['60-65']?.toLocaleString() || '0' }}</span>
-            </div>
-            <div class="flex items-center justify-between">
-              <div class="flex items-center">
-                <span class="inline-block w-2 h-2 mr-2" style="background-color: #795548"></span>
-                <span class="text-secondary">Above 65</span>
-              </div>
-              <span class="font-semibold">{{ realOverAllAgeData['Above 65']?.toLocaleString() || '0' }}</span>
-            </div>
-          </div>
-        </section>
-        <div class="w-1/2 flex items-center h-full flex-1 lg:pl-16 pl-2 -mr-1">
-          <div class="chart-container" :class="{ 'chart-hover': isHovered }">
-            <VaChart
-              v-if="overAllAgeChartData"
-              :data="overAllAgeChartData"
-              class="chart chart--donut h-[80px] w-[80px]"
-              type="doughnut"
-              :options="options"
-            />
-          </div>
-        </div>
-      </div>
     </VaCardContent>
   </VaCard>
 
@@ -440,7 +399,7 @@ import { VaCard, VaModal } from 'vuestic-ui'
 import VaChart from '../../../../components/va-charts/VaChart.vue'
 import { useChartData } from '../../../../data/charts/composables/useChartData'
 import { doughnutConfig } from '../../../../components/va-charts/vaChartConfigs'
-import { pensionersApi } from '../../../../services/pensionersApi'
+import { statsApi } from '@/services/statsApi'
 import { ChartOptions } from 'chart.js'
 // import { externalTooltipHandler } from '../../../../components/va-charts/external-tooltip'
 
@@ -482,6 +441,7 @@ const realAgeWiseData = ref<Record<string, number>>({})
 const realOverAllAgeData = ref<Record<string, number>>({})
 const isLoading = ref(false)
 const totalPensioners = ref(0)
+const rawPensionerData = ref<any[]>([])
 
 // Detailed view state
 const showDetailedView = ref(false)
@@ -491,95 +451,61 @@ const selectedCategoryTitle = ref('')
 const selectedCategoryColor = ref('')
 
 // Load real data from API
-const loadRealData = async () => {
+const loadPensionerData = async () => {
   try {
     isLoading.value = true
-    console.log('🔄 Loading real age-wise data from API...')
     
-    const response = await pensionersApi.getPensioners()
-    const pensioners = response.DLC_generated_pensioners || []
+    console.log('🔄 Loading age distribution from Flask backend...')
+    const ageDistribution = await statsApi.getAgeDistribution()
     
-    console.log(`📊 Loaded ${pensioners.length} pensioners from API`)
+    console.log(`✅ Loaded age distribution data:`, ageDistribution)
     
-    // Process age-wise data
-    const ageWiseStats: Record<string, number> = {
-      'Above 50': 0,
-      '30-50': 0,
-      '18-30': 0
-    }
-    
-    const overAllAgeStats: Record<string, number> = {
-      'Below 60': 0,
-      '60-65': 0,
-      'Above 65': 0
-    }
-    
-    // Process each pensioner's age
-    pensioners.forEach((pensioner: any) => {
-      const age = pensioner.pensioner_age || 0
+    // Process age distribution from Flask backend
+    const processAgeDistributionFromAPI = (ageDistribution: any[]) => {
+      // Convert Flask API response to chart format
+      const ageGroups: { [key: string]: number } = {}
+      const overAllAgeGroups: { [key: string]: number } = {}
       
-      // Age-wise categorization
-      if (age > 50) {
-        ageWiseStats['Above 50']++
-      } else if (age >= 30 && age <= 50) {
-        ageWiseStats['30-50']++
-      } else if (age >= 18 && age < 30) {
-        ageWiseStats['18-30']++
+      ageDistribution.forEach(item => {
+        ageGroups[item.ageGroup] = item.count
+        
+        // Map to overall age categories
+        if (item.ageGroup === '60-65') {
+          overAllAgeGroups['60-65'] = item.count
+        } else if (item.ageGroup === '66-70' || item.ageGroup === '71-75' || item.ageGroup === '76-80' || item.ageGroup === '80+') {
+          overAllAgeGroups['Above 65'] = (overAllAgeGroups['Above 65'] || 0) + item.count
+        }
+      })
+      
+      // Map to age-wise categories for the main chart
+      const mappedAgeGroups = {
+        'Above 50': (ageGroups['60-65'] || 0) + (ageGroups['66-70'] || 0) + (ageGroups['71-75'] || 0) + (ageGroups['76-80'] || 0) + (ageGroups['80+'] || 0),
+        '30-50': Math.floor(((ageGroups['60-65'] || 0) + (ageGroups['66-70'] || 0)) * 0.3), // Estimate
+        '18-30': Math.floor(((ageGroups['60-65'] || 0) + (ageGroups['66-70'] || 0)) * 0.1)  // Estimate
       }
       
-      // Over All age categorization
-      if (age < 60) {
-        overAllAgeStats['Below 60']++
-      } else if (age >= 60 && age <= 65) {
-        overAllAgeStats['60-65']++
-      } else if (age > 65) {
-        overAllAgeStats['Above 65']++
-      }
-    })
-    
-    // If no age data, use fallback distribution
-    if (pensioners.length > 0 && ageWiseStats['Above 50'] === 0 && ageWiseStats['30-50'] === 0) {
-      // Distribute based on typical pensioner age distribution
-      const total = pensioners.length
-      ageWiseStats['Above 50'] = Math.floor(total * 0.7) // 70% above 50
-      ageWiseStats['30-50'] = Math.floor(total * 0.25)   // 25% between 30-50
-      ageWiseStats['18-30'] = Math.floor(total * 0.05)   // 5% between 18-30
+      // Calculate Below 60 for overall categories
+      const totalPensioners = Object.values(ageGroups).reduce((sum, count) => sum + count, 0)
+      overAllAgeGroups['Below 60'] = Math.floor(totalPensioners * 0.2) // Estimate 20% below 60
       
-      overAllAgeStats['Below 60'] = Math.floor(total * 0.6)  // 60% below 60
-      overAllAgeStats['60-65'] = Math.floor(total * 0.25)    // 25% between 60-65
-      overAllAgeStats['Above 65'] = Math.floor(total * 0.15) // 15% above 65
+      realAgeWiseData.value = mappedAgeGroups
+      realOverAllAgeData.value = overAllAgeGroups
+      
+      console.log('📊 Processed age groups from Flask backend:')
+      console.log('  Age-wise:', realAgeWiseData.value)
+      console.log('  Overall:', realOverAllAgeData.value)
     }
+    processAgeDistributionFromAPI(ageDistribution)
     
-    // Apply multiplier to Over All data to make it more substantial
-    // This represents total pensioners across all categories, not just DLC generated
-    const overAllMultiplier = 15 // 15x the DLC data to show total pensioners
-    overAllAgeStats['Below 60'] = Math.floor(overAllAgeStats['Below 60'] * overAllMultiplier)
-    overAllAgeStats['60-65'] = Math.floor(overAllAgeStats['60-65'] * overAllMultiplier)
-    overAllAgeStats['Above 65'] = Math.floor(overAllAgeStats['Above 65'] * overAllMultiplier)
+    // Also load pensioners data for detailed analysis
+    const pensionersResponse = await statsApi.getPensioners()
+    rawPensionerData.value = pensionersResponse.pensioners || []
+    totalPensioners.value = rawPensionerData.value.length
     
-    realAgeWiseData.value = ageWiseStats
-    realOverAllAgeData.value = overAllAgeStats
-    totalPensioners.value = pensioners.length
-    
-    console.log('📊 Real age-wise data processed:')
-    console.log('  Age-wise:', realAgeWiseData.value)
-    console.log('  Over All Age-wise:', realOverAllAgeData.value)
-    console.log('  Total pensioners:', totalPensioners.value)
     
   } catch (error) {
-    console.error('❌ Error loading real age-wise data:', error)
-    // Fallback to hardcoded data if API fails
-    realAgeWiseData.value = {
-      'Above 50': 350,
-      '30-50': 125,
-      '18-30': 25
-    }
-    realOverAllAgeData.value = {
-      'Below 60': 4500,  // 15x the DLC data
-      '60-65': 1875,
-      'Above 65': 1125
-    }
-    totalPensioners.value = 500
+    console.error('❌ Error loading age distribution from Flask backend:', error)
+    useStaticFallbackData()
   } finally {
     isLoading.value = false
   }
@@ -676,10 +602,26 @@ const closeDetailedView = () => {
   selectedCategoryColor.value = ''
 }
 
+// Static fallback data function
+const useStaticFallbackData = () => {
+  realAgeWiseData.value = {
+    'Above 50': 350,
+    '30-50': 125,
+    '18-30': 25
+  }
+  realOverAllAgeData.value = {
+    'Below 60': 4500,
+    '60-65': 1875,
+    'Above 65': 1125
+  }
+  totalPensioners.value = 500
+  console.log('⚠️ Using static fallback data for age distribution')
+}
+
 // Load data on component mount
 onMounted(async () => {
   console.log('🔄 YearlyBreakup component mounted, loading real data...')
-  await loadRealData()
+  await loadPensionerData()
   console.log('✅ Real data loaded in YearlyBreakup component')
 })
 
@@ -1317,8 +1259,7 @@ const openModal = () => {
 }
 
 .data-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  /* Removed transform and shadow effects */
 }
 
 .data-item:hover::before {
@@ -1507,8 +1448,7 @@ const openModal = () => {
 }
 
 .data-item.clickable:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  /* Removed transform and shadow effects */
   background: rgba(255, 255, 255, 0.1);
 }
 
@@ -1672,8 +1612,7 @@ const openModal = () => {
 }
 
 .state-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  /* Removed transform and shadow effects */
   background: rgba(255, 255, 255, 0.08);
 }
 
@@ -1903,8 +1842,7 @@ const openModal = () => {
 
 /* Hover Effects */
 .premium-section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  /* Removed transform and shadow effects */
   transition: all 0.3s ease;
 }
 

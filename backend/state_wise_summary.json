@@ -1,0 +1,165 @@
+{
+  "West Bengal": {
+    "total_pensioners": 2842,
+    "top_age_group": "60-65",
+    "unique_banks": 1,
+    "unique_pincodes": 24,
+    "age_distribution": {
+      "80+": 463,
+      "76-80": 323,
+      "71-75": 497,
+      "66-70": 540,
+      "60-65": 690,
+      "Below 60": 329
+    }
+  },
+  "Telangana": {
+    "total_pensioners": 591,
+    "top_age_group": "66-70",
+    "unique_banks": 1,
+    "unique_pincodes": 13,
+    "age_distribution": {
+      "71-75": 111,
+      "76-80": 62,
+      "66-70": 123,
+      "60-65": 116,
+      "Below 60": 110,
+      "80+": 69
+    }
+  },
+  "Unknown State": {
+    "total_pensioners": 7,
+    "top_age_group": "60-65",
+    "unique_banks": 1,
+    "unique_pincodes": 1,
+    "age_distribution": {
+      "60-65": 7
+    }
+  },
+  "Bihar": {
+    "total_pensioners": 6252,
+    "top_age_group": "71-75",
+    "unique_banks": 1,
+    "unique_pincodes": 32,
+    "age_distribution": {
+      "71-75": 1607,
+      "60-65": 924,
+      "66-70": 1311,
+      "80+": 823,
+      "Below 60": 586,
+      "76-80": 1001
+    }
+  },
+  "Uttar Pradesh": {
+    "total_pensioners": 3285,
+    "top_age_group": "71-75",
+    "unique_banks": 1,
+    "unique_pincodes": 40,
+    "age_distribution": {
+      "66-70": 645,
+      "60-65": 580,
+      "71-75": 656,
+      "76-80": 464,
+      "80+": 429,
+      "Below 60": 511
+    }
+  },
+  "Other State": {
+    "total_pensioners": 23731,
+    "top_age_group": "60-65",
+    "unique_banks": 1,
+    "unique_pincodes": 144,
+    "age_distribution": {
+      "66-70": 4846,
+      "60-65": 5352,
+      "71-75": 4273,
+      "76-80": 2887,
+      "Below 60": 3570,
+      "80+": 2803
+    }
+  },
+  "Rajasthan": {
+    "total_pensioners": 875,
+    "top_age_group": "60-65",
+    "unique_banks": 1,
+    "unique_pincodes": 19,
+    "age_distribution": {
+      "Below 60": 170,
+      "60-65": 173,
+      "71-75": 153,
+      "80+": 149,
+      "66-70": 129,
+      "76-80": 101
+    }
+  },
+  "Gujarat": {
+    "total_pensioners": 1047,
+    "top_age_group": "60-65",
+    "unique_banks": 1,
+    "unique_pincodes": 17,
+    "age_distribution": {
+      "60-65": 232,
+      "66-70": 191,
+      "80+": 136,
+      "71-75": 186,
+      "76-80": 146,
+      "Below 60": 156
+    }
+  },
+  "Tamil Nadu": {
+    "total_pensioners": 1097,
+    "top_age_group": "60-65",
+    "unique_banks": 1,
+    "unique_pincodes": 18,
+    "age_distribution": {
+      "66-70": 164,
+      "Below 60": 197,
+      "76-80": 156,
+      "60-65": 214,
+      "71-75": 177,
+      "80+": 189
+    }
+  },
+  "Delhi": {
+    "total_pensioners": 3380,
+    "top_age_group": "71-75",
+    "unique_banks": 1,
+    "unique_pincodes": 17,
+    "age_distribution": {
+      "60-65": 658,
+      "66-70": 539,
+      "76-80": 509,
+      "Below 60": 482,
+      "71-75": 767,
+      "80+": 425
+    }
+  },
+  "Maharashtra": {
+    "total_pensioners": 3116,
+    "top_age_group": "60-65",
+    "unique_banks": 1,
+    "unique_pincodes": 32,
+    "age_distribution": {
+      "Below 60": 537,
+      "71-75": 563,
+      "66-70": 526,
+      "76-80": 420,
+      "60-65": 644,
+      "80+": 426
+    }
+  },
+  "Karnataka": {
+    "total_pensioners": 3777,
+    "top_age_group": "66-70",
+    "unique_banks": 1,
+    "unique_pincodes": 19,
+    "age_distribution": {
+      "66-70": 887,
+      "80+": 440,
+      "71-75": 690,
+      "76-80": 427,
+      "Below 60": 488,
+      "60-65": 845
+    }
+  }
+}

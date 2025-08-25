@@ -125,7 +125,7 @@ const createChart = async () => {
               content: 'Support',
               position: 'start',
               backgroundColor: '#10b981',
-              color: 'white',
+              color: '#ffffff',
               padding: 8,
               cornerRadius: 6,
               font: {
@@ -140,7 +140,7 @@ const createChart = async () => {
             xValue: 'Nov 23',
             yValue: 9500,
             backgroundColor: '#7c3aed',
-            borderColor: 'white',
+            borderColor: '#ffffff',
             borderWidth: 3,
             radius: 8,
             label: {
@@ -148,7 +148,7 @@ const createChart = async () => {
               content: 'Annual Peak',
               position: 'top',
               backgroundColor: '#7c3aed',
-              color: 'white',
+              color: '#ffffff',
               padding: 8,
               cornerRadius: 6,
               font: {
@@ -171,7 +171,7 @@ const createChart = async () => {
               content: 'New Beginning',
               position: 'top',
               backgroundColor: '#f59e0b',
-              color: 'white',
+              color: '#ffffff',
               padding: 8,
               cornerRadius: 6,
               font: {
@@ -253,9 +253,9 @@ const createChart = async () => {
       backgroundColor: gradient,
       borderColor: '#667eea',
       pointBackgroundColor: '#667eea',
-      pointBorderColor: 'white',
+      pointBorderColor: '#ffffff',
       pointHoverBackgroundColor: '#667eea',
-      pointHoverBorderColor: 'white',
+      pointHoverBorderColor: '#ffffff',
       fill: true,
       tension: 0.4
     }))

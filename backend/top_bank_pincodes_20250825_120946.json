@@ -1,0 +1,1223 @@
+{
+  "top_50_bank_pincodes": {
+    "147001": {
+      "total_dlc_completed": 15430,
+      "age_groups": {
+        "Below 60": 1823,
+        "80+": 2088,
+        "66-70": 3097,
+        "76-80": 1907,
+        "71-75": 2748,
+        "60-65": 3767
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 14815,
+        "Invalid Pincode": 49,
+        "Maharashtra": 5,
+        "Uttar Pradesh": 37,
+        "Punjab": 72,
+        "Himachal Pradesh": 14,
+        "Rajasthan": 2,
+        "Delhi": 427,
+        "Odisha": 2,
+        "Karnataka": 3,
+        "Andhra Pradesh": 2,
+        "Jammu and Kashmir": 1,
+        "Bihar": 1
+      }
+    },
+    "143001": {
+      "total_dlc_completed": 14957,
+      "age_groups": {
+        "60-65": 3250,
+        "76-80": 2031,
+        "66-70": 3233,
+        "71-75": 2751,
+        "80+": 1669,
+        "Below 60": 2023
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 14699,
+        "Himachal Pradesh": 24,
+        "Uttar Pradesh": 23,
+        "Punjab": 25,
+        "Invalid Pincode": 59,
+        "Odisha": 2,
+        "Delhi": 98,
+        "Jammu and Kashmir": 3,
+        "Rajasthan": 5,
+        "Karnataka": 5,
+        "Gujarat": 2,
+        "Maharashtra": 5,
+        "West Bengal": 4,
+        "Assam": 1,
+        "Bihar": 2
+      }
+    },
+    "799001": {
+      "total_dlc_completed": 14941,
+      "age_groups": {
+        "71-75": 2660,
+        "60-65": 3943,
+        "76-80": 1942,
+        "Below 60": 1715,
+        "66-70": 3445,
+        "80+": 1236
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "West Bengal": 416,
+        "Other State": 14428,
+        "Uttar Pradesh": 11,
+        "Gujarat": 4,
+        "Karnataka": 45,
+        "Delhi": 12,
+        "Bihar": 1,
+        "Maharashtra": 14,
+        "Odisha": 2,
+        "Assam": 8
+      }
+    },
+    "110001": {
+      "total_dlc_completed": 14657,
+      "age_groups": {
+        "60-65": 4636,
+        "Below 60": 1130,
+        "71-75": 2297,
+        "76-80": 1545,
+        "66-70": 3137,
+        "80+": 1912
+      },
+      "state": "Delhi",
+      "pensioner_states": {
+        "Delhi": 11149,
+        "Other State": 197,
+        "Bihar": 149,
+        "Gujarat": 53,
+        "Uttar Pradesh": 2207,
+        "Rajasthan": 83,
+        "Karnataka": 93,
+        "Maharashtra": 130,
+        "Tamil Nadu": 109,
+        "Telangana": 55,
+        "Jammu and Kashmir": 14,
+        "Odisha": 49,
+        "Himachal Pradesh": 32,
+        "West Bengal": 87,
+        "Kerala": 42,
+        "Assam": 21,
+        "Invalid Pincode": 156,
+        "Punjab": 24,
+        "Andhra Pradesh": 7
+      }
+    },
+    "495001": {
+      "total_dlc_completed": 13298,
+      "age_groups": {
+        "80+": 1410,
+        "Below 60": 1666,
+        "71-75": 2328,
+        "60-65": 3058,
+        "66-70": 3221,
+        "76-80": 1615
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 13122,
+        "Maharashtra": 51,
+        "Telangana": 8,
+        "Uttar Pradesh": 33,
+        "Kerala": 7,
+        "Bihar": 12,
+        "West Bengal": 22,
+        "Karnataka": 12,
+        "Andhra Pradesh": 1,
+        "Delhi": 9,
+        "Gujarat": 3,
+        "Odisha": 15,
+        "Rajasthan": 2,
+        "Punjab": 1
+      }
+    },
+    "782001": {
+      "total_dlc_completed": 12594,
+      "age_groups": {
+        "60-65": 4080,
+        "66-70": 3085,
+        "Below 60": 1741,
+        "71-75": 2029,
+        "76-80": 1079,
+        "80+": 580
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 12567,
+        "Other State": 9,
+        "Karnataka": 1,
+        "West Bengal": 12,
+        "Bihar": 2,
+        "Invalid Pincode": 1,
+        "Delhi": 1,
+        "Rajasthan": 1
+      }
+    },
+    "781006": {
+      "total_dlc_completed": 11283,
+      "age_groups": {
+        "76-80": 1351,
+        "60-65": 3305,
+        "71-75": 2081,
+        "66-70": 2672,
+        "Below 60": 1101,
+        "80+": 773
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 11177,
+        "Other State": 26,
+        "Bihar": 15,
+        "West Bengal": 24,
+        "Maharashtra": 7,
+        "Telangana": 2,
+        "Karnataka": 3,
+        "Uttar Pradesh": 8,
+        "Delhi": 14,
+        "Gujarat": 2,
+        "Invalid Pincode": 2,
+        "Tamil Nadu": 1,
+        "Himachal Pradesh": 1,
+        "Kerala": 1
+      }
+    },
+    "800015": {
+      "total_dlc_completed": 10204,
+      "age_groups": {
+        "71-75": 3037,
+        "80+": 1138,
+        "76-80": 1578,
+        "66-70": 3017,
+        "60-65": 853,
+        "Below 60": 581
+      },
+      "state": "Bihar",
+      "pensioner_states": {
+        "Bihar": 9885,
+        "West Bengal": 47,
+        "Delhi": 71,
+        "Uttar Pradesh": 109,
+        "Punjab": 2,
+        "Maharashtra": 32,
+        "Karnataka": 27,
+        "Rajasthan": 5,
+        "Gujarat": 8,
+        "Other State": 7,
+        "Odisha": 2,
+        "Tamil Nadu": 5,
+        "Telangana": 2,
+        "Invalid Pincode": 1,
+        "Assam": 1
+      }
+    },
+    "797112": {
+      "total_dlc_completed": 9783,
+      "age_groups": {
+        "60-65": 2606,
+        "Below 60": 2498,
+        "66-70": 1806,
+        "71-75": 1303,
+        "76-80": 852,
+        "80+": 718
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 9611,
+        "Assam": 144,
+        "Bihar": 6,
+        "West Bengal": 14,
+        "Uttar Pradesh": 4,
+        "Karnataka": 2,
+        "Delhi": 1,
+        "Rajasthan": 1
+      }
+    },
+    "834002": {
+      "total_dlc_completed": 9638,
+      "age_groups": {
+        "76-80": 1129,
+        "60-65": 2620,
+        "80+": 827,
+        "71-75": 1836,
+        "Below 60": 1090,
+        "66-70": 2136
+      },
+      "state": "Bihar",
+      "pensioner_states": {
+        "Bihar": 9385,
+        "West Bengal": 82,
+        "Uttar Pradesh": 58,
+        "Odisha": 8,
+        "Maharashtra": 29,
+        "Delhi": 28,
+        "Karnataka": 22,
+        "Other State": 10,
+        "Gujarat": 3,
+        "Himachal Pradesh": 2,
+        "Tamil Nadu": 1,
+        "Invalid Pincode": 1,
+        "Telangana": 4,
+        "Rajasthan": 3,
+        "Kerala": 2
+      }
+    },
+    "781335": {
+      "total_dlc_completed": 9533,
+      "age_groups": {
+        "80+": 588,
+        "60-65": 2873,
+        "66-70": 2252,
+        "76-80": 902,
+        "71-75": 1660,
+        "Below 60": 1258
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 9523,
+        "West Bengal": 1,
+        "Delhi": 2,
+        "Other State": 5,
+        "Invalid Pincode": 1,
+        "Uttar Pradesh": 1
+      }
+    },
+    "800001": {
+      "total_dlc_completed": 8927,
+      "age_groups": {
+        "71-75": 2145,
+        "76-80": 1418,
+        "80+": 1497,
+        "60-65": 1165,
+        "66-70": 2058,
+        "Below 60": 644
+      },
+      "state": "Bihar",
+      "pensioner_states": {
+        "Bihar": 8568,
+        "Tamil Nadu": 3,
+        "Delhi": 81,
+        "Uttar Pradesh": 98,
+        "Karnataka": 26,
+        "Maharashtra": 51,
+        "West Bengal": 65,
+        "Telangana": 7,
+        "Gujarat": 8,
+        "Other State": 11,
+        "Rajasthan": 1,
+        "Punjab": 2,
+        "Invalid Pincode": 4,
+        "Jammu and Kashmir": 1,
+        "Odisha": 1
+      }
+    },
+    "462003": {
+      "total_dlc_completed": 8808,
+      "age_groups": {
+        "66-70": 2191,
+        "71-75": 1565,
+        "Below 60": 969,
+        "60-65": 2200,
+        "76-80": 966,
+        "80+": 917
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 8540,
+        "Uttar Pradesh": 113,
+        "Maharashtra": 64,
+        "Rajasthan": 5,
+        "Karnataka": 22,
+        "Gujarat": 6,
+        "Himachal Pradesh": 2,
+        "Kerala": 20,
+        "Bihar": 7,
+        "Invalid Pincode": 8,
+        "Telangana": 1,
+        "Delhi": 15,
+        "Tamil Nadu": 5
+      }
+    },
+    "486001": {
+      "total_dlc_completed": 8544,
+      "age_groups": {
+        "76-80": 952,
+        "66-70": 2050,
+        "Below 60": 998,
+        "71-75": 1564,
+        "80+": 980,
+        "60-65": 2000
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 8474,
+        "Uttar Pradesh": 42,
+        "Maharashtra": 11,
+        "Telangana": 3,
+        "Bihar": 4,
+        "Assam": 1,
+        "Rajasthan": 2,
+        "Delhi": 2,
+        "Gujarat": 2,
+        "Kerala": 2,
+        "West Bengal": 1
+      }
+    },
+    "492001": {
+      "total_dlc_completed": 8359,
+      "age_groups": {
+        "80+": 790,
+        "Below 60": 1007,
+        "60-65": 2059,
+        "71-75": 1291,
+        "66-70": 2198,
+        "76-80": 1014
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 8233,
+        "Odisha": 16,
+        "Karnataka": 8,
+        "Bihar": 12,
+        "Uttar Pradesh": 19,
+        "Delhi": 8,
+        "Rajasthan": 3,
+        "Maharashtra": 35,
+        "Gujarat": 3,
+        "Invalid Pincode": 3,
+        "Tamil Nadu": 4,
+        "Kerala": 5,
+        "Telangana": 4,
+        "West Bengal": 5,
+        "Jammu and Kashmir": 1
+      }
+    },
+    "784001": {
+      "total_dlc_completed": 8344,
+      "age_groups": {
+        "66-70": 1937,
+        "76-80": 893,
+        "80+": 530,
+        "60-65": 2334,
+        "Below 60": 1277,
+        "71-75": 1373
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 8293,
+        "Other State": 26,
+        "Uttar Pradesh": 4,
+        "Maharashtra": 2,
+        "Odisha": 1,
+        "West Bengal": 12,
+        "Karnataka": 1,
+        "Delhi": 4,
+        "Bihar": 1
+      }
+    },
+    "785001": {
+      "total_dlc_completed": 8190,
+      "age_groups": {
+        "66-70": 2067,
+        "60-65": 2507,
+        "Below 60": 830,
+        "76-80": 777,
+        "71-75": 1529,
+        "80+": 480
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 8167,
+        "Uttar Pradesh": 2,
+        "West Bengal": 4,
+        "Other State": 10,
+        "Bihar": 4,
+        "Karnataka": 1,
+        "Gujarat": 1,
+        "Maharashtra": 1
+      }
+    },
+    "786001": {
+      "total_dlc_completed": 8112,
+      "age_groups": {
+        "71-75": 1400,
+        "76-80": 770,
+        "Below 60": 1007,
+        "60-65": 2479,
+        "66-70": 1983,
+        "80+": 473
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 8065,
+        "Uttar Pradesh": 8,
+        "Andhra Pradesh": 1,
+        "West Bengal": 20,
+        "Delhi": 3,
+        "Bihar": 4,
+        "Other State": 6,
+        "Maharashtra": 2,
+        "Karnataka": 3
+      }
+    },
+    "842001": {
+      "total_dlc_completed": 7914,
+      "age_groups": {
+        "80+": 1170,
+        "71-75": 2247,
+        "76-80": 1568,
+        "Below 60": 498,
+        "60-65": 788,
+        "66-70": 1643
+      },
+      "state": "Bihar",
+      "pensioner_states": {
+        "Bihar": 7806,
+        "West Bengal": 14,
+        "Uttar Pradesh": 27,
+        "Gujarat": 4,
+        "Karnataka": 8,
+        "Other State": 10,
+        "Delhi": 28,
+        "Maharashtra": 11,
+        "Telangana": 1,
+        "Rajasthan": 1,
+        "Invalid Pincode": 2,
+        "Assam": 2
+      }
+    },
+    "788001": {
+      "total_dlc_completed": 7848,
+      "age_groups": {
+        "Below 60": 967,
+        "66-70": 2131,
+        "76-80": 663,
+        "60-65": 2472,
+        "80+": 298,
+        "71-75": 1317
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 7769,
+        "West Bengal": 37,
+        "Odisha": 3,
+        "Uttar Pradesh": 6,
+        "Other State": 21,
+        "Maharashtra": 2,
+        "Delhi": 4,
+        "Invalid Pincode": 3,
+        "Karnataka": 2,
+        "Bihar": 1
+      }
+    },
+    "144001": {
+      "total_dlc_completed": 7826,
+      "age_groups": {
+        "Below 60": 940,
+        "66-70": 1654,
+        "60-65": 1925,
+        "71-75": 1443,
+        "76-80": 974,
+        "80+": 890
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 7566,
+        "Delhi": 66,
+        "Himachal Pradesh": 26,
+        "Karnataka": 4,
+        "Invalid Pincode": 103,
+        "Uttar Pradesh": 27,
+        "Punjab": 17,
+        "Rajasthan": 6,
+        "Maharashtra": 3,
+        "Jammu and Kashmir": 1,
+        "Bihar": 5,
+        "West Bengal": 2
+      }
+    },
+    "124001": {
+      "total_dlc_completed": 7773,
+      "age_groups": {
+        "66-70": 1143,
+        "76-80": 1262,
+        "80+": 821,
+        "Below 60": 1159,
+        "71-75": 2129,
+        "60-65": 1259
+      },
+      "state": "Delhi",
+      "pensioner_states": {
+        "Delhi": 7691,
+        "Other State": 13,
+        "Uttar Pradesh": 29,
+        "Gujarat": 3,
+        "Invalid Pincode": 5,
+        "Maharashtra": 6,
+        "Kerala": 2,
+        "Telangana": 3,
+        "Punjab": 8,
+        "Karnataka": 2,
+        "Rajasthan": 5,
+        "West Bengal": 2,
+        "Bihar": 1,
+        "Odisha": 1,
+        "Himachal Pradesh": 2
+      }
+    },
+    "784125": {
+      "total_dlc_completed": 7714,
+      "age_groups": {
+        "Below 60": 1111,
+        "71-75": 1101,
+        "60-65": 2574,
+        "66-70": 1877,
+        "80+": 367,
+        "76-80": 684
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 7705,
+        "Other State": 5,
+        "Odisha": 1,
+        "West Bengal": 2,
+        "Bihar": 1
+      }
+    },
+    "785640": {
+      "total_dlc_completed": 7600,
+      "age_groups": {
+        "60-65": 2512,
+        "66-70": 1862,
+        "76-80": 643,
+        "71-75": 1116,
+        "Below 60": 1035,
+        "80+": 432
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 7589,
+        "Other State": 6,
+        "Uttar Pradesh": 1,
+        "West Bengal": 1,
+        "Delhi": 3
+      }
+    },
+    "834001": {
+      "total_dlc_completed": 7519,
+      "age_groups": {
+        "71-75": 1350,
+        "Below 60": 790,
+        "80+": 827,
+        "60-65": 2039,
+        "76-80": 864,
+        "66-70": 1649
+      },
+      "state": "Bihar",
+      "pensioner_states": {
+        "Bihar": 7396,
+        "Delhi": 13,
+        "Karnataka": 13,
+        "West Bengal": 31,
+        "Other State": 17,
+        "Punjab": 1,
+        "Maharashtra": 12,
+        "Uttar Pradesh": 26,
+        "Odisha": 5,
+        "Telangana": 1,
+        "Rajasthan": 3,
+        "Gujarat": 1
+      }
+    },
+    "452001": {
+      "total_dlc_completed": 7392,
+      "age_groups": {
+        "80+": 1238,
+        "71-75": 1462,
+        "60-65": 1398,
+        "76-80": 1131,
+        "66-70": 1586,
+        "Below 60": 577
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 7264,
+        "Himachal Pradesh": 1,
+        "Delhi": 13,
+        "Maharashtra": 43,
+        "Uttar Pradesh": 21,
+        "Rajasthan": 7,
+        "Kerala": 8,
+        "Gujarat": 19,
+        "Bihar": 2,
+        "Assam": 1,
+        "Karnataka": 7,
+        "Invalid Pincode": 4,
+        "Jammu and Kashmir": 1,
+        "Telangana": 1
+      }
+    },
+    "781325": {
+      "total_dlc_completed": 7266,
+      "age_groups": {
+        "60-65": 2214,
+        "71-75": 1109,
+        "76-80": 611,
+        "Below 60": 1300,
+        "66-70": 1677,
+        "80+": 355
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 7258,
+        "Other State": 6,
+        "West Bengal": 1,
+        "Rajasthan": 1
+      }
+    },
+    "781001": {
+      "total_dlc_completed": 7103,
+      "age_groups": {
+        "60-65": 2682,
+        "Below 60": 614,
+        "76-80": 587,
+        "80+": 421,
+        "71-75": 1045,
+        "66-70": 1754
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 7004,
+        "Bihar": 28,
+        "West Bengal": 23,
+        "Karnataka": 4,
+        "Punjab": 1,
+        "Andhra Pradesh": 1,
+        "Delhi": 6,
+        "Other State": 17,
+        "Uttar Pradesh": 8,
+        "Invalid Pincode": 7,
+        "Odisha": 2,
+        "Maharashtra": 2
+      }
+    },
+    "787001": {
+      "total_dlc_completed": 6878,
+      "age_groups": {
+        "60-65": 2250,
+        "Below 60": 1148,
+        "71-75": 1049,
+        "66-70": 1673,
+        "76-80": 471,
+        "80+": 287
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 6836,
+        "Other State": 35,
+        "Uttar Pradesh": 3,
+        "West Bengal": 3,
+        "Bihar": 1
+      }
+    },
+    "580001": {
+      "total_dlc_completed": 6836,
+      "age_groups": {
+        "71-75": 1402,
+        "60-65": 1371,
+        "66-70": 1477,
+        "80+": 1021,
+        "Below 60": 652,
+        "76-80": 913
+      },
+      "state": "Karnataka",
+      "pensioner_states": {
+        "Karnataka": 6796,
+        "Maharashtra": 28,
+        "Telangana": 4,
+        "Rajasthan": 2,
+        "Delhi": 4,
+        "Kerala": 1,
+        "Gujarat": 1
+      }
+    },
+    "284003": {
+      "total_dlc_completed": 6671,
+      "age_groups": {
+        "66-70": 1828,
+        "60-65": 1860,
+        "71-75": 1282,
+        "80+": 506,
+        "76-80": 564,
+        "Below 60": 631
+      },
+      "state": "Uttar Pradesh",
+      "pensioner_states": {
+        "Uttar Pradesh": 6474,
+        "Other State": 158,
+        "Maharashtra": 17,
+        "Gujarat": 3,
+        "Bihar": 1,
+        "Delhi": 9,
+        "Telangana": 1,
+        "Rajasthan": 3,
+        "Odisha": 1,
+        "Kerala": 1,
+        "Tamil Nadu": 1,
+        "Karnataka": 2
+      }
+    },
+    "585401": {
+      "total_dlc_completed": 6570,
+      "age_groups": {
+        "60-65": 1408,
+        "66-70": 1569,
+        "Below 60": 1003,
+        "76-80": 649,
+        "71-75": 1336,
+        "80+": 605
+      },
+      "state": "Karnataka",
+      "pensioner_states": {
+        "Karnataka": 6438,
+        "Telangana": 97,
+        "Gujarat": 1,
+        "Maharashtra": 32,
+        "Delhi": 1,
+        "Other State": 1
+      }
+    },
+    "580020": {
+      "total_dlc_completed": 6496,
+      "age_groups": {
+        "Below 60": 788,
+        "71-75": 1182,
+        "60-65": 1454,
+        "66-70": 1534,
+        "80+": 812,
+        "76-80": 726
+      },
+      "state": "Karnataka",
+      "pensioner_states": {
+        "Karnataka": 6422,
+        "Telangana": 4,
+        "Kerala": 5,
+        "Tamil Nadu": 10,
+        "West Bengal": 1,
+        "Invalid Pincode": 10,
+        "Maharashtra": 20,
+        "Uttar Pradesh": 3,
+        "Other State": 10,
+        "Andhra Pradesh": 10,
+        "Gujarat": 1
+      }
+    },
+    "586101": {
+      "total_dlc_completed": 6492,
+      "age_groups": {
+        "71-75": 1316,
+        "60-65": 1539,
+        "80+": 608,
+        "76-80": 685,
+        "66-70": 1549,
+        "Below 60": 795
+      },
+      "state": "Karnataka",
+      "pensioner_states": {
+        "Karnataka": 6446,
+        "Maharashtra": 42,
+        "Other State": 3,
+        "Tamil Nadu": 1
+      }
+    },
+    "457001": {
+      "total_dlc_completed": 6479,
+      "age_groups": {
+        "71-75": 1128,
+        "76-80": 763,
+        "Below 60": 633,
+        "60-65": 1587,
+        "80+": 814,
+        "66-70": 1554
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 6362,
+        "Gujarat": 42,
+        "Maharashtra": 13,
+        "Rajasthan": 29,
+        "Himachal Pradesh": 1,
+        "Uttar Pradesh": 17,
+        "Bihar": 4,
+        "Karnataka": 1,
+        "Delhi": 5,
+        "Kerala": 2,
+        "Tamil Nadu": 1,
+        "Odisha": 1,
+        "Telangana": 1
+      }
+    },
+    "122001": {
+      "total_dlc_completed": 6454,
+      "age_groups": {
+        "66-70": 939,
+        "60-65": 752,
+        "Below 60": 432,
+        "76-80": 1318,
+        "71-75": 1834,
+        "80+": 1179
+      },
+      "state": "Delhi",
+      "pensioner_states": {
+        "Delhi": 6305,
+        "Uttar Pradesh": 47,
+        "Odisha": 2,
+        "Bihar": 8,
+        "Other State": 22,
+        "Maharashtra": 9,
+        "Rajasthan": 15,
+        "Punjab": 6,
+        "Jammu and Kashmir": 2,
+        "West Bengal": 4,
+        "Himachal Pradesh": 6,
+        "Gujarat": 5,
+        "Invalid Pincode": 8,
+        "Assam": 5,
+        "Karnataka": 6,
+        "Telangana": 3,
+        "Tamil Nadu": 1
+      }
+    },
+    "141001": {
+      "total_dlc_completed": 6346,
+      "age_groups": {
+        "71-75": 1232,
+        "60-65": 1349,
+        "66-70": 1332,
+        "76-80": 842,
+        "80+": 973,
+        "Below 60": 618
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 6174,
+        "Uttar Pradesh": 30,
+        "Delhi": 59,
+        "Punjab": 18,
+        "Invalid Pincode": 40,
+        "Rajasthan": 1,
+        "Himachal Pradesh": 16,
+        "Maharashtra": 1,
+        "Tamil Nadu": 1,
+        "Jammu and Kashmir": 2,
+        "Bihar": 4
+      }
+    },
+    "342001": {
+      "total_dlc_completed": 6242,
+      "age_groups": {
+        "80+": 1174,
+        "66-70": 1272,
+        "71-75": 1061,
+        "Below 60": 699,
+        "60-65": 1302,
+        "76-80": 734
+      },
+      "state": "Rajasthan",
+      "pensioner_states": {
+        "Rajasthan": 6174,
+        "Kerala": 3,
+        "Uttar Pradesh": 21,
+        "Delhi": 12,
+        "Gujarat": 5,
+        "Maharashtra": 9,
+        "Other State": 3,
+        "Telangana": 2,
+        "Invalid Pincode": 11,
+        "Bihar": 1,
+        "Tamil Nadu": 1
+      }
+    },
+    "497001": {
+      "total_dlc_completed": 6192,
+      "age_groups": {
+        "66-70": 1506,
+        "Below 60": 1042,
+        "80+": 431,
+        "60-65": 1646,
+        "71-75": 984,
+        "76-80": 583
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 6135,
+        "Invalid Pincode": 1,
+        "Uttar Pradesh": 29,
+        "Bihar": 12,
+        "Delhi": 4,
+        "Maharashtra": 4,
+        "Kerala": 6,
+        "Gujarat": 1
+      }
+    },
+    "744101": {
+      "total_dlc_completed": 6097,
+      "age_groups": {
+        "71-75": 921,
+        "60-65": 1843,
+        "66-70": 1307,
+        "Below 60": 1086,
+        "80+": 417,
+        "76-80": 523
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 5986,
+        "Tamil Nadu": 45,
+        "Uttar Pradesh": 17,
+        "Delhi": 2,
+        "Kerala": 23,
+        "Bihar": 8,
+        "West Bengal": 8,
+        "Maharashtra": 1,
+        "Karnataka": 5,
+        "Invalid Pincode": 1,
+        "Telangana": 1
+      }
+    },
+    "783101": {
+      "total_dlc_completed": 6084,
+      "age_groups": {
+        "80+": 260,
+        "66-70": 1418,
+        "60-65": 2088,
+        "71-75": 862,
+        "Below 60": 998,
+        "76-80": 458
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 6062,
+        "Other State": 16,
+        "Maharashtra": 1,
+        "Bihar": 2,
+        "Rajasthan": 1,
+        "West Bengal": 2
+      }
+    },
+    "785621": {
+      "total_dlc_completed": 6072,
+      "age_groups": {
+        "60-65": 1733,
+        "Below 60": 876,
+        "66-70": 1445,
+        "80+": 390,
+        "71-75": 993,
+        "76-80": 635
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 6067,
+        "Tamil Nadu": 1,
+        "Karnataka": 2,
+        "Other State": 2
+      }
+    },
+    "477001": {
+      "total_dlc_completed": 6042,
+      "age_groups": {
+        "Below 60": 999,
+        "66-70": 1088,
+        "76-80": 761,
+        "80+": 850,
+        "60-65": 1245,
+        "71-75": 1099
+      },
+      "state": "Other State",
+      "pensioner_states": {
+        "Other State": 5777,
+        "Uttar Pradesh": 241,
+        "Delhi": 5,
+        "Rajasthan": 3,
+        "Assam": 1,
+        "Gujarat": 9,
+        "Maharashtra": 3,
+        "Karnataka": 1,
+        "West Bengal": 1,
+        "Invalid Pincode": 1
+      }
+    },
+    "781301": {
+      "total_dlc_completed": 5925,
+      "age_groups": {
+        "66-70": 1507,
+        "71-75": 905,
+        "60-65": 1938,
+        "80+": 294,
+        "Below 60": 801,
+        "76-80": 480
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 5921,
+        "Other State": 3,
+        "West Bengal": 1
+      }
+    },
+    "751009": {
+      "total_dlc_completed": 5912,
+      "age_groups": {
+        "76-80": 1184,
+        "60-65": 895,
+        "80+": 1534,
+        "71-75": 1218,
+        "66-70": 736,
+        "Below 60": 345
+      },
+      "state": "Odisha",
+      "pensioner_states": {
+        "Odisha": 5812,
+        "Delhi": 15,
+        "West Bengal": 18,
+        "Gujarat": 2,
+        "Other State": 13,
+        "Telangana": 10,
+        "Tamil Nadu": 1,
+        "Karnataka": 11,
+        "Bihar": 4,
+        "Uttar Pradesh": 3,
+        "Maharashtra": 8,
+        "Invalid Pincode": 14,
+        "Andhra Pradesh": 1
+      }
+    },
+    "160017": {
+      "total_dlc_completed": 5892,
+      "age_groups": {
+        "80+": 803,
+        "60-65": 1191,
+        "71-75": 1461,
+        "66-70": 1146,
+        "76-80": 940,
+        "Below 60": 351
+      },
+      "state": "Punjab",
+      "pensioner_states": {
+        "Punjab": 3773,
+        "Delhi": 1874,
+        "Other State": 85,
+        "Uttar Pradesh": 40,
+        "Himachal Pradesh": 48,
+        "Invalid Pincode": 50,
+        "Kerala": 4,
+        "Karnataka": 4,
+        "Gujarat": 2,
+        "Maharashtra": 2,
+        "Telangana": 6,
+        "Tamil Nadu": 1,
+        "Rajasthan": 3
+      }
+    },
+    "788710": {
+      "total_dlc_completed": 5876,
+      "age_groups": {
+        "76-80": 569,
+        "66-70": 1515,
+        "60-65": 1653,
+        "71-75": 1062,
+        "Below 60": 791,
+        "80+": 286
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 5821,
+        "Uttar Pradesh": 2,
+        "Other State": 12,
+        "West Bengal": 29,
+        "Delhi": 5,
+        "Maharashtra": 2,
+        "Gujarat": 1,
+        "Karnataka": 3,
+        "Telangana": 1
+      }
+    },
+    "123401": {
+      "total_dlc_completed": 5839,
+      "age_groups": {
+        "66-70": 903,
+        "60-65": 1063,
+        "71-75": 1510,
+        "76-80": 820,
+        "Below 60": 1035,
+        "80+": 508
+      },
+      "state": "Delhi",
+      "pensioner_states": {
+        "Delhi": 5669,
+        "Rajasthan": 149,
+        "Punjab": 3,
+        "Uttar Pradesh": 7,
+        "Maharashtra": 3,
+        "Other State": 6,
+        "Assam": 1,
+        "West Bengal": 1
+      }
+    },
+    "781021": {
+      "total_dlc_completed": 5839,
+      "age_groups": {
+        "80+": 591,
+        "66-70": 1336,
+        "76-80": 626,
+        "60-65": 1838,
+        "71-75": 910,
+        "Below 60": 538
+      },
+      "state": "Assam",
+      "pensioner_states": {
+        "Assam": 5782,
+        "Uttar Pradesh": 5,
+        "Other State": 18,
+        "Delhi": 6,
+        "West Bengal": 12,
+        "Bihar": 8,
+        "Maharashtra": 6,
+        "Karnataka": 2
+      }
+    },
+    "802301": {
+      "total_dlc_completed": 5785,
+      "age_groups": {
+        "80+": 744,
+        "71-75": 1373,
+        "60-65": 706,
+        "66-70": 1134,
+        "Below 60": 872,
+        "76-80": 956
+      },
+      "state": "Bihar",
+      "pensioner_states": {
+        "Bihar": 5684,
+        "Rajasthan": 1,
+        "Odisha": 1,
+        "Uttar Pradesh": 40,
+        "West Bengal": 22,
+        "Other State": 8,
+        "Karnataka": 3,
+        "Delhi": 22,
+        "Maharashtra": 2,
+        "Assam": 1,
+        "Gujarat": 1
+      }
+    }
+  }
+}

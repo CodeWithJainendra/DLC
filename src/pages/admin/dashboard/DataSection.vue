@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-wrap gap-4">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
     <!-- First two cards: Total Registered Pensioners and Verified This Month -->
-    <div class="flex-1 min-w-[280px] max-w-[320px]" v-for="metric in dashboardMetrics.slice(0, 2)" :key="metric.id">
+    <div v-for="metric in dashboardMetrics.slice(0, 2)" :key="metric.id" class="w-full">
       <DataSectionItem
         :title="metric.title"
         :value="metric.value"
@@ -17,7 +17,7 @@
     </div>
 
     <!-- Third card: Graph card for Monthly Pensioner Verifications -->
-    <div class="flex-1 min-w-[280px] max-w-[320px]">
+    <div class="w-full">
       <VaCard
         class="cardview"
         style="height: 100px; min-height: 100px; max-height: 100px; transition: all 0.3s ease;"
@@ -45,7 +45,6 @@ import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useColors, useGlobalConfig } from 'vuestic-ui'
 import DataSectionItem from './DataSectionItem.vue'
 import VaChart from '@/components/va-charts/VaChart.vue'
-import { pensionersApi } from '@/services/pensionersApi'
 import { statsApi } from '@/services/statsApi'
 
 interface DashboardMetric {
@@ -69,12 +68,12 @@ const gridColor = computed(() => isDarkTheme.value ? 'rgba(255, 255, 255, 0.1)' 
 const tooltipBg = computed(() => isDarkTheme.value ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)')
 const tooltipText = computed(() => isDarkTheme.value ? '#ffffff' : '#1f2937')
 
-// Real-time stats from API
+// Real-time stats from Flask backend
 const apiStats = ref({
   totalPensioners: '0',
   verifiedThisMonth: '0',
-  pendingVerification: '0',
-  flaggedProfiles: '0'
+  pendingVerifications: '0',
+  totalAmount: '₹0'
 })
 
 const dashboardMetrics = computed<DashboardMetric[]>(() => [
@@ -457,10 +456,10 @@ const simpleChartOptions = {
   animation: { duration: 800 }
 }
 
-// Fetch real-time stats from API
+// Fetch real-time stats from Flask backend
 async function fetchApiStats() {
   try {
-    const stats = await statsApi.getPensionerStats()
+    const stats = await statsApi.getFormattedStats()
     apiStats.value = stats
     console.log('📊 Updated dashboard stats:', stats)
   } catch (error) {
@@ -469,90 +468,36 @@ async function fetchApiStats() {
     apiStats.value = {
       totalPensioners: '0',
       verifiedThisMonth: '0',
-      pendingVerification: '0',
-      flaggedProfiles: '0'
+      pendingVerifications: '0',
+      totalAmount: '₹0'
     }
   }
 }
 
-async function fetchStateVerifications() {
-  // Build a weekly trend from your running API (/pensioners)
+async function fetchVerificationTrends() {
+  // Fetch analytics trends from Flask backend
   try {
-    const response = await pensionersApi.getPensioners()
-    const pensioners = response.DLC_generated_pensioners || []
-
-    // Detect a timestamp field on records
-    const getRecordDate = (p: any): Date | null => {
-      const candidates = [
-        p.timestamp, p.created_at, p.updated_at, p.generated_at,
-        p.dlc_time, p.dlc_date, p.date, p.datetime
-      ]
-      for (const c of candidates) {
-        if (!c) continue
-        const d = new Date(c)
-        if (!isNaN(d.getTime())) return d
-      }
-      return null
-    }
-
-    // Aggregate by ISO week for the last 8 weeks
-    const now = new Date()
-    const start = new Date(now)
-    start.setDate(start.getDate() - 7 * 8)
-
-    const buckets: Record<string, number> = {}
-    const weekLabel = (d: Date) => {
-      const date = new Date(d)
-      const weekStart = new Date(date)
-      const day = weekStart.getDay()
-      const diff = (day === 0 ? 6 : day - 1) // make Monday start
-      weekStart.setDate(weekStart.getDate() - diff)
-      const m = weekStart.toLocaleString('en-GB', { month: 'short' })
-      const dd = String(weekStart.getDate()).padStart(2, '0')
-      return `${dd} ${m}`
-    }
-
-    pensioners.forEach((p: any) => {
-      const d = getRecordDate(p)
-      if (!d) return
-      if (d < start) return
-      const label = weekLabel(d)
-      buckets[label] = (buckets[label] || 0) + 1
-    })
-
-    // If no time field available, fallback to a simple rolling weekly split
-    if (Object.keys(buckets).length === 0) {
-      const total = pensioners.length
-      const weeks = 8
-      const base = Math.max(1, Math.floor(total / weeks))
-      const series: number[] = []
-      for (let i = 0; i < weeks; i++) {
-        series.push(base + Math.floor((i / weeks) * base * 0.6))
-      }
-      const labels: string[] = []
-      const tmp = new Date(start)
-      for (let i = 0; i < weeks; i++) {
-        labels.push(weekLabel(tmp))
-        tmp.setDate(tmp.getDate() + 7)
-      }
+    const trends = await statsApi.getAnalyticsTrends(30)
+    
+    if (trends.dates.length > 0 && trends.verifications.length > 0) {
+      // Use last 8 data points for the chart
+      const lastEight = Math.min(8, trends.dates.length)
+      const labels = trends.dates.slice(-lastEight).map(date => {
+        const d = new Date(date)
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })
+      })
+      const data = trends.verifications.slice(-lastEight)
+      
       simpleChartData.value.labels = labels
-      simpleChartData.value.datasets[0].data = series
-      topStateVerifications.value = series[series.length - 1].toLocaleString()
-      return
+      simpleChartData.value.datasets[0].data = data
+      topStateVerifications.value = data[data.length - 1]?.toLocaleString() || '0'
+      simpleChartData.value.datasets[0].borderColor = '#3b82f6'
+      simpleChartData.value.datasets[0].backgroundColor = 'rgba(59, 130, 246, 0.2)'
+    } else {
+      setDemoData()
     }
-
-    // Sort labels chronologically by reconstructing date from label
-    const parseLabel = (s: string) => new Date(`${s} ${now.getFullYear()}`)
-    const labels = Object.keys(buckets).sort((a, b) => parseLabel(a).getTime() - parseLabel(b).getTime())
-    const data = labels.map(l => buckets[l])
-
-    simpleChartData.value.labels = labels
-    simpleChartData.value.datasets[0].data = data
-    topStateVerifications.value = data[data.length - 1]?.toLocaleString() || '0'
-    simpleChartData.value.datasets[0].borderColor = '#3b82f6'
-    simpleChartData.value.datasets[0].backgroundColor = 'rgba(59, 130, 246, 0.2)'
-  } catch (e) {
-    console.log('API not available, using demo data for weekly trend')
+  } catch (error) {
+    console.error('Failed to fetch verification trends:', error)
     setDemoData()
   }
 }
@@ -569,12 +514,12 @@ function isDataIncreasing(data: number[]): boolean {
 
 // Demo data function for pensioner verifications
 function setDemoData() {
-  topStateVerifications.value = '39,200'
+  topStateVerifications.value = '156'
   simpleChartData.value.labels = [
-    'January 2024', 'February 2024', 'March 2024', 'April 2024', 'May 2024', 'June 2024', 'July 2024', 'August 2024'
+    '18 Aug', '19 Aug', '20 Aug', '21 Aug', '22 Aug', '23 Aug', '24 Aug', '25 Aug'
   ] as string[]
   simpleChartData.value.datasets[0].data = [
-    32000, 33500, 31800, 34200, 35600, 37100, 38400, 39200
+    120, 135, 128, 142, 156, 171, 148, 156
   ] as number[]
   // Blue color for pensioner verification data
   simpleChartData.value.datasets[0].borderColor = '#3b82f6'
@@ -587,12 +532,12 @@ let refreshInterval: NodeJS.Timeout | null = null
 onMounted(() => {
   // Fetch initial data
   fetchApiStats()
-  fetchStateVerifications()
+  fetchVerificationTrends()
 
   // Set up real-time data refresh
   refreshInterval = setInterval(() => {
     fetchApiStats()
-    fetchStateVerifications()
+    fetchVerificationTrends()
   }, 30000) // Refresh every 30 seconds
 })
 
@@ -610,10 +555,7 @@ onUnmounted(() => {
 }
 
 .cardview:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  z-index: 2;
+  /* Removed transform and enhanced shadow effects */
 }
 
 /* Dark theme border support */
@@ -622,15 +564,13 @@ onUnmounted(() => {
 }
 
 :deep(.va-card:hover) {
-  border: 1px solid var(--va-background-border-hover, rgba(255, 255, 255, 0.12));
+  /* Removed hover border changes */
 }
 </style>
 
 <style scoped>
 .full-graph-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  z-index: 2;
+  /* Removed transform and shadow effects */
 }
 
 .cardview {

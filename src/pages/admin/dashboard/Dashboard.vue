@@ -6,7 +6,9 @@ import YearlyBreakup from './cards/YearlyBreakup.vue'
 import MonthlyEarnings from './cards/MonthlyEarnings.vue'
 import AuthenticationMethods from './cards/AuthenticationMethods.vue'
 
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import { useGlobalStore } from '@/stores/global-store'
+import { storeToRefs } from 'pinia'
 // import { useDark } from 'vuestic-ui' // Incorrect import, removed
 // If you want dark mode detection, use useColors from vuestic-ui or use a custom solution
 // Chatbot message state
@@ -34,12 +36,156 @@ const showChatbot = ref(false)
 // Simple fallback for dark mode (replace with your own logic or Vuestic composable)
 const isDark = ref(false)
 
+// Filter functionality
+const globalStore = useGlobalStore()
+const { showFilterPanel, selectedStateInfo } = storeToRefs(globalStore)
+
+// Track if we're in district view to hide state info card
+const isDistrictView = ref(false)
+
+// Watch for changes in selectedStateInfo to determine view state
+watch(selectedStateInfo, (newValue) => {
+  // If selectedStateInfo is cleared, we're likely in district view
+  if (!newValue) {
+    isDistrictView.value = true
+  } else {
+    isDistrictView.value = false
+  }
+}, { immediate: true })
+const filterOptions = ref({
+  chooseDate: '',
+  verificationMode: '',
+  department: '',
+  typeOfPensioner: '',
+  disbursingAuthority: ''
+})
+
+function applyFilters() {
+  console.log('Applying filters:', filterOptions.value)
+  // API integration logic will go here
+  const { toggleFilterPanel } = useGlobalStore()
+  toggleFilterPanel()
+}
+
+function clearFilters() {
+  filterOptions.value = {
+    chooseDate: '',
+    verificationMode: '',
+    department: '',
+    typeOfPensioner: '',
+    disbursingAuthority: ''
+  }
+}
+
 </script>
 
 <template>
   <section class="flex flex-col">
+    <!-- Filter Panel -->
+    <Transition
+      enter-active-class="transition-all duration-300 ease-out"
+      enter-from-class="opacity-0 transform -translate-y-4 scale-95"
+      enter-to-class="opacity-100 transform translate-y-0 scale-100"
+      leave-active-class="transition-all duration-200 ease-in"
+      leave-from-class="opacity-100 transform translate-y-0 scale-100"
+      leave-to-class="opacity-0 transform -translate-y-4 scale-95"
+    >
+      <div v-if="showFilterPanel" class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg p-3 mb-3 z-10 transform-gpu">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 items-end">
+        <!-- Choose Date -->
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">CHOOSE DATE</label>
+          <input 
+            type="date" 
+            v-model="filterOptions.chooseDate"
+            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          />
+        </div>
+
+        <!-- Verification Mode -->
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">VERIFICATION MODE</label>
+          <select 
+            v-model="filterOptions.verificationMode"
+            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          >
+            <option value="">All Modes</option>
+            <option value="face">Face Verification</option>
+            <option value="digital">Digital LC</option>
+            <option value="video">Video LC</option>
+            <option value="manual">Manual LC</option>
+          </select>
+        </div>
+
+
+        <!-- Department -->
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">DEPARTMENT</label>
+          <select 
+            v-model="filterOptions.department"
+            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          >
+            <option value="">All Departments</option>
+            <option value="defence">Defence</option>
+            <option value="railways">Railways</option>
+            <option value="civil">Civil</option>
+            <option value="post">Post</option>
+            <option value="telecom">Telecom</option>
+          </select>
+        </div>
+
+        <!-- Type of Pensioner -->
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">TYPE OF PENSIONER</label>
+          <select 
+            v-model="filterOptions.typeOfPensioner"
+            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          >
+            <option value="">All Types</option>
+            <option value="central">Central</option>
+            <option value="state">State</option>
+            <option value="epfo">EPFO</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+
+        <!-- Disbursing Authority -->
+        <div>
+          <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">DISBURSING AUTHORITY</label>
+          <select 
+            v-model="filterOptions.disbursingAuthority"
+            class="w-full px-2 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+          >
+            <option value="">All Authorities</option>
+            <option value="bank">Bank</option>
+            <option value="post_office">Post Office</option>
+            <option value="epfo">EPFO</option>
+            <option value="treasury">Treasury</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-2 mt-3">
+        <button 
+          @click="clearFilters"
+          class="px-3 py-1.5 text-sm text-gray-600 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+        >
+          Clear
+        </button>
+        <button 
+          @click="applyFilters"
+          class="px-4 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-1"
+        >
+          <VaIcon name="check" size="14px" />
+          Apply Filters
+        </button>
+      </div>
+      </div>
+    </Transition>
+
     <!-- Top Stats and DLC Status Section -->
-    <div class="flex flex-col sm:flex-row gap-2">
+    <div class="flex flex-col sm:flex-row gap-2 relative z-10">
       <DataSection class="w-full sm:w-[70%]" />
       <div class="flex flex-col gap-2 w-full sm:w-[30%]">
         <YearlyBreakup />
@@ -49,8 +195,43 @@ const isDark = ref(false)
     </div>
 
     <!-- Map Section - Moved up for better positioning -->
-    <div class="flex flex-col sm:flex-row gap-2 -mt-[40.1rem] mb-0">
+    <div class="flex flex-col sm:flex-row gap-2 -mt-[33.3rem] mb-0 relative z-20">
       <RevenueByLocationMap class="w-full sm:w-[69%]" />
+      
+      <!-- Floating State Info Card - Outside map, positioned on dashboard -->
+      <transition name="state-info-slide">
+        <div v-if="selectedStateInfo && !isDistrictView" class="dashboard-floating-state-card">
+          <div class="state-info-header">
+            <h3>{{ selectedStateInfo.name }}</h3>
+            <button @click="globalStore.clearSelectedStateInfo()" class="close-state-info">
+              <VaIcon name="close" size="16px" />
+            </button>
+          </div>
+          <div class="state-info-content">
+            <div class="state-stat">
+              <span class="stat-label">Total Pensioners:</span>
+              <span class="stat-value">{{ selectedStateInfo.totalPensioners?.toLocaleString() || 0 }}</span>
+            </div>
+            <div class="state-stat">
+              <span class="stat-label">Banks:</span>
+              <span class="stat-value">{{ selectedStateInfo.totalBanks || 0 }}</span>
+            </div>
+            <div class="state-stat">
+              <span class="stat-label">Districts:</span>
+              <span class="stat-value">{{ selectedStateInfo.districts?.length || 0 }}</span>
+            </div>
+            <div class="top-banks-section">
+              <h4>Top Banks:</h4>
+              <div class="banks-list">
+                <div v-for="bank in (selectedStateInfo.topBanks || []).slice(0, 3)" :key="bank.name" class="bank-item">
+                  <span class="bank-name">{{ bank.name }}</span>
+                  <span class="bank-count">({{ bank.count }})</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
     </div>
 
 
@@ -173,5 +354,180 @@ const isDark = ref(false)
 .ask-ai-popup-leave-to {
   opacity: 0;
   transform: translateY(40px) scale(0.95);
+}
+
+/* Dashboard Floating State Info Card */
+.dashboard-floating-state-card {
+  position: absolute;
+  top: 0;
+  right: -300px;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.state-info-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.state-info-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.close-state-info {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: white;
+}
+
+.close-state-info:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(1.1);
+}
+
+.state-info-content {
+  padding: 20px;
+}
+
+.state-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.top-banks-section {
+  margin-top: 16px;
+}
+
+.top-banks-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.banks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bank-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #667eea;
+}
+
+.bank-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #374151;
+  flex: 1;
+  margin-right: 8px;
+}
+
+.bank-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: #667eea;
+}
+
+/* Animation for dashboard state info card */
+.state-info-slide-enter-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.state-info-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.state-info-slide-enter-from {
+  opacity: 0;
+  transform: translateX(100%) scale(0.9);
+}
+
+.state-info-slide-enter-to {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.state-info-slide-leave-from {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.state-info-slide-leave-to {
+  opacity: 0;
+  transform: translateX(100%) scale(0.9);
+}
+
+/* Dark theme support */
+[data-theme='dark'] .dashboard-floating-state-card {
+  background: rgba(30, 30, 30, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .state-stat {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-theme='dark'] .stat-label {
+  color: #9ca3af;
+}
+
+[data-theme='dark'] .stat-value {
+  color: #f9fafb;
+}
+
+[data-theme='dark'] .top-banks-section h4 {
+  color: #e5e7eb;
+}
+
+[data-theme='dark'] .bank-item {
+  background: rgba(102, 126, 234, 0.2);
+}
+
+[data-theme='dark'] .bank-name {
+  color: #d1d5db;
 }
 </style>

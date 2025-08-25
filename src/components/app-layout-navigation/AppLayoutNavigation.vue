@@ -1,28 +1,40 @@
 <template>
-  <div class="flex gap-2">
-    <VaIconMenuCollapsed
-      class="cursor-pointer"
-      :class="{ 'x-flip': !isSidebarMinimized }"
-      :color="collapseIconColor"
-      @click="isSidebarMinimized = !isSidebarMinimized"
-    />
+  <div class="flex justify-between items-center">
+    <div class="flex gap-2">
+      <VaIconMenuCollapsed
+        class="cursor-pointer"
+        :class="{ 'x-flip': !isSidebarMinimized }"
+        :color="collapseIconColor"
+        @click="isSidebarMinimized = !isSidebarMinimized"
+      />
 
-    <nav class="flex items-center">
-      <VaBreadcrumbs>
-        <VaBreadcrumbsItem label="Home" :to="{ name: 'dashboard' }" />
-        <VaBreadcrumbsItem
-          v-for="item in items"
-          :key="item.label"
-          :label="item.label"
-          @click="handleBreadcrumbClick(item)"
-        />
-      </VaBreadcrumbs>
-    </nav>
+      <nav class="flex items-center">
+        <VaBreadcrumbs>
+          <VaBreadcrumbsItem label="Home" :to="{ name: 'dashboard' }" />
+          <VaBreadcrumbsItem
+            v-for="item in items"
+            :key="item.label"
+            :label="item.label"
+            @click="handleBreadcrumbClick(item)"
+          />
+        </VaBreadcrumbs>
+      </nav>
+    </div>
+
+    <!-- Filter Button -->
+    <button 
+      v-if="route.name === 'dashboard'"
+      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-200 shadow-md hover:shadow-lg"
+      @click="toggleFilter"
+    >
+      <VaIcon name="filter_list" size="18px" />
+      Filter
+    </button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useColors } from 'vuestic-ui'
@@ -86,6 +98,13 @@ const handleBreadcrumbClick = (item: BreadcrumbNavigationItem) => {
   if (!item.hasChildren) {
     router.push(item.to)
   }
+}
+
+// Filter functionality
+const { toggleFilterPanel } = useGlobalStore()
+
+const toggleFilter = () => {
+  toggleFilterPanel()
 }
 </script>
 

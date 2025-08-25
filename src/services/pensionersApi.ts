@@ -244,3 +244,88 @@ class PensionersApiService {
 }
 
 export const pensionersApi = new PensionersApiService()
+
+// Excel Pensioner Data API Service
+export interface ExcelPensionerData {
+  state_wise_data: Record<string, {
+    total_pensioners: number
+    age_groups: Record<string, number>
+    bank_locations: Record<string, number>
+    pincode_counts: Record<string, number>
+  }>
+  total_records: number
+  total_states: number
+  processed_at: string
+  sample_note?: string
+}
+
+export interface AgeGroupSummary {
+  ageGroup: string
+  count: number
+}
+
+class ExcelPensionerApiService {
+  private baseUrl: string
+
+  constructor() {
+    this.baseUrl = 'http://localhost:5000/api'
+  }
+
+  async getExcelPensionerData(): Promise<ExcelPensionerData> {
+    try {
+      const response = await fetch(`${this.baseUrl}/excel-pensioner-data`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      console.log('✅ Excel pensioner data received:', data)
+      return data
+    } catch (error) {
+      console.error('❌ Error fetching Excel pensioner data:', error)
+      console.error('Full error details:', error)
+      // Return fallback data
+      return {
+        state_wise_data: {},
+        total_records: 0,
+        total_states: 0,
+        processed_at: new Date().toISOString(),
+        sample_note: 'Fallback data - API unavailable'
+      }
+    }
+  }
+
+  async getAgeGroupSummary(): Promise<AgeGroupSummary[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/excel-age-group-summary`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        mode: 'cors',
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      console.log('✅ Age group summary received:', data)
+      return data
+    } catch (error) {
+      console.error('❌ Error fetching age group summary:', error)
+      return []
+    }
+  }
+}
+
+export const excelPensionerApi = new ExcelPensionerApiService()

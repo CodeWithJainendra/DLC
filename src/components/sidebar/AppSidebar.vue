@@ -1,6 +1,28 @@
 <template>
-  <VaSidebar v-model="writableVisible" :width="sidebarWidth" :color="color" minimized-width="0">
+  <VaSidebar
+    v-model="writableVisible"
+    :minimized="localMinimized"
+    :width="localMinimized ? '64px' : `${sidebarWidth}px`"
+    :minimized-width="'64px'"
+    :color="color"
+    class="relative"
+  >
+    <!-- Collapse/Expand Handle -->
+    <div 
+      class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 w-4 h-16 bg-gray-200 dark:bg-gray-700 rounded-r-lg flex items-center justify-center cursor-pointer z-30 hover:bg-primary-500 hover:text-white transition-colors"
+      @click="toggleSidebar"
+    >
+      <VaIcon :name="localMinimized ? 'chevron_right' : 'chevron_left'" size="small" />
+    </div>
+    <!-- Width Resize Handle (only when expanded) -->
+    <div
+      v-if="!localMinimized"
+      class="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary-500 active:bg-primary-600 transition-colors z-10"
+      @mousedown="startResize"
+    />
+    
     <div class="flex flex-col h-full">
+
       <!-- Navigation Menu -->
       <div class="flex-1">
         <VaAccordion v-model="value" multiple>
@@ -15,7 +37,7 @@
                 role="button"
                 hover-opacity="0.10"
               >
-                <VaSidebarItemContent class="py-3 pr-2 pl-4">
+                <VaSidebarItemContent :class="['py-3 pr-2', localMinimized ? 'pl-3' : 'pl-4']">
                   <VaIcon
                     v-if="route.meta.icon"
                     aria-hidden="true"
@@ -23,7 +45,7 @@
                     size="20px"
                     :color="iconColor(route)"
                   />
-                  <VaSidebarItemTitle class="flex justify-between items-center leading-5 font-semibold">
+                  <VaSidebarItemTitle v-if="!localMinimized" class="flex justify-between items-center leading-5 font-semibold">
                     {{ t(route.displayName) }}
                     <VaIcon v-if="route.children" :name="arrowDirection(isCollapsed)" size="20px" />
                   </VaSidebarItemTitle>
@@ -31,7 +53,7 @@
               </VaSidebarItem>
             </template>
             <template #body>
-              <div v-for="(childRoute, index2) in route.children" :key="index2">
+              <div v-if="!localMinimized" v-for="(childRoute, index2) in route.children" :key="index2">
                 <VaSidebarItem
                   :to="{ name: childRoute.name }"
                   :active="isActiveChildRoute(childRoute)"
@@ -52,17 +74,18 @@
         </VaAccordion>
       </div>
 
-      <!-- Version Footer -->
-      <div class="p-4 border-t border-gray-200">
+      <!-- Footer: Version -->
+      <div class="p-4 border-t border-[color:var(--va-border)] mt-auto">
         <div class="text-center text-sm text-secondary">
-          Version 4.0.0
+          v4.0.0
         </div>
       </div>
     </div>
   </VaSidebar>
 </template>
+
 <script lang="ts">
-import { defineComponent, watch, ref, computed } from 'vue'
+import { defineComponent, watch, ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute } from 'vue-router'
 
 import { useI18n } from 'vue-i18n'
@@ -75,8 +98,9 @@ export default defineComponent({
   props: {
     visible: { type: Boolean, default: true },
     mobile: { type: Boolean, default: false },
+    minimized: { type: Boolean, default: false },
   },
-  emits: ['update:visible'],
+  emits: ['update:visible', 'update:minimized'],
 
   setup: (props, { emit }) => {
     const { getColor, colorToRgba } = useColors()
@@ -84,6 +108,14 @@ export default defineComponent({
     const { t } = useI18n()
 
     const value = ref<boolean[]>([])
+    // Local minimized state to work even if parent doesn't sync
+    const localMinimized = ref<boolean>(props.minimized)
+    watch(
+      () => props.minimized,
+      (v) => (localMinimized.value = v),
+    )
+    // Width for expanded state
+    const sidebarWidth = ref<number>(280)
 
     const writableVisible = computed({
       get: () => props.visible,
@@ -103,19 +135,51 @@ export default defineComponent({
     const setActiveExpand = () =>
       (value.value = navigationRoutes.routes.map((route: INavigationRoute) => routeHasActiveChild(route)))
 
-    const sidebarWidth = computed(() => (props.mobile ? '100vw' : '280px'))
+    const sidebarMinWidth = computed(() => (props.mobile ? '0' : '64'))
     const color = computed(() => getColor('background-secondary'))
     const activeColor = computed(() => colorToRgba(getColor('focus'), 0.1))
+
+    // Toggle between collapsed and expanded states
+    const toggleSidebar = () => {
+      localMinimized.value = !localMinimized.value
+      emit('update:minimized', localMinimized.value)
+    }
+
+    // Resize logic for expanded state
+    const startResize = (e: MouseEvent) => {
+      const startX = e.pageX
+      const startWidth = sidebarWidth.value
+
+      const onMouseMove = (e: MouseEvent) => {
+        const newWidth = startWidth + e.pageX - startX
+        const clamped = Math.min(400, Math.max(200, newWidth))
+        sidebarWidth.value = clamped
+      }
+
+      const stop = () => {
+        document.removeEventListener('mousemove', onMouseMove)
+        document.removeEventListener('mouseup', stop)
+      }
+
+      document.addEventListener('mousemove', onMouseMove)
+      document.addEventListener('mouseup', stop, { once: true })
+    }
 
     const iconColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'secondary')
     const textColor = (route: INavigationRoute) => (routeHasActiveChild(route) ? 'primary' : 'textPrimary')
     const arrowDirection = (state: boolean) => (state ? 'va-arrow-up' : 'va-arrow-down')
 
-    watch(() => route.fullPath, setActiveExpand, { immediate: true })
+    watch(
+      () => route.path,
+      () => setActiveExpand(),
+      { immediate: true },
+    )
 
     return {
       writableVisible,
+      localMinimized,
       sidebarWidth,
+      sidebarMinWidth,
       value,
       color,
       activeColor,
@@ -126,7 +190,56 @@ export default defineComponent({
       iconColor,
       textColor,
       arrowDirection,
+      toggleSidebar,
+      startResize,
+      minimized: computed(() => props.minimized),
     }
   },
 })
 </script>
+
+<style lang="scss" scoped>
+// Prevent icon jump on animation and add smooth transitions
+.va-sidebar {
+  width: unset !important;
+  min-width: unset !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: visible !important;
+}
+
+// Force transition on the sidebar wrapper
+:deep(.va-sidebar__wrapper) {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+// Ensure content transitions smoothly
+:deep(.va-sidebar__content) {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+:deep(.va-sidebar__menu) {
+  padding-top: 0.5rem;
+}
+
+.text-secondary {
+  color: var(--va-secondary) !important;
+  opacity: 0.8;
+}
+
+// Ensure menu items don't overflow
+:deep(.va-sidebar-item) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Adjust padding when minimized
+:deep(.va-sidebar-item-content) {
+  padding: 0.75rem 1rem !important;
+}
+
+// Make sure the sidebar has a border
+.va-sidebar {
+  border-right: 1px solid var(--va-border);
+}
+</style>

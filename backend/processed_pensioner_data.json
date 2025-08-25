@@ -1,0 +1,102 @@
+{
+  "state_wise_data": {
+    "Rajasthan": {
+      "total_pensioners": 1735953,
+      "age_groups": {
+        "Below 60": 1735953
+      },
+      "banks": {
+        "Unknown Bank": 1735953
+      },
+      "verification_locations": []
+    },
+    "Uttar Pradesh": {
+      "total_pensioners": 560505,
+      "age_groups": {
+        "Below 60": 560505
+      },
+      "banks": {
+        "Unknown Bank": 560505
+      },
+      "verification_locations": []
+    },
+    "Haryana": {
+      "total_pensioners": 485623,
+      "age_groups": {
+        "Below 60": 485623
+      },
+      "banks": {
+        "Unknown Bank": 485623
+      },
+      "verification_locations": []
+    },
+    "Unknown": {
+      "total_pensioners": 6341,
+      "age_groups": {
+        "Below 60": 6341
+      },
+      "banks": {
+        "Unknown Bank": 6341
+      },
+      "verification_locations": []
+    },
+    "Tamil Nadu": {
+      "total_pensioners": 751,
+      "age_groups": {
+        "Below 60": 751
+      },
+      "banks": {
+        "Unknown Bank": 751
+      },
+      "verification_locations": []
+    },
+    "Delhi": {
+      "total_pensioners": 602582,
+      "age_groups": {
+        "Below 60": 602582
+      },
+      "banks": {
+        "Unknown Bank": 602582
+      },
+      "verification_locations": []
+    },
+    "Gujarat": {
+      "total_pensioners": 473936,
+      "age_groups": {
+        "Below 60": 473936
+      },
+      "banks": {
+        "Unknown Bank": 473936
+      },
+      "verification_locations": []
+    },
+    "Punjab": {
+      "total_pensioners": 180634,
+      "age_groups": {
+        "Below 60": 180634
+      },
+      "banks": {
+        "Unknown Bank": 180634
+      },
+      "verification_locations": []
+    },
+    "Maharashtra": {
+      "total_pensioners": 159,
+      "age_groups": {
+        "Below 60": 159
+      },
+      "banks": {
+        "Unknown Bank": 159
+      },
+      "verification_locations": []
+    }
+  },
+  "age_group_summary": {
+    "Below 60": 4046484
+  },
+  "bank_summary": {
+    "Unknown Bank": 4046484
+  },
+  "total_records": 4046484,
+  "processed_at": "2025-08-23T22:13:29.396937"
+}

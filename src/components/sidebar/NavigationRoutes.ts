@@ -51,14 +51,6 @@ export default {
           displayName: 'menu.monthlyReports',
         },
         {
-          name: 'verification-summary',
-          displayName: 'menu.verificationSummary',
-        },
-        {
-          name: 'fraud-detection',
-          displayName: 'menu.fraudDetection',
-        },
-        {
           name: 'export-data',
           displayName: 'menu.exportData',
         },
@@ -69,27 +61,6 @@ export default {
       displayName: 'menu.bulkOperations',
       meta: {
         icon: 'cloud_upload',
-      },
-    },
-    {
-      name: 'user-management',
-      displayName: 'menu.userManagement',
-      meta: {
-        icon: 'admin_panel_settings',
-      },
-    },
-    {
-      name: 'notifications',
-      displayName: 'menu.notifications',
-      meta: {
-        icon: 'notifications',
-      },
-    },
-    {
-      name: 'settings',
-      displayName: 'menu.settings',
-      meta: {
-        icon: 'settings',
       },
     },
   ] as INavigationRoute[],
