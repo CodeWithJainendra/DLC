@@ -84,5 +84,11 @@
     "vite": "^5.4.9",
     "vue-eslint-parser": "^9.3.2",
     "vue-tsc": "^2.1.6"
-  }
+  },
+  "scripts": {
+  "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
+  "start-frontend": "cd DLC/frontend && npm run start",
+  "start-backend": "cd DLC/backend && python app.py"
+}
+
 }
