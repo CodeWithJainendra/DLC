@@ -242,6 +242,54 @@ def get_analytics_trends():
     }
     return jsonify(trends)
 
+@app.route("/All_India_pincode_Boundary.geojson")
+def get_pincode_geojson():
+    """Serve pincode boundary GeoJSON file"""
+    try:
+        with open("All_India_pincode_Boundary.geojson", 'r', encoding='utf-8') as f:
+            geojson_data = f.read()
+        return geojson_data, 200, {'Content-Type': 'application/json'}
+    except FileNotFoundError:
+        return jsonify({"error": "GeoJSON file not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/Filtered_Pincode_Boundaries.geojson")
+def get_filtered_pincode_geojson():
+    """Serve filtered pincode boundary GeoJSON file"""
+    try:
+        with open("Filtered_Pincode_Boundaries.geojson", 'r', encoding='utf-8') as f:
+            geojson_data = f.read()
+        return geojson_data, 200, {'Content-Type': 'application/json'}
+    except FileNotFoundError:
+        return jsonify({"error": "Filtered GeoJSON file not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/Real_Pensioner_Pincode_Boundaries.geojson")
+def get_real_pensioner_pincode_geojson():
+    """Serve real pensioner pincode boundary GeoJSON file"""
+    try:
+        with open("Real_Pensioner_Pincode_Boundaries.geojson", 'r', encoding='utf-8') as f:
+            geojson_data = f.read()
+        return geojson_data, 200, {'Content-Type': 'application/json'}
+    except FileNotFoundError:
+        return jsonify({"error": "Real pensioner GeoJSON file not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/india.json")
+def get_india_json():
+    """Serve India state boundaries JSON file"""
+    try:
+        with open("india.json", 'r', encoding='utf-8') as f:
+            india_data = f.read()
+        return india_data, 200, {'Content-Type': 'application/json'}
+    except FileNotFoundError:
+        return jsonify({"error": "India JSON file not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # Health check endpoint
 @app.route("/health")
 def health_check():
