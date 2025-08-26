@@ -2,7 +2,7 @@
 publish = "dist"
 
 # Default build command.
-command = "yarn build:ci"
+command = "npm run build"
 
 [[redirects]]
 from = "/*"
