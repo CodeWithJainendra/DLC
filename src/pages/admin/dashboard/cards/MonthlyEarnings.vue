@@ -463,19 +463,22 @@ const filteredBankWiseData = computed(() => {
 
 // Card styling with dynamic effects
 const cardStyle = computed(() => ({
-  transform: 'scale(1)',
-  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-  borderLeft: '4px solid transparent',
+  transform: isHovered.value ? 'translateY(-2px) scale(1.02)' : 'translateY(0) scale(1)',
+  boxShadow: isHovered.value 
+    ? '0 20px 40px rgba(0, 0, 0, 0.15), 0 0 30px rgba(var(--va-primary-rgb), 0.2)'
+    : '0 4px 12px rgba(0, 0, 0, 0.1)',
+  borderLeft: isHovered.value ? '4px solid var(--va-primary)' : '4px solid transparent',
   transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  cursor: 'pointer'
 }))
 
 // Hover handlers
 const onHover = () => {
-  // Card hover effect handled by CSS
+  isHovered.value = true
 }
 
 const onLeave = () => {
-  // Card hover effect handled by CSS
+  isHovered.value = false
 }
 
 // Helper: process state-wise data from API
