@@ -55,7 +55,6 @@
       </div>
     </VaCardContent>
   </VaCard>
-
 </template>
 
 <script setup lang="ts">
@@ -87,7 +86,7 @@ const showModal = ref(false)
 const cardStyle = computed(() => ({
   transform: isHovered.value ? 'translateY(-2px)' : 'translateY(0)',
   boxShadow: isHovered.value ? '0 8px 25px rgba(0,0,0,0.15)' : '0 2px 10px rgba(0,0,0,0.1)',
-  transition: 'all 0.3s ease'
+  transition: 'all 0.3s ease',
 }))
 
 // Event handlers
@@ -115,15 +114,15 @@ const loadAuthData = async () => {
       if (authResponse.ok) {
         const authApiData = await authResponse.json()
         console.log('📊 Auth API Response:', authApiData)
-        
+
         if (authApiData.authenticationMethods) {
           authData.value = {
             IRIS: authApiData.authenticationMethods.IRIS || 0,
             Fingerprint: authApiData.authenticationMethods.Fingerprint || 0,
-            'Face Auth': authApiData.authenticationMethods['Face Auth'] || 0
+            'Face Auth': authApiData.authenticationMethods['Face Auth'] || 0,
           }
           totalAuthentication.value = authApiData.totalCount || 0
-          
+
           console.log(`📊 Loaded real auth data:`, authData.value)
           console.log(`📊 Total count: ${totalAuthentication.value}`)
           return
@@ -140,17 +139,17 @@ const loadAuthData = async () => {
         const backendData = await backendResponse.json()
         const pensioners = backendData.DLC_generated_pensioners || []
         console.log(`📊 Loaded ${pensioners.length} pensioners from backend API`)
-        
+
         if (pensioners.length > 0) {
           // Use realistic distribution based on actual pensioner count
           const totalCount = pensioners.length
           authData.value = {
             IRIS: Math.floor(totalCount * 0.4),
             Fingerprint: Math.floor(totalCount * 0.35),
-            'Face Auth': Math.floor(totalCount * 0.25)
+            'Face Auth': Math.floor(totalCount * 0.25),
           }
           totalAuthentication.value = totalCount
-          
+
           console.log(`📊 Set auth data for ${totalCount} pensioners:`, authData.value)
           return
         }
@@ -163,7 +162,7 @@ const loadAuthData = async () => {
     authData.value = {
       IRIS: 200,
       Fingerprint: 180,
-      'Face Auth': 120
+      'Face Auth': 120,
     }
     totalAuthentication.value = 500
     console.log('📊 Using fallback auth data:', authData.value)

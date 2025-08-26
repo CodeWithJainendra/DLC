@@ -1,7 +1,6 @@
 <template>
   <VaCard class="verification-map-card">
     <VaCardContent class="p-0">
-
       <!-- Leaflet Map Section -->
       <div class="map-container">
         <!-- Loading State -->
@@ -26,28 +25,16 @@
 
         <!-- Breadcrumb Navigation -->
         <div v-if="currentViewLevel !== 'state'" class="breadcrumb-nav">
-          <button @click="backToStateView" class="breadcrumb-btn">
-            🗺️ States
-          </button>
+          <button @click="backToStateView" class="breadcrumb-btn">🗺️ States</button>
           <span class="breadcrumb-separator">→</span>
-          <button 
-            v-if="currentViewLevel === 'district'" 
-            class="breadcrumb-btn active"
-          >
+          <button v-if="currentViewLevel === 'district'" class="breadcrumb-btn active">
             🏛️ {{ selectedState }} Districts
           </button>
-          <button 
-            v-if="currentViewLevel === 'pincode'" 
-            @click="backToDistrictView"
-            class="breadcrumb-btn"
-          >
+          <button v-if="currentViewLevel === 'pincode'" @click="backToDistrictView" class="breadcrumb-btn">
             🏛️ {{ selectedState }} Districts
           </button>
           <span v-if="currentViewLevel === 'pincode'" class="breadcrumb-separator">→</span>
-          <button 
-            v-if="currentViewLevel === 'pincode'" 
-            class="breadcrumb-btn active"
-          >
+          <button v-if="currentViewLevel === 'pincode'" class="breadcrumb-btn active">
             📍 {{ selectedDistrict }} Pincodes
           </button>
         </div>
@@ -59,12 +46,14 @@
           <template #header>
             <h2 class="text-xl font-bold">{{ selectedStateData?.name }} - Pensioner Details</h2>
           </template>
-          
+
           <div v-if="selectedStateData" class="p-4">
             <!-- Summary Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div class="bg-blue-50 p-4 rounded-lg text-center">
-                <div class="text-2xl font-bold text-blue-600">{{ selectedStateData.totalPensioners.toLocaleString() }}</div>
+                <div class="text-2xl font-bold text-blue-600">
+                  {{ selectedStateData.totalPensioners.toLocaleString() }}
+                </div>
                 <div class="text-sm text-gray-600">Total Pensioners</div>
               </div>
               <div class="bg-green-50 p-4 rounded-lg text-center">
@@ -104,8 +93,11 @@
             <div>
               <h3 class="text-lg font-semibold mb-3">Top Banks in {{ selectedStateData.name }}</h3>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div v-for="bank in selectedStateData.topBanks" :key="bank.name" 
-                     class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div
+                  v-for="bank in selectedStateData.topBanks"
+                  :key="bank.name"
+                  class="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                >
                   <span class="font-medium">{{ bank.name }}</span>
                   <span class="text-sm text-gray-600">{{ bank.count }} pensioners</span>
                 </div>
@@ -114,20 +106,14 @@
           </div>
         </VaModal>
 
-
         <!-- Floating Legend Panel -->
         <div class="floating-legend-container">
           <!-- Small Floating Card Button - Always positioned -->
           <div class="floating-card-wrapper">
-            <div
-              v-if="!showLegendPanel"
-              class="floating-legend-card"
-              @click="toggleLegendPanel"
-            >
+            <div v-if="!showLegendPanel" class="floating-legend-card" @click="toggleLegendPanel">
               <VaIcon name="bar_chart" size="18px" />
               <span class="card-text">View Stats</span>
             </div>
-
           </div>
 
           <!-- Expanded Legend Panel - Separate positioning -->
@@ -145,27 +131,27 @@
                   <h4>Pensioner Count Ranges</h4>
                   <div class="legend-items">
                     <div class="legend-item">
-                      <div class="legend-color" style="background-color: #7f1d1d;"></div>
+                      <div class="legend-color" style="background-color: #7f1d1d"></div>
                       <span>5,000+ Highest</span>
                     </div>
                     <div class="legend-item">
-                      <div class="legend-color" style="background-color: #dc2626;"></div>
+                      <div class="legend-color" style="background-color: #dc2626"></div>
                       <span>2,000 - 5,000</span>
                     </div>
                     <div class="legend-item">
-                      <div class="legend-color" style="background-color: #ef4444;"></div>
+                      <div class="legend-color" style="background-color: #ef4444"></div>
                       <span>1,000 - 2,000</span>
                     </div>
                     <div class="legend-item">
-                      <div class="legend-color" style="background-color: #f87171;"></div>
+                      <div class="legend-color" style="background-color: #f87171"></div>
                       <span>500 - 1,000</span>
                     </div>
                     <div class="legend-item">
-                      <div class="legend-color" style="background-color: #fca5a5;"></div>
+                      <div class="legend-color" style="background-color: #fca5a5"></div>
                       <span>1 - 500 Lowest</span>
                     </div>
                     <div class="legend-item">
-                      <div class="legend-color" style="background-color: #e5e7eb;"></div>
+                      <div class="legend-color" style="background-color: #e5e7eb"></div>
                       <span>0 No Data</span>
                     </div>
                   </div>
@@ -199,7 +185,7 @@ interface VerificationData {
   total: number
   completed: number
   pending: number
-  coordinates?: { latitude: number, longitude: number }
+  coordinates?: { latitude: number; longitude: number }
   pensioners?: any[]
 }
 
@@ -208,7 +194,7 @@ interface LocationData {
     state: string
     district: string
     count: number
-    coordinates?: { lat: number, lng: number }
+    coordinates?: { lat: number; lng: number }
     pensioners: Array<{ pin: string }>
   }>
 }
@@ -259,8 +245,8 @@ const generateVerificationData = () => {
       { state: 'Maharashtra', district: 'Mumbai', total: 2000, completed: 1800, pending: 200 },
       { state: 'Karnataka', district: 'Bangalore', total: 1200, completed: 1000, pending: 200 },
       { state: 'Tamil Nadu', district: 'Chennai', total: 800, completed: 700, pending: 100 },
-      { state: 'West Bengal', district: 'Kolkata', total: 900, completed: 750, pending: 150 }
-    ]
+      { state: 'West Bengal', district: 'Kolkata', total: 900, completed: 750, pending: 150 },
+    ],
   }
 }
 
@@ -271,35 +257,35 @@ const getMapVisualizationData = (data: any): VerificationData[] => {
     total: location.total,
     completed: location.completed,
     pending: location.pending,
-    coordinates: getCoordinatesForLocation(location.state, location.district)
+    coordinates: getCoordinatesForLocation(location.state, location.district),
   }))
 }
 
 const getCoordinatesForLocation = (state: string, district: string) => {
-  const coordinates: Record<string, { latitude: number, longitude: number }> = {
-    'Lucknow': { latitude: 26.8467, longitude: 80.9462 },
-    'Mumbai': { latitude: 19.0760, longitude: 72.8777 },
-    'Bangalore': { latitude: 12.9716, longitude: 77.5946 },
-    'Chennai': { latitude: 13.0827, longitude: 80.2707 },
-    'Kolkata': { latitude: 22.5726, longitude: 88.3639 }
+  const coordinates: Record<string, { latitude: number; longitude: number }> = {
+    Lucknow: { latitude: 26.8467, longitude: 80.9462 },
+    Mumbai: { latitude: 19.076, longitude: 72.8777 },
+    Bangalore: { latitude: 12.9716, longitude: 77.5946 },
+    Chennai: { latitude: 13.0827, longitude: 80.2707 },
+    Kolkata: { latitude: 22.5726, longitude: 88.3639 },
   }
   return coordinates[district] || coordinates[state]
 }
 
 const loadVerificationData = async () => {
   console.log('🔄 Loading real pensioner data from API...')
-  
+
   try {
     // Fetch real data from your API with cache busting
     const timestamp = new Date().getTime()
     const response = await fetch(`http://100.113.47.45:8080/pensioners?t=${timestamp}`, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache',
       },
-      mode: 'cors'
+      mode: 'cors',
     })
 
     if (!response.ok) {
@@ -308,20 +294,20 @@ const loadVerificationData = async () => {
 
     const apiData = await response.json()
     const pensioners = apiData.DLC_generated_pensioners || []
-    
+
     console.log(`📊 Received ${pensioners.length} pensioners from API`)
 
     // Create more granular data points by grouping by smaller areas or creating individual points
     const realVerificationData: VerificationData[] = []
-    
+
     // Method 1: Group by state-district but create multiple points per district if there are many pensioners
     const locationGroups: { [key: string]: any[] } = {}
-    
+
     pensioners.forEach((pensioner: any) => {
       const state = pensioner.pensioner_state || 'Unknown'
       const district = pensioner.pensioner_district || 'Unknown'
       const locationKey = `${state}-${district}`
-      
+
       if (!locationGroups[locationKey]) {
         locationGroups[locationKey] = []
       }
@@ -331,21 +317,23 @@ const loadVerificationData = async () => {
     // Create multiple data points for districts with many pensioners
     Object.entries(locationGroups).forEach(([locationKey, districtPensioners]) => {
       const [state, district] = locationKey.split('-')
-      
+
       // If a district has more than 10 pensioners, split it into multiple points
       if (districtPensioners.length > 10) {
         const chunks = Math.ceil(districtPensioners.length / 10)
         for (let i = 0; i < chunks; i++) {
           const chunk = districtPensioners.slice(i * 10, (i + 1) * 10)
           const firstPensioner = chunk[0]
-          const coordinates = firstPensioner.pensioner_coordinates || 
-                            { pensioner_latitude: null, pensioner_longitude: null }
-          
+          const coordinates = firstPensioner.pensioner_coordinates || {
+            pensioner_latitude: null,
+            pensioner_longitude: null,
+          }
+
           // Add slight offset to prevent overlapping markers
           const baseLat = coordinates.pensioner_latitude || coordinates[0] || 0
           const baseLng = coordinates.pensioner_longitude || coordinates[1] || 0
           const offset = i * 0.01 // Small offset for each chunk
-          
+
           const locationData: VerificationData = {
             state: state,
             district: `${district} (Area ${i + 1})`,
@@ -354,19 +342,21 @@ const loadVerificationData = async () => {
             pending: Math.ceil(chunk.length * 0.2),
             coordinates: {
               latitude: baseLat + offset,
-              longitude: baseLng + offset
+              longitude: baseLng + offset,
             },
-            pensioners: chunk
+            pensioners: chunk,
           }
-          
+
           realVerificationData.push(locationData)
         }
       } else {
         // For districts with 10 or fewer pensioners, create single point
         const firstPensioner = districtPensioners[0]
-        const coordinates = firstPensioner.pensioner_coordinates || 
-                          { pensioner_latitude: null, pensioner_longitude: null }
-        
+        const coordinates = firstPensioner.pensioner_coordinates || {
+          pensioner_latitude: null,
+          pensioner_longitude: null,
+        }
+
         const locationData: VerificationData = {
           state: state,
           district: district,
@@ -375,39 +365,49 @@ const loadVerificationData = async () => {
           pending: Math.ceil(districtPensioners.length * 0.2),
           coordinates: {
             latitude: coordinates.pensioner_latitude || coordinates[0],
-            longitude: coordinates.pensioner_longitude || coordinates[1]
+            longitude: coordinates.pensioner_longitude || coordinates[1],
           },
-          pensioners: districtPensioners
+          pensioners: districtPensioners,
         }
-        
+
         realVerificationData.push(locationData)
       }
     })
 
     // Use only real API data - no sample data
     const combinedData = [...realVerificationData]
-    
+
     verificationData.value = combinedData
     rawData.value = { pensioners: pensioners, locations: combinedData }
-    
+
     // Force a visual update to show real data is loaded
     console.log('🎯 REAL DATA LOADED - Check map for actual API data!')
     console.log('📊 Sample of real data:')
     combinedData.slice(0, 5).forEach((loc, index) => {
       console.log(`  ${index + 1}. ${loc.district}, ${loc.state}: ${loc.total} pensioners`)
     })
-    
+
     console.log(`✅ Loaded ${realVerificationData.length} real locations from API`)
     console.log(`🎯 Total data points: ${combinedData.length} (real API data only)`)
-    console.log(`📋 Real API locations:`, realVerificationData.map(loc => `${loc.district}, ${loc.state}`).slice(0, 10))
-    
+    console.log(
+      `📋 Real API locations:`,
+      realVerificationData.map((loc) => `${loc.district}, ${loc.state}`).slice(0, 10),
+    )
+
     // Debug: Check specific locations
-    const puneData = realVerificationData.filter(loc => loc.district.toLowerCase().includes('pune'))
-    console.log(`🔍 Pune data found:`, puneData.length, puneData.map(loc => `${loc.district}: ${loc.total} pensioners`))
-    
-    const maharashtraData = realVerificationData.filter(loc => loc.state.toLowerCase().includes('maharashtra'))
-    console.log(`🔍 Maharashtra data found:`, maharashtraData.length, maharashtraData.map(loc => `${loc.district}: ${loc.total} pensioners`))
-    
+    const puneData = realVerificationData.filter((loc) => loc.district.toLowerCase().includes('pune'))
+    console.log(
+      `🔍 Pune data found:`,
+      puneData.length,
+      puneData.map((loc) => `${loc.district}: ${loc.total} pensioners`),
+    )
+
+    const maharashtraData = realVerificationData.filter((loc) => loc.state.toLowerCase().includes('maharashtra'))
+    console.log(
+      `🔍 Maharashtra data found:`,
+      maharashtraData.length,
+      maharashtraData.map((loc) => `${loc.district}: ${loc.total} pensioners`),
+    )
   } catch (error) {
     console.error('❌ Error loading real data:', error)
     // Fallback to static data
@@ -435,44 +435,44 @@ const ageDistributionData = ref<Record<string, number>>({})
 // Process state-wise data for enhanced map features with pincode counting
 const processStateWiseData = (pensioners: any[]) => {
   const stateGroups: any = {}
-  
-  pensioners.forEach(pensioner => {
+
+  pensioners.forEach((pensioner) => {
     const state = pensioner.pensioner_state || 'Unknown'
     const district = pensioner.pensioner_district || 'Unknown'
     const bank = pensioner.disbursing_agency || 'Unknown Bank'
     const pincode = pensioner.pensioner_pincode || 'Unknown'
-    
+
     if (!stateGroups[state]) {
       stateGroups[state] = {
         totalPensioners: 0,
         districts: {},
         banks: {},
         pincodes: new Set(),
-        pensioners: []
+        pensioners: [],
       }
     }
-    
+
     stateGroups[state].totalPensioners++
     stateGroups[state].pensioners.push(pensioner)
     stateGroups[state].pincodes.add(pincode)
-    
+
     if (!stateGroups[state].districts[district]) {
       stateGroups[state].districts[district] = {
         pensioners: 0,
         banks: new Set(),
-        pincodes: new Set()
+        pincodes: new Set(),
       }
     }
     stateGroups[state].districts[district].pensioners++
     stateGroups[state].districts[district].banks.add(bank)
     stateGroups[state].districts[district].pincodes.add(pincode)
-    
+
     if (!stateGroups[state].banks[bank]) {
       stateGroups[state].banks[bank] = 0
     }
     stateGroups[state].banks[bank]++
   })
-  
+
   const processedData: any = {}
   Object.entries(stateGroups).forEach(([stateName, stateInfo]: [string, any]) => {
     processedData[stateName] = {
@@ -480,20 +480,22 @@ const processStateWiseData = (pensioners: any[]) => {
       totalPensioners: stateInfo.totalPensioners,
       totalBanks: Object.keys(stateInfo.banks).length || stateInfo.banks?.size || 0,
       totalPincodes: stateInfo.pincodes.size,
-      districts: Object.entries(stateInfo.districts).map(([districtName, districtInfo]: [string, any]) => ({
-        name: districtName,
-        pensioners: districtInfo.pensioners,
-        banks: districtInfo.banks.size,
-        pincodes: districtInfo.pincodes.size
-      })).sort((a, b) => b.pensioners - a.pensioners),
+      districts: Object.entries(stateInfo.districts)
+        .map(([districtName, districtInfo]: [string, any]) => ({
+          name: districtName,
+          pensioners: districtInfo.pensioners,
+          banks: districtInfo.banks.size,
+          pincodes: districtInfo.pincodes.size,
+        }))
+        .sort((a, b) => b.pensioners - a.pensioners),
       topBanks: Object.entries(stateInfo.banks)
         .map(([bankName, count]) => ({ name: bankName, count }))
         .sort((a: any, b: any) => b.count - a.count)
         .slice(0, 10),
-      pensioners: stateInfo.pensioners
+      pensioners: stateInfo.pensioners,
     }
   })
-  
+
   return processedData
 }
 
@@ -508,7 +510,7 @@ const openStateDetails = (stateName: string) => {
 
 // Make function globally available
 if (typeof window !== 'undefined') {
-  (window as any).openStateDetails = openStateDetails
+  ;(window as any).openStateDetails = openStateDetails
 }
 
 // Fetch DLC Bank Pincode data (actual analysis results)
@@ -522,13 +524,13 @@ const fetchExcelPensionerData = async () => {
       console.log('🎯 Total DLC Completed:', data.total_records)
       console.log('🏦 Unique Bank Pincodes:', data.total_bank_pincodes)
       console.log('🗺️ Rajasthan data:', data.state_wise_data?.Rajasthan)
-      Object.keys(data.state_wise_data).forEach(state => {
+      Object.keys(data.state_wise_data).forEach((state) => {
         const stateInfo = data.state_wise_data[state]
         stateWisePensionerData.value[state] = {
           totalVerifications: stateInfo.total_pensioners, // Bank verifications in this state
           ageGroups: stateInfo.age_groups,
           pensionerOrigins: stateInfo.bank_locations, // Where pensioners come from
-          pincodeCounts: stateInfo.pincode_counts || {} // Exact verification counts per pincode in this bank state
+          pincodeCounts: stateInfo.pincode_counts || {}, // Exact verification counts per pincode in this bank state
         }
       })
     } else {
@@ -547,35 +549,30 @@ const fetchPensionersData = async () => {
   try {
     isLoading.value = true
     apiError.value = null
-    
+
     console.log('🔄 Fetching pensioners data...')
-    
+
     // Fetch both regular pensioner data and Excel data
-    const [response] = await Promise.all([
-      pensionersApi.getPensioners(),
-      fetchExcelPensionerData()
-    ])
-    
+    const [response] = await Promise.all([pensionersApi.getPensioners(), fetchExcelPensionerData()])
+
     pensionersData.value = response.DLC_generated_pensioners || []
-    
+
     // Process data for analytics
     stateData.value = pensionersApi.getStateWiseData(pensionersData.value)
     departmentData.value = pensionersApi.getDepartmentWiseData(pensionersData.value)
     dlcTypeData.value = pensionersApi.getDLCTypeWiseData(pensionersData.value)
     disbursingAuthorityData.value = pensionersApi.getDisbursingAuthorityData(pensionersData.value)
     ageDistributionData.value = pensionersApi.getAgeDistribution(pensionersData.value)
-    
+
     // Process state-wise data for enhanced map features
     stateWiseData.value = processStateWiseData(pensionersData.value)
-    
+
     console.log('✅ Pensioners data loaded:', {
       total: pensionersData.value.length,
       states: Object.keys(stateData.value).length,
       departments: Object.keys(departmentData.value).length,
-      excel_data_available: !!excelPensionerData.value
+      excel_data_available: !!excelPensionerData.value,
     })
-    
-
   } catch (error) {
     console.error('Error fetching pensioners data:', error)
     apiError.value = 'Failed to load pensioners data'
@@ -591,7 +588,9 @@ const toggleLegendPanel = () => {
   // When opening the stats panel, fit the map to show active markers or current layer bounds
   if (showLegendPanel.value && map) {
     // Ensure Leaflet recalculates container size before fitting bounds
-    try { map.invalidateSize(true) } catch (e) {}
+    try {
+      map.invalidateSize(true)
+    } catch (e) {}
     setTimeout(() => {
       try {
         // Determine best bounds source
@@ -608,7 +607,7 @@ const toggleLegendPanel = () => {
         if (bounds && bounds.isValid()) {
           map.fitBounds(bounds, {
             padding: [30, 30],
-            maxZoom: 6
+            maxZoom: 6,
           })
           console.log('🗺️ Map fitted to active bounds')
         }
@@ -647,8 +646,8 @@ const loadMapData = async () => {
     const indiaResponse = await fetch('/india.json', {
       cache: 'force-cache',
       headers: {
-        'Cache-Control': 'max-age=86400' // Cache for 24 hours
-      }
+        'Cache-Control': 'max-age=86400', // Cache for 24 hours
+      },
     })
     if (!indiaResponse.ok) {
       throw new Error(`India JSON error: ${indiaResponse.status}`)
@@ -660,37 +659,38 @@ const loadMapData = async () => {
     const pincodeResponse = await fetch('/All_India_pincode_Boundary.geojson', {
       cache: 'force-cache',
       headers: {
-        'Cache-Control': 'max-age=86400' // Cache for 24 hours
-      }
+        'Cache-Control': 'max-age=86400', // Cache for 24 hours
+      },
     })
     if (!pincodeResponse.ok) {
       throw new Error(`Pincode GeoJSON error: ${pincodeResponse.status}`)
     }
     const rawPincodeData = await pincodeResponse.json()
-    
+
     // Filter out Pakistan territories
     const indianPincodes = rawPincodeData.features.filter((feature: any) => {
       const circle = feature.properties.Circle?.toLowerCase() || ''
       const region = feature.properties.Region?.toLowerCase() || ''
       const officeName = feature.properties.Office_Name?.toLowerCase() || ''
-      
-      return !circle.includes('pakistan') && 
-             !circle.includes('pak') && 
-             !region.includes('pakistan') && 
-             !region.includes('pak') && 
-             !officeName.includes('pakistan') && 
-             !officeName.includes('pak') &&
-             !circle.includes('pok') &&
-             !region.includes('pok')
+
+      return (
+        !circle.includes('pakistan') &&
+        !circle.includes('pak') &&
+        !region.includes('pakistan') &&
+        !region.includes('pak') &&
+        !officeName.includes('pakistan') &&
+        !officeName.includes('pak') &&
+        !circle.includes('pok') &&
+        !region.includes('pok')
+      )
     })
-    
+
     pincodeData = {
       ...rawPincodeData,
-      features: indianPincodes
+      features: indianPincodes,
     }
-    
+
     console.log('📍 Pincode data loaded:', pincodeData.features?.length, 'pincodes (Pakistan excluded)')
-    
   } catch (error) {
     console.error('❌ Error loading map data:', error)
   }
@@ -699,9 +699,9 @@ const loadMapData = async () => {
 // Show hierarchical choropleth map
 const showChoroplethMap = () => {
   if (!map) return
-  
+
   console.log('🗺️ Showing hierarchical choropleth map...')
-  
+
   // Clear existing layers
   clearMarkers()
   if (choroplethLayer) {
@@ -712,7 +712,7 @@ const showChoroplethMap = () => {
     map.removeLayer(pincodeLayer)
     pincodeLayer = null
   }
-  
+
   // Load map data if not already loaded
   if (!indiaStateData || !pincodeData) {
     loadMapData().then(() => {
@@ -720,7 +720,7 @@ const showChoroplethMap = () => {
     })
     return
   }
-  
+
   // Show state-level map initially
   showStateLevelMap()
 }
@@ -728,18 +728,18 @@ const showChoroplethMap = () => {
 // Show district-level view when state is clicked
 const showDistrictView = (stateName: string, bounds: any) => {
   if (!map || !pincodeData) return
-  
+
   console.log(`🏛️ Showing district view for ${stateName}...`)
-  
+
   // Hide any existing hover card immediately
   hideHoverCard()
-  
+
   // Close any Leaflet popups that might be open
   map?.closePopup()
-  
+
   // Clear the selected state info popup card
   globalStore.clearSelectedStateInfo()
-  
+
   // Remove existing layers before switching views
   if (choroplethLayer) {
     map.removeLayer(choroplethLayer)
@@ -749,38 +749,40 @@ const showDistrictView = (stateName: string, bounds: any) => {
     map.removeLayer(pincodeLayer)
     pincodeLayer = null
   }
-  
+
   currentViewLevel.value = 'district'
   selectedState.value = stateName
-  
+
   // Filter pincode data for the selected state with more comprehensive matching
   const statePincodes = pincodeData.features.filter((feature: any) => {
     const circle = feature.properties.Circle?.trim() || ''
     const state = feature.properties.State?.trim() || ''
     const stNm = feature.properties.st_nm?.trim() || ''
-    
+
     // Normalize state names for better matching
     const normalizeStateName = (name: string) => name.toLowerCase().replace(/\s+/g, ' ').trim()
     const targetState = normalizeStateName(stateName)
-    
+
     // Try multiple property matches for state filtering with normalized names
-    return normalizeStateName(circle) === targetState ||
-           normalizeStateName(state) === targetState ||
-           normalizeStateName(stNm) === targetState ||
-           // Also try exact matches without normalization
-           circle.toLowerCase() === stateName.toLowerCase() ||
-           state.toLowerCase() === stateName.toLowerCase() ||
-           stNm.toLowerCase() === stateName.toLowerCase()
+    return (
+      normalizeStateName(circle) === targetState ||
+      normalizeStateName(state) === targetState ||
+      normalizeStateName(stNm) === targetState ||
+      // Also try exact matches without normalization
+      circle.toLowerCase() === stateName.toLowerCase() ||
+      state.toLowerCase() === stateName.toLowerCase() ||
+      stNm.toLowerCase() === stateName.toLowerCase()
+    )
   })
-  
+
   console.log(`🔍 Found ${statePincodes.length} pincodes for ${stateName}`)
   console.log(`📋 Sample pincode properties:`, statePincodes[0]?.properties)
-  
+
   if (statePincodes.length === 0) {
     console.log(`⚠️ No pincode data found for ${stateName}`)
     return
   }
-  
+
   // Group pincodes by Division (District)
   const districtGroups: any = {}
   statePincodes.forEach((feature: any) => {
@@ -790,11 +792,11 @@ const showDistrictView = (stateName: string, bounds: any) => {
     }
     districtGroups[division].push(feature)
   })
-  
+
   // Create proper district boundaries by merging all pincodes in each district
-  const districtFeatures = Object.keys(districtGroups).map(division => {
+  const districtFeatures = Object.keys(districtGroups).map((division) => {
     const pincodes = districtGroups[division]
-    
+
     // Create a MultiPolygon geometry that includes all pincodes in the district
     const allCoordinates: any[] = []
     pincodes.forEach((pincode: any) => {
@@ -808,9 +810,11 @@ const showDistrictView = (stateName: string, bounds: any) => {
         }
       }
     })
-    
+
     // Calculate district center from all pincodes
-    let totalLat = 0, totalLng = 0, count = 0
+    let totalLat = 0,
+      totalLng = 0,
+      count = 0
     pincodes.forEach((pincode: any) => {
       if (pincode.geometry && pincode.geometry.coordinates) {
         const coords = pincode.geometry.coordinates[0]
@@ -821,29 +825,29 @@ const showDistrictView = (stateName: string, bounds: any) => {
         })
       }
     })
-    
+
     const centerLat = totalLat / count
     const centerLng = totalLng / count
-    
+
     return {
       type: 'Feature',
       properties: {
         division: division,
         pincodeCount: pincodes.length,
         state: stateName,
-        center: [centerLng, centerLat]
+        center: [centerLng, centerLat],
       },
       geometry: {
         type: 'MultiPolygon',
-        coordinates: allCoordinates
-      }
+        coordinates: allCoordinates,
+      },
     }
   })
-  
+
   // Store district data for later use
   districtData.value = districtFeatures
   pincodeDataByDistrict.value = districtGroups
-  
+
   // Keep state boundaries visible but dimmed and remove hover events
   // Don't remove choroplethLayer completely, just modify its style
   if (choroplethLayer) {
@@ -859,7 +863,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
           fillOpacity: 0.3,
           color: '#cbd5e1',
           weight: 1,
-          opacity: 0.6
+          opacity: 0.6,
         })
       }
       // Remove original events but add new ones for surrounding states
@@ -867,20 +871,21 @@ const showDistrictView = (stateName: string, bounds: any) => {
       layer.off('mouseout')
       layer.off('mousemove')
       layer.off('click')
-      
+
       // Add hover and click events for surrounding states
       if (layerStateName !== stateName) {
         const surroundingStateData = (stateWisePensionerData.value as any)[layerStateName] || {}
         // Calculate total banks from districts if available
-        const districtBankCount = surroundingStateData.districts ? 
-          surroundingStateData.districts.reduce((total: number, district: any) => total + (district.banks || 0), 0) : 0
+        const districtBankCount = surroundingStateData.districts
+          ? surroundingStateData.districts.reduce((total: number, district: any) => total + (district.banks || 0), 0)
+          : 0
         const surroundingHoverData = {
           name: layerStateName,
           totalPensioners: surroundingStateData.totalPensioners || 0,
           districts: surroundingStateData.districts || [],
-          totalBanks: Math.max(surroundingStateData.totalBanks || 0, districtBankCount)
+          totalBanks: Math.max(surroundingStateData.totalBanks || 0, districtBankCount),
         }
-        
+
         layer.on({
           mouseover: (e: any) => {
             showHoverCard(e, surroundingHoverData, 'state')
@@ -888,7 +893,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
               fillColor: '#e2e8f0',
               fillOpacity: 0.6,
               color: '#64748b',
-              weight: 2
+              weight: 2,
             })
           },
           mouseout: (e: any) => {
@@ -899,7 +904,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
               fillOpacity: 0.3,
               color: '#cbd5e1',
               weight: 1,
-              opacity: 0.6
+              opacity: 0.6,
             })
           },
           mousemove: (e: any) => {
@@ -915,68 +920,70 @@ const showDistrictView = (stateName: string, bounds: any) => {
             hideHoverCard()
             map?.closePopup()
             showDistrictView(layerStateName, e.target.getBounds())
-          }
+          },
         })
       }
     })
   }
-  
+
   if (pincodeLayer) {
     map.removeLayer(pincodeLayer)
     pincodeLayer = null
   }
-  
+
   // Create district layer
   const districtGeoJSON = {
     type: 'FeatureCollection' as const,
-    features: districtFeatures
+    features: districtFeatures,
   }
-  
+
   // Calculate pensioner counts for each district from Excel data and neighboring states
   const districtPensionerCounts: { [key: string]: number } = {}
-  const allDistrictData: { [key: string]: { count: number, state: string, bankPincodes: string[] } } = {}
-  
+  const allDistrictData: { [key: string]: { count: number; state: string; bankPincodes: string[] } } = {}
+
   // Process current state districts
-  districtFeatures.forEach(feature => {
+  districtFeatures.forEach((feature) => {
     const division = feature.properties.division
     let pensionerCount = 0
     const bankPincodes: string[] = []
-    
+
     console.log(`🔍 Processing district: ${division} for state: ${stateName}`)
-    
+
     // Count pensioners who LIVE in this district (not where banks are)
     if (excelPensionerData.value?.bank_pincode_data) {
       const bankData = excelPensionerData.value.bank_pincode_data
-      
+
       // Go through all bank locations and find pensioners from this district
       Object.entries(bankData).forEach(([bankPincode, bankInfo]: [string, any]) => {
         if (bankInfo.pensioner_states && bankInfo.pensioner_states[stateName]) {
           // This bank has pensioners from our state
           const pensionersFromState = bankInfo.pensioner_states[stateName]
-          
+
           // For now, distribute evenly across districts in the state
           // In a real implementation, you'd need pensioner pincode data
           pensionerCount += Math.floor(pensionersFromState / 10) // Rough distribution
-          
+
           console.log(`✅ Bank ${bankPincode} served ${pensionersFromState} pensioners from ${stateName}`)
         }
       })
     }
-    
-    console.log(`📊 Final count for ${division}: ${pensionerCount} DLC verifications from ${bankPincodes.length} bank locations`)
+
+    console.log(
+      `📊 Final count for ${division}: ${pensionerCount} DLC verifications from ${bankPincodes.length} bank locations`,
+    )
     districtPensionerCounts[division] = pensionerCount
     allDistrictData[division] = { count: pensionerCount, state: stateName, bankPincodes }
   })
-  
+
   // Add neighboring state districts for context
   const neighboringStates = getNeighboringStates(stateName)
-  neighboringStates.forEach(neighborState => {
+  neighboringStates.forEach((neighborState) => {
     if (excelPensionerData.value?.state_wise_data?.[neighborState]) {
       const neighborStateData = excelPensionerData.value.state_wise_data[neighborState]
-      
+
       if (neighborStateData.pincode_counts) {
-        const neighborDistrictCounts: { [key: string]: { count: number, pincodes: string[] } } = {}
-        
+        const neighborDistrictCounts: { [key: string]: { count: number; pincodes: string[] } } = {}
+
         Object.entries(neighborStateData.pincode_counts).forEach(([pincode, count]) => {
           const district = getDistrictFromPincode(pincode)
           if (!neighborDistrictCounts[district]) {
@@ -985,13 +992,13 @@ const showDistrictView = (stateName: string, bounds: any) => {
           neighborDistrictCounts[district].count += Number(count) || 0
           neighborDistrictCounts[district].pincodes.push(pincode)
         })
-        
+
         Object.entries(neighborDistrictCounts).forEach(([district, data]) => {
           if (!allDistrictData[district]) {
-            allDistrictData[district] = { 
-              count: data.count, 
-              state: neighborState, 
-              bankPincodes: data.pincodes 
+            allDistrictData[district] = {
+              count: data.count,
+              state: neighborState,
+              bankPincodes: data.pincodes,
             }
           }
         })
@@ -1003,13 +1010,13 @@ const showDistrictView = (stateName: string, bounds: any) => {
     style: (feature: any) => {
       const division = feature?.properties?.division || ''
       const pensionerCount = districtPensionerCounts[division] || 0
-      
+
       // Debug log to check if pensioner counts are being found
       console.log(`District: ${division}, Pensioner Count: ${pensionerCount}`)
-      
+
       // Use district color function with actual pensioner count
       let fillColor = '#e5e7eb' // Default gray
-      
+
       if (pensionerCount === 0) {
         fillColor = '#e5e7eb' // Light gray for no data
       } else if (pensionerCount >= 1000) {
@@ -1023,7 +1030,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
       } else if (pensionerCount > 0) {
         fillColor = '#fca5a5' // Very light red for lowest counts (1-100)
       }
-      
+
       return {
         fillColor: fillColor,
         weight: 2,
@@ -1031,13 +1038,13 @@ const showDistrictView = (stateName: string, bounds: any) => {
         color: '#374151',
         dashArray: '',
         fillOpacity: 0.8,
-        smoothFactor: 1.0
+        smoothFactor: 1.0,
       }
     },
     onEachFeature: (feature: any, layer: any) => {
       const division = feature.properties.division
       const pincodeCount = feature.properties.pincodeCount
-      
+
       layer.bindPopup(`
         <div class="district-popup" style="font-family: 'Inter', sans-serif; min-width: 220px;">
           <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 18px; font-weight: 700; border-bottom: 2px solid #0ea5e9; padding-bottom: 8px;">
@@ -1045,15 +1052,21 @@ const showDistrictView = (stateName: string, bounds: any) => {
           </h3>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px;">
             <div style="text-align: center; padding: 8px; background: #f0f9ff; border-radius: 6px; border: 1px solid #e0f2fe;">
-              <div style="font-size: 18px; font-weight: 700; color: #0284c7;">${districtPensionerCounts[division] || 0}</div>
+              <div style="font-size: 18px; font-weight: 700; color: #0284c7;">${
+                districtPensionerCounts[division] || 0
+              }</div>
               <div style="font-size: 11px; color: #64748b; font-weight: 500;">DLC Completed</div>
             </div>
             <div style="text-align: center; padding: 8px; background: #fef3c7; border-radius: 6px; border: 1px solid #fde68a;">
-              <div style="font-size: 16px; font-weight: 600; color: #d97706;">${allDistrictData[division]?.bankPincodes?.length || 0}</div>
+              <div style="font-size: 16px; font-weight: 600; color: #d97706;">${
+                allDistrictData[division]?.bankPincodes?.length || 0
+              }</div>
               <div style="font-size: 11px; color: #64748b; font-weight: 500;">Bank Locations</div>
             </div>
             <div style="text-align: center; padding: 8px; background: #f0f9ff; border-radius: 6px; border: 1px solid #e0f2fe;">
-              <div style="font-size: 14px; font-weight: 600; color: #0369a1;">${allDistrictData[division]?.state || stateName}</div>
+              <div style="font-size: 14px; font-weight: 600; color: #0369a1;">${
+                allDistrictData[division]?.state || stateName
+              }</div>
               <div style="font-size: 11px; color: #64748b; font-weight: 500;">State</div>
             </div>
           </div>
@@ -1074,7 +1087,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
           </button>
         </div>
       `)
-      
+
       layer.on({
         click: (e: any) => {
           const division = feature?.properties?.division || ''
@@ -1087,13 +1100,13 @@ const showDistrictView = (stateName: string, bounds: any) => {
           const hoverData = {
             name: `${division} District`,
             pincodeCount: feature?.properties?.pincodeCount || 0,
-            pensionerCount: pensionerCount
+            pensionerCount: pensionerCount,
           }
           showHoverCard(e, hoverData, 'district')
           e.target.setStyle({
             weight: 2.5,
             color: '#0369a1',
-            fillOpacity: 0.8
+            fillOpacity: 0.8,
           })
         },
         mouseout: (e: any) => {
@@ -1101,7 +1114,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
           // Restore original district style with correct pensioner count color
           const division = e.target.feature?.properties?.division || ''
           const pensionerCount = districtPensionerCounts[division] || 0
-          
+
           // Use same color logic as in style function
           let fillColor = '#e5e7eb' // Default gray
           if (pensionerCount === 0) {
@@ -1117,7 +1130,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
           } else if (pensionerCount > 0) {
             fillColor = '#fca5a5' // Very light red for lowest counts (1-100)
           }
-          
+
           e.target.setStyle({
             fillColor: fillColor,
             weight: 2,
@@ -1125,7 +1138,7 @@ const showDistrictView = (stateName: string, bounds: any) => {
             color: '#374151',
             dashArray: '',
             fillOpacity: 0.8,
-            smoothFactor: 1.0
+            smoothFactor: 1.0,
           })
         },
         mousemove: (e: any) => {
@@ -1142,32 +1155,32 @@ const showDistrictView = (stateName: string, bounds: any) => {
           // Close any existing popups before transitioning
           map?.closePopup()
           showBankVerificationPincodes(division)
-        }
+        },
       })
-    }
+    },
   }).addTo(map)
-  
+
   // Store district layer reference
   pincodeLayer = districtLayer
-  
+
   // Zoom to state bounds with more padding to show surrounding states
   map.fitBounds(bounds, { padding: [50, 50], maxZoom: 7 })
-  
+
   // Set up global function for popup button
   ;(window as any).showPincodeView = (division: string) => {
     showBankVerificationPincodes(division)
   }
 }
 
-// Show pincode-level view when district is clicked  
+// Show pincode-level view when district is clicked
 const showBankVerificationPincodes = (division: string) => {
   if (!map || !pincodeData) return
-  
+
   console.log(`📍 Showing pincode view for ${division}...`)
-  
+
   hideHoverCard()
   map?.closePopup()
-  
+
   // Remove existing layers before switching views
   if (choroplethLayer) {
     map.removeLayer(choroplethLayer)
@@ -1177,41 +1190,41 @@ const showBankVerificationPincodes = (division: string) => {
     map.removeLayer(pincodeLayer)
     pincodeLayer = null
   }
-  
+
   currentViewLevel.value = 'pincode'
   selectedDistrict.value = division
-  
+
   const pincodes = pincodeDataByDistrict.value[division]
-  
+
   if (!pincodes || pincodes.length === 0) {
     console.log(`⚠️ No pincode data found for district: ${division}`)
     console.log(`📋 Available districts:`, Object.keys(pincodeDataByDistrict.value))
     return
   }
-  
+
   console.log(`📍 Found ${pincodes.length} pincodes for district: ${division}`)
-  
+
   // Create pincode layer
   const pincodeGeoJSON = {
     type: 'FeatureCollection' as const,
-    features: pincodes
+    features: pincodes,
   }
-  
+
   pincodeLayer = L.geoJSON(pincodeGeoJSON, {
     style: (feature: any) => {
       const pincode = feature?.properties?.Pincode || ''
-      
+
       // Get bank verification count for this pincode from Excel analysis
       let bankVerificationCount = 0
       if (excelPensionerData.value?.bank_pincode_data?.[pincode]) {
         bankVerificationCount = excelPensionerData.value.bank_pincode_data[pincode].total_dlc_completed || 0
       }
-      
+
       console.log(`🏦 Pincode ${pincode}: ${bankVerificationCount} DLC verifications`)
-      
+
       // Red gradient color mapping - zyada bank verifications = dark red
       let fillColor = '#e5e7eb' // Default gray for no data
-      
+
       if (bankVerificationCount === 0) {
         fillColor = '#e5e7eb' // Light gray for no bank activity
       } else if (bankVerificationCount >= 1000) {
@@ -1225,33 +1238,33 @@ const showBankVerificationPincodes = (division: string) => {
       } else if (bankVerificationCount > 0) {
         fillColor = '#fca5a5' // Very light red for minimal bank activity (1-50)
       }
-      
+
       return {
         fillColor: fillColor,
         weight: 1,
         opacity: 0.8,
         color: '#374151',
         dashArray: '',
-        fillOpacity: 0.8
+        fillOpacity: 0.8,
       }
     },
     onEachFeature: (feature: any, layer: any) => {
       const pincode = feature.properties.Pincode
       const officeName = feature.properties.Office_Name
       const division = feature.properties.Division
-      
+
       // Get bank verification data for this pincode
       let bankVerificationCount = 0
       let ageGroupData = {}
       let pensionerStatesData = {}
-      
+
       if (excelPensionerData.value?.bank_pincode_data?.[pincode]) {
         const bankData = excelPensionerData.value.bank_pincode_data[pincode]
         bankVerificationCount = bankData.total_dlc_completed || 0
         ageGroupData = bankData.age_groups || {}
         pensionerStatesData = bankData.pensioner_states || {}
       }
-      
+
       // Add hover tooltip with bank verification data
       layer.on('mouseover', (e: any) => {
         console.log(`🏦 Pincode hover: ${pincode}, Bank Verifications: ${bankVerificationCount}`)
@@ -1261,15 +1274,15 @@ const showBankVerificationPincodes = (division: string) => {
           bankCount: bankVerificationCount > 0 ? 1 : 0,
           division: division,
           ageGroups: ageGroupData,
-          pensionerStates: pensionerStatesData
+          pensionerStates: pensionerStatesData,
         }
         showHoverCard(e, hoverData, 'pincode')
       })
-      
+
       layer.on('mouseout', () => {
         hideHoverCard()
       })
-      
+
       layer.bindPopup(`
         <div class="pincode-popup">
           <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 700;">
@@ -1289,10 +1302,18 @@ const showBankVerificationPincodes = (division: string) => {
               <strong>Bank DLC Verifications:</strong> ${bankVerificationCount}
             </div>
             <div style="margin-bottom: 4px;">
-              <strong>Age Groups:</strong> ${Object.entries(ageGroupData).map(([age, count]) => `${age}: ${count}`).join(', ') || 'No data'}
+              <strong>Age Groups:</strong> ${
+                Object.entries(ageGroupData)
+                  .map(([age, count]) => `${age}: ${count}`)
+                  .join(', ') || 'No data'
+              }
             </div>
             <div style="margin-bottom: 8px;">
-              <strong>Pensioner States:</strong> ${Object.entries(pensionerStatesData).map(([state, count]) => `${state}: ${count}`).join(', ') || 'No data'}
+              <strong>Pensioner States:</strong> ${
+                Object.entries(pensionerStatesData)
+                  .map(([state, count]) => `${state}: ${count}`)
+                  .join(', ') || 'No data'
+              }
             </div>
           </div>
           <div style="display: flex; gap: 4px;">
@@ -1323,28 +1344,28 @@ const showBankVerificationPincodes = (division: string) => {
           </div>
         </div>
       `)
-      
+
       layer.on({
         mouseover: (e: any) => {
           e.target.setStyle({
             weight: 2,
             color: '#059669',
-            fillOpacity: 0.8
+            fillOpacity: 0.8,
           })
         },
         mouseout: (e: any) => {
           pincodeLayer?.resetStyle(e.target)
-        }
+        },
       })
-    }
+    },
   }).addTo(map)
-  
+
   // Zoom to district bounds
   const bounds = pincodeLayer.getBounds()
   if (bounds.isValid()) {
     map.fitBounds(bounds, { padding: [20, 20] })
   }
-  
+
   // Set up navigation functions
   ;(window as any).backToDistricts = () => {
     backToDistrictView()
@@ -1357,29 +1378,29 @@ const showBankVerificationPincodes = (division: string) => {
 // Navigate back to district view
 const backToDistrictView = () => {
   if (!map) return
-  
+
   console.log(`🔙 Going back to district view for ${selectedState.value}...`)
-  
+
   // Hide hover cards and close popups
   hideHoverCard()
   map.closePopup()
-  
+
   if (pincodeLayer) {
     map.removeLayer(pincodeLayer)
     pincodeLayer = null
   }
-  
+
   // Reset view level
   currentViewLevel.value = 'district'
   selectedDistrict.value = ''
-  
+
   // Get the selected state bounds for proper navigation
   const stateName = selectedState.value
   if (!stateName) {
     console.error('❌ No selected state for district view')
     return
   }
-  
+
   // Find state bounds
   let stateBounds: any = null
   if (indiaStateData) {
@@ -1389,7 +1410,7 @@ const backToDistrictView = () => {
       stateBounds = tempLayer.getBounds()
     }
   }
-  
+
   // Call showDistrictView to properly recreate district view
   if (stateBounds) {
     showDistrictView(stateName, stateBounds)
@@ -1400,13 +1421,13 @@ const backToDistrictView = () => {
 
 const backToStateView = () => {
   if (!map) return
-  
+
   console.log('🔙 Going back to state view...')
-  
+
   // Hide hover cards and close popups
   hideHoverCard()
   map.closePopup()
-  
+
   // Remove all non-base layers
   if (choroplethLayer) {
     map.removeLayer(choroplethLayer)
@@ -1416,13 +1437,13 @@ const backToStateView = () => {
     map.removeLayer(pincodeLayer)
     pincodeLayer = null
   }
-  
+
   // Reset view state
   currentViewLevel.value = 'state'
   selectedState.value = ''
   selectedDistrict.value = ''
   globalStore.clearSelectedStateInfo()
-  
+
   // Immediately recreate state map
   showStateLevelMap()
 }
@@ -1430,7 +1451,7 @@ const backToStateView = () => {
 // Create custom hover card for states
 const createHoverCard = () => {
   if (tooltipDiv) return
-  
+
   tooltipDiv = document.createElement('div')
   tooltipDiv.className = 'map-hover-card'
   tooltipDiv.style.cssText = `
@@ -1455,26 +1476,26 @@ const createHoverCard = () => {
 // Show hover card with state/district details
 const showHoverCard = (e: any, data: any, type: 'state' | 'district' | 'pincode') => {
   if (!tooltipDiv) return
-  
+
   let content = ''
-  
+
   if (type === 'state') {
     const { name, totalPensioners, totalBanks, districts, ageGroups } = data
-    
+
     // Get Excel data for this state
     const excelStateData = (excelPensionerData.value?.state_wise_data?.[name] as any) || {}
-    
+
     // Use ONLY Excel data - this shows DLC completion data by age group
     const actualPensioners = excelStateData.total_pensioners || 0
-    
+
     // Count bank pincodes and districts from raw bank data
     let bankPincodeCount = 0
     let bankDistrictCount = 0
     const bankDistricts = new Set()
-    
+
     if (excelPensionerData.value?.bank_pincode_data) {
       const bankData = excelPensionerData.value.bank_pincode_data
-      
+
       // Count bank pincodes in this state
       Object.entries(bankData).forEach(([pincode, info]: [string, any]) => {
         if (info.state === name) {
@@ -1486,16 +1507,18 @@ const showHoverCard = (e: any, data: any, type: 'state' | 'district' | 'pincode'
         }
       })
     }
-    
+
     bankDistrictCount = bankDistricts.size
-    
+
     const stateAgeGroups = excelStateData.age_groups || {}
-    const topAgeGroup = Object.keys(stateAgeGroups).length > 0 ? 
-      Object.entries(stateAgeGroups).sort(([,a], [,b]) => (b as number) - (a as number))[0] : null
-    
+    const topAgeGroup =
+      Object.keys(stateAgeGroups).length > 0
+        ? Object.entries(stateAgeGroups).sort(([, a], [, b]) => (b as number) - (a as number))[0]
+        : null
+
     // Create age group breakdown display
-    const ageGroupEntries = Object.entries(stateAgeGroups || {}).sort(([,a], [,b]) => (b as number) - (a as number))
-    
+    const ageGroupEntries = Object.entries(stateAgeGroups || {}).sort(([, a], [, b]) => (b as number) - (a as number))
+
     content = `
       <div style="border-bottom: 2px solid #3b82f6; padding-bottom: 6px; margin-bottom: 8px;">
         <h3 style="margin: 0; font-size: 14px; font-weight: 700; color: #1f2937;">${name}</h3>
@@ -1511,57 +1534,62 @@ const showHoverCard = (e: any, data: any, type: 'state' | 'district' | 'pincode'
           <div style="font-size: 10px; color: #6b7280; font-weight: 500;">Bank Districts</div>
         </div>
       </div>`
-    
+
     if (ageGroupEntries.length > 0) {
       content += `
         <div style="margin-top: 8px; padding: 6px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 3px;">
           <div style="font-size: 11px; font-weight: 600; color: #92400e; margin-bottom: 4px;">Age Group Breakdown:</div>`
-      
+
       ageGroupEntries.slice(0, 4).forEach(([ageGroup, count]) => {
-        const percentage = actualPensioners > 0 ? Math.round((count as number / actualPensioners) * 100) : 0
+        const percentage = actualPensioners > 0 ? Math.round(((count as number) / actualPensioners) * 100) : 0
         content += `
           <div style="font-size: 10px; color: #374151; margin-bottom: 2px; display: flex; justify-content: space-between;">
             <span style="font-weight: 600;">${ageGroup}:</span> 
             <span>${count} (${percentage}%)</span>
           </div>`
       })
-      
+
       content += `</div>`
     }
   } else if (type === 'district') {
     const { name, pincodeCount, pensionerCount } = data
-    
+
     // Get the current selected state
     const currentState = selectedState.value
-    
+
     // Get state data from backend
     const backendStateInfo = (stateWiseData.value as any)[currentState] || {}
-    
+
     // Find district data in backend state info
     let districtInfo = null
     if (backendStateInfo.districts && Array.isArray(backendStateInfo.districts)) {
       // Try exact match first
-      districtInfo = backendStateInfo.districts.find((d: any) => 
-        (d.name || '').toLowerCase() === (name || '').toLowerCase().replace(/ district$/i, '')
+      districtInfo = backendStateInfo.districts.find(
+        (d: any) => (d.name || '').toLowerCase() === (name || '').toLowerCase().replace(/ district$/i, ''),
       )
-      
+
       // If not found, try fuzzy match
       if (!districtInfo) {
-        const normalized = (s: string) => s.replace(/\s+/g, ' ').replace(/ district$/i, '').trim().toLowerCase()
+        const normalized = (s: string) =>
+          s
+            .replace(/\s+/g, ' ')
+            .replace(/ district$/i, '')
+            .trim()
+            .toLowerCase()
         const target = normalized(name || '')
         districtInfo = backendStateInfo.districts.find((d: any) => normalized(d.name || '') === target)
       }
     }
-    
+
     // Get accurate pensioner count from backend data first, then fallback
     const actualPensionerCount = districtInfo ? districtInfo.pensioners : pensionerCount || 0
-    
+
     // Get accurate pincode count from backend data first, then fallback
     const actualPincodeCount = districtInfo ? districtInfo.pincodes : pincodeCount || 0
-    
+
     // Get bank count from backend data
     const bankCount = districtInfo ? districtInfo.banks : 0
-    
+
     // Get top pincodes with verification counts for this district
     let topPincodes: Array<[string, number]> = []
     if (excelPensionerData.value?.state_wise_data?.[currentState]) {
@@ -1572,12 +1600,12 @@ const showHoverCard = (e: any, data: any, type: 'state' | 'district' | 'pincode'
             const pincodeDistrict = getDistrictFromPincode(pincode)
             return pincodeDistrict.toLowerCase() === (name || '').toLowerCase()
           })
-          .sort(([,a], [,b]) => (b as number) - (a as number))
+          .sort(([, a], [, b]) => (b as number) - (a as number))
           .slice(0, 3)
         topPincodes = districtPincodes
       }
     }
-    
+
     content = `
       <div style=\"border-bottom: 2px solid #0ea5e9; padding-bottom: 6px; margin-bottom: 8px;\">
         <h3 style=\"margin: 0; font-size: 14px; font-weight: 700; color: #1f2937;\">${name || 'Unknown District'}</h3>
@@ -1593,23 +1621,25 @@ const showHoverCard = (e: any, data: any, type: 'state' | 'district' | 'pincode'
           <div style=\"font-size: 10px; color: #64748b; font-weight: 500;\">Bank Pincodes</div>
         </div>
         <div style=\"text-align: center; padding: 4px 6px; background: #f0f9ff; border-radius: 4px;\">
-          <div style=\"font-size: 16px; font-weight: 700; color: #8b5cf6;\">${topPincodes.length > 0 ? topPincodes.length : 0}</div>
+          <div style=\"font-size: 16px; font-weight: 700; color: #8b5cf6;\">${
+            topPincodes.length > 0 ? topPincodes.length : 0
+          }</div>
           <div style=\"font-size: 10px; color: #64748b; font-weight: 500;\">Bank Locations</div>
         </div>
       </div>`
-    
+
     if (topPincodes.length > 0) {
       content += `
         <div style=\"margin-top: 8px; padding: 6px; background: #fef2f2; border-left: 3px solid #dc2626; border-radius: 3px;\">
           <div style=\"font-size: 11px; font-weight: 600; color: #dc2626; margin-bottom: 4px;\">Top Verification Pincodes:</div>`
-      
+
       topPincodes.forEach(([pincode, count]) => {
         content += `
           <div style=\"font-size: 10px; color: #374151; margin-bottom: 2px;\">
             <span style=\"font-weight: 600;\">${pincode}:</span> ${count} verifications
           </div>`
       })
-      
+
       content += `</div>`
     }
   } else if (type === 'pincode') {
@@ -1633,14 +1663,14 @@ const showHoverCard = (e: any, data: any, type: 'state' | 'district' | 'pincode'
       </div>
     `
   }
-  
+
   tooltipDiv.innerHTML = content
-  
+
   // Position the card
   const rect = tooltipDiv.getBoundingClientRect()
   const x = e.originalEvent.pageX + 15
   const y = e.originalEvent.pageY - rect.height - 10
-  
+
   tooltipDiv.style.left = x + 'px'
   tooltipDiv.style.top = y + 'px'
   tooltipDiv.style.opacity = '1'
@@ -1660,11 +1690,11 @@ const showStateLevelMap = () => {
     console.error('❌ Map or data not available for state view')
     return
   }
-  
+
   console.log('🗺️ Showing state-level map...')
   console.log('📊 State data available:', !!indiaStateData)
   console.log('🎯 Current view level:', currentViewLevel.value)
-  
+
   // Clear any existing layers first
   if (choroplethLayer) {
     console.log('🧹 Removing existing choropleth layer')
@@ -1676,18 +1706,18 @@ const showStateLevelMap = () => {
     map.removeLayer(pincodeLayer)
     pincodeLayer = null
   }
-  
+
   // Create hover card if not exists
   createHoverCard()
-  
+
   // Create choropleth layer for states with improved styling
   choroplethLayer = L.geoJSON(indiaStateData, {
     style: (feature: any) => {
       const stateName = feature?.properties?.st_nm || ''
-      
+
       // Use the proper color function for consistent red-green gradient
       const fillColor = getStateColor(stateName)
-      
+
       return {
         fillColor: fillColor,
         weight: 1.2,
@@ -1695,7 +1725,7 @@ const showStateLevelMap = () => {
         color: '#374151',
         dashArray: '',
         fillOpacity: 0.8,
-        smoothFactor: 1.0
+        smoothFactor: 1.0,
       }
     },
     onEachFeature: (feature: any, layer: any) => {
@@ -1708,23 +1738,27 @@ const showStateLevelMap = () => {
       const excelBanks = excelStateData.bank_locations ? Object.keys(excelStateData.bank_locations).length : 0
       const regularBanks = regularStateData.totalBanks || 0
       // If we have district data, count banks from all districts
-      const districtBanks = regularStateData.districts ? 
-        regularStateData.districts.reduce((total: number, district: any) => total + (district.banks || 0), 0) : 0
+      const districtBanks = regularStateData.districts
+        ? regularStateData.districts.reduce((total: number, district: any) => total + (district.banks || 0), 0)
+        : 0
       const totalBanks = Math.max(excelBanks, regularBanks, districtBanks)
       const totalDistricts = regularStateData.totalDistricts || 0
-      const topBanks = Object.entries(excelStateData.bank_locations || {})
-        .sort(([,a], [,b]) => (b as number) - (a as number))
-        .slice(0, 3)
-        .map(([bank, count]) => `${bank}: ${count}`) || regularStateData.topBanks || []
-      
+      const topBanks =
+        Object.entries(excelStateData.bank_locations || {})
+          .sort(([, a], [, b]) => (b as number) - (a as number))
+          .slice(0, 3)
+          .map(([bank, count]) => `${bank}: ${count}`) ||
+        regularStateData.topBanks ||
+        []
+
       const stateInfo = {
         name: stateName,
         totalPensioners,
         totalBanks,
         totalDistricts,
-        topBanks: topBanks.slice(0, 3)
+        topBanks: topBanks.slice(0, 3),
       }
-      
+
       layer.bindPopup(`
         <div style="font-family: 'Inter', sans-serif; min-width: 200px;">
           <h3 style="margin: 0 0 12px 0; color: #1f2937; font-size: 18px; font-weight: 700; border-bottom: 2px solid #3b82f6; padding-bottom: 8px;">
@@ -1733,11 +1767,15 @@ const showStateLevelMap = () => {
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
             <div style="text-align: center; padding: 8px; background: #f3f4f6; border-radius: 6px;">
               <div style="font-size: 20px; font-weight: 700; color: #3b82f6;">${totalPensioners.toLocaleString()}</div>
-              <div style="font-size: 12px; color: #6b7280; font-weight: 500;">${(excelStateData as any).total_pensioners ? 'Bank Verifications' : 'Pensioners'}</div>
+              <div style="font-size: 12px; color: #6b7280; font-weight: 500;">${
+                (excelStateData as any).total_pensioners ? 'Bank Verifications' : 'Pensioners'
+              }</div>
             </div>
             <div style="text-align: center; padding: 8px; background: #f3f4f6; border-radius: 6px;">
               <div style="font-size: 20px; font-weight: 700; color: #10b981;">${totalBanks}</div>
-              <div style="font-size: 12px; color: #6b7280; font-weight: 500;">${(excelStateData as any).total_pensioners ? 'Origin States' : 'Banks'}</div>
+              <div style="font-size: 12px; color: #6b7280; font-weight: 500;">${
+                (excelStateData as any).total_pensioners ? 'Origin States' : 'Banks'
+              }</div>
             </div>
           </div>
           <button style="
@@ -1757,25 +1795,25 @@ const showStateLevelMap = () => {
           </button>
         </div>
       `)
-      
+
       layer.on({
         mouseover: (e: any) => {
           // Get age group data from Excel
           const ageGroups = excelStateData.age_groups || {}
-          
+
           const hoverData = {
             name: stateName,
             totalPensioners,
             districts: (regularStateData as any).districts || [],
             totalBanks,
-            ageGroups
+            ageGroups,
           }
           showHoverCard(e, hoverData, 'state')
           e.target.setStyle({
             weight: 2.5,
             color: '#1e40af',
             fillOpacity: 0.9,
-            dashArray: '3, 3'
+            dashArray: '3, 3',
           })
         },
         mouseout: (e: any) => {
@@ -1796,28 +1834,28 @@ const showStateLevelMap = () => {
           hideHoverCard()
           // Close any existing popups before transitioning
           map?.closePopup()
-          
+
           // Force clear any existing state before switching
           if (currentViewLevel.value !== 'state') {
             console.log(`🔄 Switching from ${currentViewLevel.value} view to district view for ${stateName}`)
           }
-          
+
           // Show district-level view for the clicked state
           showDistrictView(stateName, e.target.getBounds())
-        }
+        },
       })
-    }
+    },
   }).addTo(map)
-  
+
   // Fit map to India bounds with better padding for card view
   const bounds = choroplethLayer.getBounds()
   if (bounds.isValid()) {
-    map.fitBounds(bounds, { 
+    map.fitBounds(bounds, {
       padding: [20, 20],
-      maxZoom: 6
+      maxZoom: 6,
     })
   }
-  
+
   // Set up global function for popup button
   ;(window as any).showDistrictView = (stateName: string) => {
     console.log(`🌍 Global showDistrictView called for: ${stateName}`)
@@ -1828,9 +1866,9 @@ const showStateLevelMap = () => {
       console.error(`❌ State layer not found for: ${stateName}`)
     }
   }
-  
+
   console.log(`✅ State map created with ${choroplethLayer.getLayers().length} states`)
-  
+
   // Verify click handlers are attached
   let clickableStates = 0
   choroplethLayer.eachLayer((layer: any) => {
@@ -1844,7 +1882,7 @@ const showStateLevelMap = () => {
 // Helper function to find a state layer by name
 const findStateLayer = (stateName: string): any => {
   if (!choroplethLayer) return null
-  
+
   let foundLayer: any = null
   choroplethLayer.eachLayer((layer: any) => {
     if (layer.feature && layer.feature.properties.st_nm === stateName) {
@@ -1854,19 +1892,18 @@ const findStateLayer = (stateName: string): any => {
   return foundLayer
 }
 
-
 // Show marker map
 const showMarkerMap = () => {
   if (!map) return
-  
+
   console.log(' Showing marker map...')
-  
+
   // Remove choropleth layer
   if (choroplethLayer) {
     map.removeLayer(choroplethLayer)
     choroplethLayer = null
   }
-  
+
   // Add markers back
   addPensionerLocationMarkers()
 }
@@ -1877,37 +1914,35 @@ const showDistrictMarkers = async () => {
     console.log(' Loading district data for markers...')
     await loadDistrictData()
   }
-  
+
   if (!currentDistrictData.length) {
     console.log(' No district data available for markers')
     return
   }
-  
+
   console.log(' Showing district markers...')
-  
+
   // Create district markers layer if it doesn't exist
   if (!districtMarkersLayer) {
     districtMarkersLayer = L.layerGroup()
   }
-  
+
   // Clear existing markers
   districtMarkersLayer.clearLayers()
-  
+
   // Get current map bounds to show only visible districts
   const bounds = map.getBounds()
-  
+
   // Add district markers
   currentDistrictData.forEach((districtInfo: any) => {
-    if (districtInfo.coordinates && 
-        bounds.contains([districtInfo.coordinates.lat, districtInfo.coordinates.lng])) {
-      
+    if (districtInfo.coordinates && bounds.contains([districtInfo.coordinates.lat, districtInfo.coordinates.lng])) {
       const marker = createDistrictMarker(districtInfo)
       if (marker) {
         districtMarkersLayer!.addLayer(marker)
       }
     }
   })
-  
+
   // Add to map if not already added
   if (!map.hasLayer(districtMarkersLayer)) {
     map.addLayer(districtMarkersLayer)
@@ -1928,37 +1963,39 @@ const loadDistrictData = async () => {
     console.log(' Loading district data...')
     const response = await pensionersApi.getPensioners()
     const pensioners = response.DLC_generated_pensioners || []
-    
+
     // Group by state and district
     const districtGroups: { [key: string]: any[] } = {}
-    
+
     pensioners.forEach((pensioner: any) => {
       const state = pensioner.pensioner_state || 'Unknown'
       const district = pensioner.pensioner_district || 'Unknown'
       const key = `${state}-${district}`
-      
+
       if (!districtGroups[key]) {
         districtGroups[key] = []
       }
       districtGroups[key].push(pensioner)
     })
-    
+
     // Convert to district data with coordinates
-    currentDistrictData = Object.entries(districtGroups).map(([key, pensioners]) => {
-      const [state, district] = key.split('-')
-      const coordinates = getDistrictCoordinates(state, district)
-      
-      return {
-        state,
-        district,
-        pensioners: pensioners.length,
-        coordinates,
-        banks: [...new Set(pensioners.map((p: any) => p.disbursing_agency))].length,
-        topBank: getTopBank(pensioners),
-        data: pensioners
-      }
-    }).filter(d => d.coordinates) // Only include districts with known coordinates
-    
+    currentDistrictData = Object.entries(districtGroups)
+      .map(([key, pensioners]) => {
+        const [state, district] = key.split('-')
+        const coordinates = getDistrictCoordinates(state, district)
+
+        return {
+          state,
+          district,
+          pensioners: pensioners.length,
+          coordinates,
+          banks: [...new Set(pensioners.map((p: any) => p.disbursing_agency))].length,
+          topBank: getTopBank(pensioners),
+          data: pensioners,
+        }
+      })
+      .filter((d) => d.coordinates) // Only include districts with known coordinates
+
     console.log(' District data loaded:', currentDistrictData.length, 'districts')
   } catch (error) {
     console.error(' Error loading district data:', error)
@@ -1968,9 +2005,9 @@ const loadDistrictData = async () => {
 // Create district marker
 const createDistrictMarker = (districtInfo: any) => {
   if (!districtInfo.coordinates) return null
-  
+
   const { lat, lng } = districtInfo.coordinates
-  
+
   // Create pin-style marker for district (smaller than state markers)
   const markerHtml = `
     <svg width="20" height="28" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg">
@@ -1988,16 +2025,16 @@ const createDistrictMarker = (districtInfo: any) => {
       <circle cx="10" cy="10" r="2" fill="#10b981"/>
     </svg>
   `
-  
+
   const marker = L.marker([lat, lng], {
     icon: L.divIcon({
       html: markerHtml,
       className: 'district-pin-marker',
       iconSize: [20, 28],
-      iconAnchor: [10, 28]
-    })
+      iconAnchor: [10, 28],
+    }),
   })
-  
+
   // Add popup with district details
   const popupContent = `
     <div class="district-popup">
@@ -2017,7 +2054,7 @@ const createDistrictMarker = (districtInfo: any) => {
       </div>
     </div>
   `
-  
+
   marker.bindPopup(popupContent)
   return marker
 }
@@ -2025,24 +2062,24 @@ const createDistrictMarker = (districtInfo: any) => {
 // Get district coordinates (simplified mapping)
 const getDistrictCoordinates = (state: string, district: string) => {
   // District coordinates mapping for major districts
-  const districtCoords: { [key: string]: { lat: number, lng: number } } = {
+  const districtCoords: { [key: string]: { lat: number; lng: number } } = {
     // Gujarat districts
     'Gujarat-Surat': { lat: 21.1702, lng: 72.8311 },
     'Gujarat-Vadodara': { lat: 22.3072, lng: 73.1812 },
     'Gujarat-Rajkot': { lat: 22.3039, lng: 70.8022 },
     'Gujarat-Bhavnagar': { lat: 21.7645, lng: 72.1519 },
     'Gujarat-Ahmedabad': { lat: 23.0225, lng: 72.5714 },
-    
+
     // Rajasthan districts
     'Rajasthan-Kota': { lat: 25.2138, lng: 75.8648 },
     'Rajasthan-Jaipur': { lat: 26.9124, lng: 75.7873 },
     'Rajasthan-Bikaner': { lat: 28.0229, lng: 73.3119 },
     'Rajasthan-Ajmer': { lat: 26.4499, lng: 74.6399 },
     'Rajasthan-Jodhpur': { lat: 26.2389, lng: 73.0243 },
-    
+
     // Add more districts as needed
   }
-  
+
   const key = `${state}-${district}`
   return districtCoords[key] || null
 }
@@ -2050,15 +2087,14 @@ const getDistrictCoordinates = (state: string, district: string) => {
 // Get top bank for district
 const getTopBank = (pensioners: any[]) => {
   const bankCounts: { [key: string]: number } = {}
-  
+
   pensioners.forEach((p: any) => {
     const bank = p.disbursing_agency || 'Unknown'
     bankCounts[bank] = (bankCounts[bank] || 0) + 1
   })
-  
-  const topBank = Object.entries(bankCounts)
-    .sort(([,a], [,b]) => b - a)[0]
-  
+
+  const topBank = Object.entries(bankCounts).sort(([, a], [, b]) => b - a)[0]
+
   return topBank ? topBank[0] : 'Unknown'
 }
 
@@ -2067,7 +2103,7 @@ const getTopBank = (pensioners: any[]) => {
 // Validation function to check if coordinates are within India
 const isWithinIndia = (lat: number, lng: number): boolean => {
   // Conservative boundaries for India's political territory
-  return lat >= 8.0 && lat <= 35.5 && lng >= 68.7 && lng <= 97.25;
+  return lat >= 8.0 && lat <= 35.5 && lng >= 68.7 && lng <= 97.25
 }
 
 // Initialize map
@@ -2075,7 +2111,7 @@ const initializeMap = () => {
   if (map) return
 
   console.log(' Initializing map...')
-  
+
   map = L.map('leaflet-map', {
     center: [20.5937, 78.9629], // Center of India
     zoom: 5,
@@ -2096,7 +2132,7 @@ const initializeMap = () => {
 
   // NO tile layer - we'll use only india.json as the base map
   console.log(' Map initialized without background tiles')
-  
+
   // Always load india.json based map by default
   loadMapData().then(() => {
     if (useCustomGeoJSON.value) {
@@ -2155,7 +2191,7 @@ const showCustomGeoJSONMap = () => {
           opacity: 1,
           color: '#1e40af',
           dashArray: '',
-          fillOpacity: 0.7
+          fillOpacity: 0.7,
         }
       },
       onEachFeature: (feature, layer) => {
@@ -2177,14 +2213,14 @@ const showCustomGeoJSONMap = () => {
             targetLayer.setStyle({
               weight: 3,
               color: '#1f2937',
-              fillOpacity: 0.8
+              fillOpacity: 0.8,
             })
           },
           mouseout: (e) => {
             customGeoJSONLayer?.resetStyle(e.target)
-          }
+          },
         })
-      }
+      },
     }).addTo(map)
 
     // Fit map to GeoJSON bounds
@@ -2247,26 +2283,26 @@ const getPinGradientDefs = (colorScheme: string) => {
       premium: ['#4f46e5', '#7c3aed', '#2563eb'],
       stroke: ['#6366f1', '#3730a3'],
       inner: ['#5b21b6', '#1e40af'],
-      center: ['#fbbf24', '#f59e0b']
+      center: ['#fbbf24', '#f59e0b'],
     },
     low: {
       premium: ['#10b981', '#059669', '#047857'],
       stroke: ['#34d399', '#065f46'],
       inner: ['#047857', '#064e3b'],
-      center: ['#fbbf24', '#f59e0b']
+      center: ['#fbbf24', '#f59e0b'],
     },
     medium: {
       premium: ['#f59e0b', '#d97706', '#b45309'],
       stroke: ['#fbbf24', '#92400e'],
       inner: ['#b45309', '#78350f'],
-      center: ['#fef3c7', '#fcd34d']
+      center: ['#fef3c7', '#fcd34d'],
     },
     high: {
       premium: ['#dc2626', '#b91c1c', '#991b1b'],
       stroke: ['#ef4444', '#7f1d1d'],
       inner: ['#991b1b', '#7f1d1d'],
-      center: ['#fef2f2', '#fecaca']
-    }
+      center: ['#fef2f2', '#fecaca'],
+    },
   }
 
   const colors = gradients[colorScheme as keyof typeof gradients] || gradients.default
@@ -2308,7 +2344,7 @@ const addPensionerLocationMarkers = async () => {
 
   // Clear existing markers
   clearMarkers()
-  
+
   // Initialize markers layer if not exists
   if (!markersLayer) {
     markersLayer = L.layerGroup().addTo(map)
@@ -2323,11 +2359,11 @@ const addPensionerLocationMarkers = async () => {
     const response = await fetch(`http://100.113.47.45:8080/pensioners?t=${timestamp}`, {
       method: 'GET',
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
+        'Cache-Control': 'no-cache',
       },
-      mode: 'cors'
+      mode: 'cors',
     })
 
     console.log('📡 API Response status:', response.status)
@@ -2367,48 +2403,48 @@ const addPensionerLocationMarkers = async () => {
     console.log(`📍 Found ${Object.keys(stateGroups).length} states with real pensioner data`)
 
     // State coordinates mapping
-    const stateCoordinates: { [key: string]: { latitude: number, longitude: number } } = {
-      'Andhra Pradesh': { latitude: 15.9129, longitude: 79.7400 },
-      'Arunachal Pradesh': { latitude: 28.2180, longitude: 94.7278 },
-      'Assam': { latitude: 26.2006, longitude: 92.9376 },
-      'Bihar': { latitude: 25.0961, longitude: 85.3131 },
-      'Chhattisgarh': { latitude: 21.2787, longitude: 81.8661 },
-      'Goa': { latitude: 15.2993, longitude: 74.1240 },
-      'Gujarat': { latitude: 23.0225, longitude: 72.5714 },
-      'Haryana': { latitude: 29.0588, longitude: 76.0856 },
+    const stateCoordinates: { [key: string]: { latitude: number; longitude: number } } = {
+      'Andhra Pradesh': { latitude: 15.9129, longitude: 79.74 },
+      'Arunachal Pradesh': { latitude: 28.218, longitude: 94.7278 },
+      Assam: { latitude: 26.2006, longitude: 92.9376 },
+      Bihar: { latitude: 25.0961, longitude: 85.3131 },
+      Chhattisgarh: { latitude: 21.2787, longitude: 81.8661 },
+      Goa: { latitude: 15.2993, longitude: 74.124 },
+      Gujarat: { latitude: 23.0225, longitude: 72.5714 },
+      Haryana: { latitude: 29.0588, longitude: 76.0856 },
       'Himachal Pradesh': { latitude: 31.1048, longitude: 77.1734 },
-      'Jharkhand': { latitude: 23.6102, longitude: 85.2799 },
-      'Karnataka': { latitude: 15.3173, longitude: 75.7139 },
-      'Kerala': { latitude: 10.8505, longitude: 76.2711 },
+      Jharkhand: { latitude: 23.6102, longitude: 85.2799 },
+      Karnataka: { latitude: 15.3173, longitude: 75.7139 },
+      Kerala: { latitude: 10.8505, longitude: 76.2711 },
       'Madhya Pradesh': { latitude: 22.9734, longitude: 78.6569 },
-      'Maharashtra': { latitude: 19.7515, longitude: 75.7139 },
-      'Manipur': { latitude: 24.6637, longitude: 93.9063 },
-      'Meghalaya': { latitude: 25.4670, longitude: 91.3662 },
-      'Mizoram': { latitude: 23.1645, longitude: 92.9376 },
-      'Nagaland': { latitude: 26.1584, longitude: 94.5624 },
-      'Odisha': { latitude: 20.9517, longitude: 85.0985 },
-      'Punjab': { latitude: 31.1471, longitude: 75.3412 },
-      'Rajasthan': { latitude: 27.0238, longitude: 74.2179 },
-      'Sikkim': { latitude: 27.5330, longitude: 88.5122 },
+      Maharashtra: { latitude: 19.7515, longitude: 75.7139 },
+      Manipur: { latitude: 24.6637, longitude: 93.9063 },
+      Meghalaya: { latitude: 25.467, longitude: 91.3662 },
+      Mizoram: { latitude: 23.1645, longitude: 92.9376 },
+      Nagaland: { latitude: 26.1584, longitude: 94.5624 },
+      Odisha: { latitude: 20.9517, longitude: 85.0985 },
+      Punjab: { latitude: 31.1471, longitude: 75.3412 },
+      Rajasthan: { latitude: 27.0238, longitude: 74.2179 },
+      Sikkim: { latitude: 27.533, longitude: 88.5122 },
       'Tamil Nadu': { latitude: 11.1271, longitude: 78.6569 },
-      'Telangana': { latitude: 18.1124, longitude: 79.0193 },
-      'Tripura': { latitude: 23.9408, longitude: 91.9882 },
+      Telangana: { latitude: 18.1124, longitude: 79.0193 },
+      Tripura: { latitude: 23.9408, longitude: 91.9882 },
       'Uttar Pradesh': { latitude: 26.8467, longitude: 80.9462 },
-      'Uttarakhand': { latitude: 30.0668, longitude: 79.0193 },
-      'West Bengal': { latitude: 22.9868, longitude: 87.8550 },
-      'Delhi': { latitude: 28.7041, longitude: 77.1025 },
+      Uttarakhand: { latitude: 30.0668, longitude: 79.0193 },
+      'West Bengal': { latitude: 22.9868, longitude: 87.855 },
+      Delhi: { latitude: 28.7041, longitude: 77.1025 },
       'Jammu and Kashmir': { latitude: 34.0837, longitude: 74.7973 },
-      'Ladakh': { latitude: 34.1526, longitude: 77.5771 }
+      Ladakh: { latitude: 34.1526, longitude: 77.5771 },
     }
 
     // Create markers for each state using real API data only
     for (const [stateName, statePensioners] of Object.entries(stateGroups)) {
       try {
         console.log(`📍 Processing state: ${stateName} with ${statePensioners.length} pensioners`)
-        
+
         // Get coordinates for this state
         const coordinates = stateCoordinates[stateName]
-        
+
         if (!coordinates) {
           console.warn(`❌ No coordinates found for state: ${stateName}`)
           continue
@@ -2421,15 +2457,16 @@ const addPensionerLocationMarkers = async () => {
         }
 
         const pensionerCount = statePensioners.length
-        const colorScheme = pensionerCount > 100 ? 'high' : pensionerCount > 50 ? 'medium' : pensionerCount > 10 ? 'low' : 'default'
+        const colorScheme =
+          pensionerCount > 100 ? 'high' : pensionerCount > 50 ? 'medium' : pensionerCount > 10 ? 'low' : 'default'
 
         console.log(`🎨 Creating marker for ${stateName} with ${pensionerCount} pensioners (${colorScheme} scheme)`)
 
         // Create pin-style location marker
         const getMarkerColor = (count: number) => {
           if (count > 100) return '#dc2626' // red for high
-          if (count > 50) return '#f59e0b'  // amber for medium
-          if (count > 10) return '#10b981'  // green for low
+          if (count > 50) return '#f59e0b' // amber for medium
+          if (count > 10) return '#10b981' // green for low
           return '#6b7280' // gray for default
         }
 
@@ -2443,12 +2480,13 @@ const addPensionerLocationMarkers = async () => {
           `)}`,
           iconSize: [25, 41],
           iconAnchor: [12, 41],
-          popupAnchor: [1, -34]
+          popupAnchor: [1, -34],
         })
 
         // Create popup content with detailed state information like choropleth
         const stateInfo = (stateWisePensionerData.value as any)[stateName]
-        const popupContent = stateInfo ? `
+        const popupContent = stateInfo
+          ? `
           <div class="choropleth-popup">
             <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px; font-weight: 700;">${stateName}</h3>
             <div class="stats" style="font-size: 14px; color: #374151;">
@@ -2479,7 +2517,8 @@ const addPensionerLocationMarkers = async () => {
               View Details
             </button>
           </div>
-        ` : `
+        `
+          : `
           <div class="choropleth-popup">
             <h3 style="margin: 0 0 10px 0; color: #1f2937; font-size: 18px; font-weight: 700;">${stateName}</h3>
             <div class="stats" style="font-size: 14px; color: #374151;">
@@ -2493,20 +2532,19 @@ const addPensionerLocationMarkers = async () => {
         `
 
         const marker = L.marker([coordinates.latitude, coordinates.longitude], {
-          icon: customIcon
+          icon: customIcon,
         })
           .bindPopup(popupContent, {
             className: 'custom-leaflet-popup',
             closeButton: true,
             minWidth: 200,
-            maxWidth: 250
+            maxWidth: 250,
           })
           .addTo(map)
 
         markersLayer.addLayer(marker)
         markersAdded++
         console.log(`✅ Marker ${markersAdded} added successfully for ${stateName} with ${pensionerCount} pensioners`)
-        
       } catch (error) {
         console.error(`Error adding marker for ${stateName}:`, error)
       }
@@ -2682,45 +2720,45 @@ const addPensionerLocationMarkers = async () => {
   }
 }
 
-
-
-
-
 // Intelligent coordinate mapping using AI-like logic
-const getIntelligentCoordinates = async (state: string, district: string, pin?: string): Promise<[number, number] | null> => {
+const getIntelligentCoordinates = async (
+  state: string,
+  district: string,
+  pin?: string,
+): Promise<[number, number] | null> => {
   // Comprehensive Indian location database with AI-enhanced mapping
   const locationDatabase: Record<string, Record<string, [number, number]>> = {
     'Uttar Pradesh': {
       'Kanpur Nagar': [26.4499, 80.3319],
-      'Kanpur': [26.4499, 80.3319],
-      'Lucknow': [26.8467, 80.9462],
-      'Agra': [27.1767, 78.0081],
-      'Varanasi': [25.3176, 82.9739],
-      'Meerut': [28.9845, 77.7064],
-      'Allahabad': [25.4358, 81.8463],
-      'Prayagraj': [25.4358, 81.8463],
-      'Bareilly': [28.3670, 79.4304],
-      'Aligarh': [27.8974, 78.0880],
-      'Moradabad': [28.8386, 78.7733],
-      'Saharanpur': [29.9680, 77.5552],
-      'Gorakhpur': [26.7606, 83.3732],
-      'Noida': [28.5355, 77.3910],
-      'Ghaziabad': [28.6692, 77.4538]
+      Kanpur: [26.4499, 80.3319],
+      Lucknow: [26.8467, 80.9462],
+      Agra: [27.1767, 78.0081],
+      Varanasi: [25.3176, 82.9739],
+      Meerut: [28.9845, 77.7064],
+      Allahabad: [25.4358, 81.8463],
+      Prayagraj: [25.4358, 81.8463],
+      Bareilly: [28.367, 79.4304],
+      Aligarh: [27.8974, 78.088],
+      Moradabad: [28.8386, 78.7733],
+      Saharanpur: [29.968, 77.5552],
+      Gorakhpur: [26.7606, 83.3732],
+      Noida: [28.5355, 77.391],
+      Ghaziabad: [28.6692, 77.4538],
     },
-    'Maharashtra': {
-      'Mumbai': [19.0760, 72.8777],
-      'Pune': [18.5204, 73.8567],
-      'Nagpur': [21.1458, 79.0882],
-      'Thane': [19.2183, 72.9781],
-      'Nashik': [19.9975, 73.7898],
-      'Aurangabad': [19.8762, 75.3433],
-      'Solapur': [17.6599, 75.9064],
-      'Kolhapur': [16.7050, 74.2433],
-      'Sangli': [16.8524, 74.5815],
-      'Ahmednagar': [19.0948, 74.7480]
+    Maharashtra: {
+      Mumbai: [19.076, 72.8777],
+      Pune: [18.5204, 73.8567],
+      Nagpur: [21.1458, 79.0882],
+      Thane: [19.2183, 72.9781],
+      Nashik: [19.9975, 73.7898],
+      Aurangabad: [19.8762, 75.3433],
+      Solapur: [17.6599, 75.9064],
+      Kolhapur: [16.705, 74.2433],
+      Sangli: [16.8524, 74.5815],
+      Ahmednagar: [19.0948, 74.748],
     },
-    'Delhi': {
-      'New Delhi': [28.6139, 77.2090],
+    Delhi: {
+      'New Delhi': [28.6139, 77.209],
       'Central Delhi': [28.6508, 77.2311],
       'North Delhi': [28.7041, 77.1025],
       'South Delhi': [28.5244, 77.1855],
@@ -2728,113 +2766,111 @@ const getIntelligentCoordinates = async (state: string, district: string, pin?: 
       'West Delhi': [28.6692, 77.1031],
       'North West Delhi': [28.7233, 77.1722],
       'North East Delhi': [28.6744, 77.2847],
-      'South West Delhi': [28.6061, 77.0610],
-      'South East Delhi': [28.5562, 77.2759]
+      'South West Delhi': [28.6061, 77.061],
+      'South East Delhi': [28.5562, 77.2759],
     },
     'Tamil Nadu': {
-      'Chennai': [13.0827, 80.2707],
-      'Coimbatore': [11.0168, 76.9558],
-      'Madurai': [9.9252, 78.1198],
-      'Tiruchirappalli': [10.7905, 78.7047],
-      'Salem': [11.6643, 78.1460],
-      'Tirunelveli': [8.7139, 77.7567],
-      'Erode': [11.3410, 77.7172],
-      'Vellore': [12.9165, 79.1325],
-      'Thoothukudi': [8.7642, 78.1348],
-      'Dindigul': [10.3673, 77.9803]
+      Chennai: [13.0827, 80.2707],
+      Coimbatore: [11.0168, 76.9558],
+      Madurai: [9.9252, 78.1198],
+      Tiruchirappalli: [10.7905, 78.7047],
+      Salem: [11.6643, 78.146],
+      Tirunelveli: [8.7139, 77.7567],
+      Erode: [11.341, 77.7172],
+      Vellore: [12.9165, 79.1325],
+      Thoothukudi: [8.7642, 78.1348],
+      Dindigul: [10.3673, 77.9803],
     },
-    'Karnataka': {
-      'Bangalore': [12.9716, 77.5946],
-      'Bengaluru': [12.9716, 77.5946],
+    Karnataka: {
+      Bangalore: [12.9716, 77.5946],
+      Bengaluru: [12.9716, 77.5946],
       'Bangalore Urban': [12.9716, 77.5946], // For your sample data
-      'Mysore': [12.2958, 76.6394],
-      'Hubli': [15.3647, 75.1240],
-      'Mangalore': [12.9141, 74.8560],
-      'Belgaum': [15.8497, 74.4977],
-      'Gulbarga': [17.3297, 76.8343],
-      'Davanagere': [14.4644, 75.9218],
-      'Bellary': [15.1394, 76.9214],
-      'Bijapur': [16.8302, 75.7100]
+      Mysore: [12.2958, 76.6394],
+      Hubli: [15.3647, 75.124],
+      Mangalore: [12.9141, 74.856],
+      Belgaum: [15.8497, 74.4977],
+      Gulbarga: [17.3297, 76.8343],
+      Davanagere: [14.4644, 75.9218],
+      Bellary: [15.1394, 76.9214],
+      Bijapur: [16.8302, 75.71],
     },
     'West Bengal': {
-      'Kolkata': [22.5726, 88.3639],
-      'Howrah': [22.5958, 88.2636],
-      'Durgapur': [23.4800, 87.3119],
-      'Asansol': [23.6739, 86.9524],
-      'Siliguri': [26.7271, 88.3953],
-      'Malda': [25.0961, 88.1408],
-      'Bardhaman': [23.2324, 87.8615],
-      'Barasat': [22.7211, 88.4810],
-      'Kharagpur': [22.3460, 87.2320],
-      'Haldia': [22.0583, 88.0597]
+      Kolkata: [22.5726, 88.3639],
+      Howrah: [22.5958, 88.2636],
+      Durgapur: [23.48, 87.3119],
+      Asansol: [23.6739, 86.9524],
+      Siliguri: [26.7271, 88.3953],
+      Malda: [25.0961, 88.1408],
+      Bardhaman: [23.2324, 87.8615],
+      Barasat: [22.7211, 88.481],
+      Kharagpur: [22.346, 87.232],
+      Haldia: [22.0583, 88.0597],
     },
-    'Gujarat': {
-      'Ahmedabad': [23.0225, 72.5714],
-      'Surat': [21.1702, 72.8311],
-      'Vadodara': [22.3072, 73.1812],
-      'Rajkot': [22.3039, 70.8022],
-      'Bhavnagar': [21.7645, 72.1519],
-      'Jamnagar': [22.4707, 70.0577],
-      'Junagadh': [21.5222, 70.4579],
-      'Gandhinagar': [23.2156, 72.6369],
-      'Anand': [22.5645, 72.9289],
-      'Morbi': [22.8173, 70.8372]
+    Gujarat: {
+      Ahmedabad: [23.0225, 72.5714],
+      Surat: [21.1702, 72.8311],
+      Vadodara: [22.3072, 73.1812],
+      Rajkot: [22.3039, 70.8022],
+      Bhavnagar: [21.7645, 72.1519],
+      Jamnagar: [22.4707, 70.0577],
+      Junagadh: [21.5222, 70.4579],
+      Gandhinagar: [23.2156, 72.6369],
+      Anand: [22.5645, 72.9289],
+      Morbi: [22.8173, 70.8372],
     },
-    'Rajasthan': {
-      'Jaipur': [26.9124, 75.7873],
-      'Jodhpur': [26.2389, 73.0243],
-      'Udaipur': [24.5854, 73.7125],
-      'Kota': [25.2138, 75.8648],
-      'Bikaner': [28.0229, 73.3119],
-      'Ajmer': [26.4499, 74.6399],
-      'Bhilwara': [25.3407, 74.6269],
-      'Alwar': [27.5530, 76.6346],
-      'Bharatpur': [27.2152, 77.5030],
-      'Sikar': [27.6094, 75.1399]
+    Rajasthan: {
+      Jaipur: [26.9124, 75.7873],
+      Jodhpur: [26.2389, 73.0243],
+      Udaipur: [24.5854, 73.7125],
+      Kota: [25.2138, 75.8648],
+      Bikaner: [28.0229, 73.3119],
+      Ajmer: [26.4499, 74.6399],
+      Bhilwara: [25.3407, 74.6269],
+      Alwar: [27.553, 76.6346],
+      Bharatpur: [27.2152, 77.503],
+      Sikar: [27.6094, 75.1399],
     },
-    'Kerala': {
-      'Thiruvananthapuram': [8.5241, 76.9366],
-      'Kochi': [9.9312, 76.2673],
-      'Kozhikode': [11.2588, 75.7804],
-      'Thrissur': [10.5276, 76.2144], // For your sample data
-      'Kollam': [8.8932, 76.6141],
-      'Palakkad': [10.7867, 76.6548],
-      'Alappuzha': [9.4981, 76.3388],
-      'Malappuram': [11.0410, 76.0873],
-      'Kannur': [11.8745, 75.3704],
-      'Kasaragod': [12.4996, 74.9869]
+    Kerala: {
+      Thiruvananthapuram: [8.5241, 76.9366],
+      Kochi: [9.9312, 76.2673],
+      Kozhikode: [11.2588, 75.7804],
+      Thrissur: [10.5276, 76.2144], // For your sample data
+      Kollam: [8.8932, 76.6141],
+      Palakkad: [10.7867, 76.6548],
+      Alappuzha: [9.4981, 76.3388],
+      Malappuram: [11.041, 76.0873],
+      Kannur: [11.8745, 75.3704],
+      Kasaragod: [12.4996, 74.9869],
     },
-    'Telangana': {
-      'Hyderabad': [17.3850, 78.4867],
-      'Nizamabad': [18.6725, 78.0941], // For your sample data
-      'Warangal': [17.9689, 79.5941],
-      'Khammam': [17.2473, 80.1514],
-      'Karimnagar': [18.4386, 79.1288],
-      'Mahbubnagar': [16.7460, 77.9953],
-      'Nalgonda': [17.0542, 79.2673],
-      'Adilabad': [19.6718, 78.5311],
-      'Rangareddy': [17.4065, 78.4772],
-      'Medak': [18.0480, 78.2747]
-    }
+    Telangana: {
+      Hyderabad: [17.385, 78.4867],
+      Nizamabad: [18.6725, 78.0941], // For your sample data
+      Warangal: [17.9689, 79.5941],
+      Khammam: [17.2473, 80.1514],
+      Karimnagar: [18.4386, 79.1288],
+      Mahbubnagar: [16.746, 77.9953],
+      Nalgonda: [17.0542, 79.2673],
+      Adilabad: [19.6718, 78.5311],
+      Rangareddy: [17.4065, 78.4772],
+      Medak: [18.048, 78.2747],
+    },
   }
 
   // First try exact state and district match
   console.log(`🔍 Trying exact match for: "${state}" -> "${district}"`)
   if (locationDatabase[state] && locationDatabase[state][district]) {
-    console.log(`✅ EXACT MATCH found: [${locationDatabase[state][district][0]}, ${locationDatabase[state][district][1]}]`)
+    console.log(
+      `✅ EXACT MATCH found: [${locationDatabase[state][district][0]}, ${locationDatabase[state][district][1]}]`,
+    )
     return locationDatabase[state][district]
   }
   console.log(`❌ No exact match for: "${state}" -> "${district}"`)
 
   // Try case-insensitive matching
-  const stateKey = Object.keys(locationDatabase).find(s =>
-    s.toLowerCase() === state.toLowerCase()
-  )
+  const stateKey = Object.keys(locationDatabase).find((s) => s.toLowerCase() === state.toLowerCase())
 
   if (stateKey) {
-    const districtKey = Object.keys(locationDatabase[stateKey]).find(d =>
-      d.toLowerCase() === district.toLowerCase()
-    )
+    const districtKey = Object.keys(locationDatabase[stateKey]).find((d) => d.toLowerCase() === district.toLowerCase())
 
     if (districtKey) {
       return locationDatabase[stateKey][districtKey]
@@ -2844,8 +2880,10 @@ const getIntelligentCoordinates = async (state: string, district: string, pin?: 
   // If no exact match, try to find similar district names
   for (const [stateName, districts] of Object.entries(locationDatabase)) {
     for (const [districtName, coords] of Object.entries(districts)) {
-      if (districtName.toLowerCase().includes(district.toLowerCase()) ||
-          district.toLowerCase().includes(districtName.toLowerCase())) {
+      if (
+        districtName.toLowerCase().includes(district.toLowerCase()) ||
+        district.toLowerCase().includes(districtName.toLowerCase())
+      ) {
         console.log(`🤖 AI: Found similar match: ${districtName} for ${district}`)
         return coords
       }
@@ -2855,28 +2893,28 @@ const getIntelligentCoordinates = async (state: string, district: string, pin?: 
   // Fallback to state capital if available
   const stateCapitals: Record<string, [number, number]> = {
     'Uttar Pradesh': [26.8467, 80.9462], // Lucknow
-    'Maharashtra': [19.0760, 72.8777], // Mumbai
-    'Delhi': [28.6139, 77.2090],
+    Maharashtra: [19.076, 72.8777], // Mumbai
+    Delhi: [28.6139, 77.209],
     'Tamil Nadu': [13.0827, 80.2707], // Chennai
-    'Karnataka': [12.9716, 77.5946], // Bangalore
+    Karnataka: [12.9716, 77.5946], // Bangalore
     'West Bengal': [22.5726, 88.3639], // Kolkata
-    'Gujarat': [23.0225, 72.5714], // Ahmedabad
-    'Rajasthan': [26.9124, 75.7873], // Jaipur
-    'Bihar': [25.5941, 85.1376], // Patna
+    Gujarat: [23.0225, 72.5714], // Ahmedabad
+    Rajasthan: [26.9124, 75.7873], // Jaipur
+    Bihar: [25.5941, 85.1376], // Patna
     'Madhya Pradesh': [23.2599, 77.4126], // Bhopal
-    'Andhra Pradesh': [17.3850, 78.4867], // Hyderabad
-    'Telangana': [17.3850, 78.4867], // Hyderabad
-    'Kerala': [9.9312, 76.2673], // Kochi
-    'Punjab': [30.7333, 76.7794], // Chandigarh
-    'Haryana': [30.7333, 76.7794], // Chandigarh
-    'Odisha': [20.2961, 85.8245], // Bhubaneswar
-    'Jharkhand': [23.6102, 85.2799], // Ranchi
-    'Assam': [26.2006, 92.9376], // Dispur
-    'Chhattisgarh': [21.2787, 81.8661], // Raipur
-    'Uttarakhand': [30.0668, 79.0193], // Dehradun
+    'Andhra Pradesh': [17.385, 78.4867], // Hyderabad
+    Telangana: [17.385, 78.4867], // Hyderabad
+    Kerala: [9.9312, 76.2673], // Kochi
+    Punjab: [30.7333, 76.7794], // Chandigarh
+    Haryana: [30.7333, 76.7794], // Chandigarh
+    Odisha: [20.2961, 85.8245], // Bhubaneswar
+    Jharkhand: [23.6102, 85.2799], // Ranchi
+    Assam: [26.2006, 92.9376], // Dispur
+    Chhattisgarh: [21.2787, 81.8661], // Raipur
+    Uttarakhand: [30.0668, 79.0193], // Dehradun
     'Himachal Pradesh': [31.1048, 77.1734], // Shimla
     'Jammu and Kashmir': [34.0837, 74.7973], // Srinagar
-    'Goa': [15.2993, 74.1240] // Panaji
+    Goa: [15.2993, 74.124], // Panaji
   }
 
   if (stateCapitals[state]) {
@@ -2888,17 +2926,17 @@ const getIntelligentCoordinates = async (state: string, district: string, pin?: 
 }
 
 // PIN code to coordinates mapping for major Indian PIN codes
-const getPinCodeCoordinates = (pin: string): { lat: number, lng: number } | null => {
-  const pinCoords: Record<string, { lat: number, lng: number }> = {
+const getPinCodeCoordinates = (pin: string): { lat: number; lng: number } | null => {
+  const pinCoords: Record<string, { lat: number; lng: number }> = {
     // Delhi
-    '110001': { lat: 28.6139, lng: 77.2090 }, // New Delhi
-    '110002': { lat: 28.6139, lng: 77.2090 }, // New Delhi
-    '110003': { lat: 28.6139, lng: 77.2090 }, // New Delhi
+    '110001': { lat: 28.6139, lng: 77.209 }, // New Delhi
+    '110002': { lat: 28.6139, lng: 77.209 }, // New Delhi
+    '110003': { lat: 28.6139, lng: 77.209 }, // New Delhi
 
     // Mumbai
-    '400001': { lat: 19.0760, lng: 72.8777 }, // Mumbai
-    '400002': { lat: 19.0760, lng: 72.8777 }, // Mumbai
-    '400003': { lat: 19.0760, lng: 72.8777 }, // Mumbai
+    '400001': { lat: 19.076, lng: 72.8777 }, // Mumbai
+    '400002': { lat: 19.076, lng: 72.8777 }, // Mumbai
+    '400003': { lat: 19.076, lng: 72.8777 }, // Mumbai
 
     // Bangalore
     '560001': { lat: 12.9716, lng: 77.5946 }, // Bangalore
@@ -2913,8 +2951,8 @@ const getPinCodeCoordinates = (pin: string): { lat: number, lng: number } | null
     '700002': { lat: 22.5726, lng: 88.3639 }, // Kolkata
 
     // Hyderabad
-    '500001': { lat: 17.3850, lng: 78.4867 }, // Hyderabad
-    '500002': { lat: 17.3850, lng: 78.4867 }, // Hyderabad
+    '500001': { lat: 17.385, lng: 78.4867 }, // Hyderabad
+    '500002': { lat: 17.385, lng: 78.4867 }, // Hyderabad
 
     // Pune
     '411001': { lat: 18.5204, lng: 73.8567 }, // Pune
@@ -2925,28 +2963,28 @@ const getPinCodeCoordinates = (pin: string): { lat: number, lng: number } | null
 }
 
 // State capital coordinates as fallback
-const getStateCapitalCoordinates = (state: string): { lat: number, lng: number } | null => {
-  const stateCapitals: Record<string, { lat: number, lng: number }> = {
-    'Delhi': { lat: 28.6139, lng: 77.2090 },
-    'Maharashtra': { lat: 19.0760, lng: 72.8777 }, // Mumbai
-    'Karnataka': { lat: 12.9716, lng: 77.5946 }, // Bangalore
+const getStateCapitalCoordinates = (state: string): { lat: number; lng: number } | null => {
+  const stateCapitals: Record<string, { lat: number; lng: number }> = {
+    Delhi: { lat: 28.6139, lng: 77.209 },
+    Maharashtra: { lat: 19.076, lng: 72.8777 }, // Mumbai
+    Karnataka: { lat: 12.9716, lng: 77.5946 }, // Bangalore
     'Tamil Nadu': { lat: 13.0827, lng: 80.2707 }, // Chennai
     'West Bengal': { lat: 22.5726, lng: 88.3639 }, // Kolkata
     'Uttar Pradesh': { lat: 26.8467, lng: 80.9462 }, // Lucknow
-    'Gujarat': { lat: 23.0225, lng: 72.5714 }, // Ahmedabad
-    'Rajasthan': { lat: 26.9124, lng: 75.7873 }, // Jaipur
-    'Punjab': { lat: 30.7333, lng: 76.7794 }, // Chandigarh
-    'Haryana': { lat: 28.4595, lng: 77.0266 }, // Gurgaon
-    'Andhra Pradesh': { lat: 17.3850, lng: 78.4867 }, // Hyderabad
-    'Telangana': { lat: 17.3850, lng: 78.4867 }, // Hyderabad
-    'Kerala': { lat: 8.5241, lng: 76.9366 }, // Thiruvananthapuram
-    'Odisha': { lat: 20.2961, lng: 85.8245 }, // Bhubaneswar
+    Gujarat: { lat: 23.0225, lng: 72.5714 }, // Ahmedabad
+    Rajasthan: { lat: 26.9124, lng: 75.7873 }, // Jaipur
+    Punjab: { lat: 30.7333, lng: 76.7794 }, // Chandigarh
+    Haryana: { lat: 28.4595, lng: 77.0266 }, // Gurgaon
+    'Andhra Pradesh': { lat: 17.385, lng: 78.4867 }, // Hyderabad
+    Telangana: { lat: 17.385, lng: 78.4867 }, // Hyderabad
+    Kerala: { lat: 8.5241, lng: 76.9366 }, // Thiruvananthapuram
+    Odisha: { lat: 20.2961, lng: 85.8245 }, // Bhubaneswar
     'Madhya Pradesh': { lat: 23.2599, lng: 77.4126 }, // Bhopal
-    'Bihar': { lat: 25.0961, lng: 85.3131 }, // Patna
-    'Jharkhand': { lat: 23.6102, lng: 85.2799 }, // Ranchi
-    'Assam': { lat: 26.1445, lng: 91.7362 }, // Guwahati
-    'Chhattisgarh': { lat: 21.2787, lng: 81.8661 }, // Raipur
-    'Uttarakhand': { lat: 30.0668, lng: 79.0193 }, // Dehradun
+    Bihar: { lat: 25.0961, lng: 85.3131 }, // Patna
+    Jharkhand: { lat: 23.6102, lng: 85.2799 }, // Ranchi
+    Assam: { lat: 26.1445, lng: 91.7362 }, // Guwahati
+    Chhattisgarh: { lat: 21.2787, lng: 81.8661 }, // Raipur
+    Uttarakhand: { lat: 30.0668, lng: 79.0193 }, // Dehradun
     'Himachal Pradesh': { lat: 31.1048, lng: 77.1734 }, // Shimla
     'Jammu and Kashmir': { lat: 34.0837, lng: 74.7973 }, // Srinagar
   }
@@ -2956,7 +2994,7 @@ const getStateCapitalCoordinates = (state: string): { lat: number, lng: number }
 
 // Clear all markers helper function
 const clearMarkers = () => {
-  markers.forEach(marker => {
+  markers.forEach((marker) => {
     if (map) {
       map.removeLayer(marker)
     }
@@ -2972,9 +3010,9 @@ const getPensionerCountForState = (stateName: string): number => {
   const normalizeStateName = (name: string): string => {
     return name.trim().replace(/\s+/g, ' ').toLowerCase()
   }
-  
+
   const normalizedStateName = normalizeStateName(stateName)
-  
+
   // Try multiple variations of state name for better matching
   const stateVariations = [
     stateName, // Original
@@ -2983,7 +3021,7 @@ const getPensionerCountForState = (stateName: string): number => {
     stateName.replace(/\s+/g, ''), // No spaces
     stateName.toUpperCase().replace(/\s+/g, ''), // Uppercase no spaces
   ]
-  
+
   // Check Excel data with all variations
   if (excelPensionerData.value?.state_wise_data) {
     for (const variation of stateVariations) {
@@ -2991,35 +3029,31 @@ const getPensionerCountForState = (stateName: string): number => {
         return excelPensionerData.value.state_wise_data[variation].total_pensioners || 0
       }
     }
-    
+
     // Try normalized matching (case-insensitive, space-insensitive)
     const excelStates = Object.keys(excelPensionerData.value.state_wise_data)
-    const matchedState = excelStates.find(state => 
-      normalizeStateName(state) === normalizedStateName
-    )
-    
+    const matchedState = excelStates.find((state) => normalizeStateName(state) === normalizedStateName)
+
     if (matchedState) {
       return excelPensionerData.value.state_wise_data[matchedState].total_pensioners || 0
     }
   }
-  
+
   // Fallback to regular API data with same variation matching
   for (const variation of stateVariations) {
     if (stateData.value[variation]) {
       return stateData.value[variation]
     }
   }
-  
+
   // Try normalized matching for regular data
   const regularStates = Object.keys(stateData.value)
-  const matchedRegularState = regularStates.find(state => 
-    normalizeStateName(state) === normalizedStateName
-  )
-  
+  const matchedRegularState = regularStates.find((state) => normalizeStateName(state) === normalizedStateName)
+
   if (matchedRegularState) {
     return stateData.value[matchedRegularState]
   }
-  
+
   // Final fallback to stateWisePensionerData
   if (stateWisePensionerData.value) {
     const stateInfo = (stateWisePensionerData.value as any)[stateName]
@@ -3027,19 +3061,19 @@ const getPensionerCountForState = (stateName: string): number => {
       return stateInfo.totalPensioners
     }
   }
-  
+
   return 0
 }
 
 // Get state color based on actual pensioner data - red shades only (5 ranges)
 const getStateColor = (stateName: string): string => {
   const pensionerCount = getPensionerCountForState(stateName)
-  
+
   // Return light gray for states with no data (0 pensioners)
   if (pensionerCount === 0) {
     return '#e5e7eb' // Light gray for no data
   }
-  
+
   // Red gradient - zyada pensioners = dark red, kam pensioners = light red (5 ranges only)
   if (pensionerCount >= 5000) {
     return '#7f1d1d' // Very dark red for highest (5k+)
@@ -3052,31 +3086,31 @@ const getStateColor = (stateName: string): string => {
   } else if (pensionerCount > 0) {
     return '#fca5a5' // Very light red for lowest counts (1-500)
   }
-  
+
   return '#e5e7eb' // Default gray for no data
 }
 
 // Helper function to get neighboring states for district view context
 const getNeighboringStates = (stateName: string): string[] => {
   const neighbors: { [key: string]: string[] } = {
-    'Rajasthan': ['Gujarat', 'Madhya Pradesh', 'Uttar Pradesh', 'Haryana', 'Punjab'],
-    'Gujarat': ['Rajasthan', 'Madhya Pradesh', 'Maharashtra'],
-    'Maharashtra': ['Gujarat', 'Madhya Pradesh', 'Karnataka', 'Telangana', 'Goa'],
-    'Karnataka': ['Maharashtra', 'Telangana', 'Andhra Pradesh', 'Tamil Nadu', 'Kerala', 'Goa'],
+    Rajasthan: ['Gujarat', 'Madhya Pradesh', 'Uttar Pradesh', 'Haryana', 'Punjab'],
+    Gujarat: ['Rajasthan', 'Madhya Pradesh', 'Maharashtra'],
+    Maharashtra: ['Gujarat', 'Madhya Pradesh', 'Karnataka', 'Telangana', 'Goa'],
+    Karnataka: ['Maharashtra', 'Telangana', 'Andhra Pradesh', 'Tamil Nadu', 'Kerala', 'Goa'],
     'Tamil Nadu': ['Karnataka', 'Andhra Pradesh', 'Kerala'],
     'Uttar Pradesh': ['Rajasthan', 'Madhya Pradesh', 'Bihar', 'Jharkhand', 'Uttarakhand', 'Haryana', 'Delhi'],
-    'Bihar': ['Uttar Pradesh', 'Jharkhand', 'West Bengal'],
+    Bihar: ['Uttar Pradesh', 'Jharkhand', 'West Bengal'],
     'West Bengal': ['Bihar', 'Jharkhand', 'Odisha', 'Assam'],
-    'Assam': ['West Bengal', 'Meghalaya', 'Arunachal Pradesh', 'Nagaland'],
-    'Delhi': ['Uttar Pradesh', 'Haryana'],
-    'Haryana': ['Punjab', 'Uttar Pradesh', 'Rajasthan', 'Delhi'],
-    'Punjab': ['Haryana', 'Rajasthan', 'Himachal Pradesh'],
+    Assam: ['West Bengal', 'Meghalaya', 'Arunachal Pradesh', 'Nagaland'],
+    Delhi: ['Uttar Pradesh', 'Haryana'],
+    Haryana: ['Punjab', 'Uttar Pradesh', 'Rajasthan', 'Delhi'],
+    Punjab: ['Haryana', 'Rajasthan', 'Himachal Pradesh'],
     'Madhya Pradesh': ['Rajasthan', 'Gujarat', 'Maharashtra', 'Uttar Pradesh', 'Bihar', 'Jharkhand', 'Odisha'],
-    'Odisha': ['Madhya Pradesh', 'Jharkhand', 'West Bengal', 'Andhra Pradesh'],
-    'Telangana': ['Maharashtra', 'Karnataka', 'Andhra Pradesh'],
+    Odisha: ['Madhya Pradesh', 'Jharkhand', 'West Bengal', 'Andhra Pradesh'],
+    Telangana: ['Maharashtra', 'Karnataka', 'Andhra Pradesh'],
     'Andhra Pradesh': ['Telangana', 'Karnataka', 'Tamil Nadu', 'Odisha'],
-    'Kerala': ['Karnataka', 'Tamil Nadu'],
-    'Goa': ['Maharashtra', 'Karnataka']
+    Kerala: ['Karnataka', 'Tamil Nadu'],
+    Goa: ['Maharashtra', 'Karnataka'],
   }
   return neighbors[stateName] || []
 }
@@ -3085,7 +3119,7 @@ const getNeighboringStates = (stateName: string): string[] => {
 const getDistrictFromPincode = (pincode: string): string => {
   try {
     const pin_num = parseInt(pincode.substring(0, 3))
-    
+
     // Gujarat districts (comprehensive mapping)
     if (pin_num >= 360 && pin_num <= 370) return 'Rajkot'
     if (pin_num >= 380 && pin_num <= 382) return 'Ahmedabad'
@@ -3097,7 +3131,7 @@ const getDistrictFromPincode = (pincode: string): string => {
     if (pin_num >= 394 && pin_num <= 396) return 'Bharuch'
     if (pin_num >= 364 && pin_num <= 365) return 'Amreli'
     if (pin_num >= 396 && pin_num <= 399) return 'Surat'
-    
+
     // Rajasthan districts (comprehensive mapping)
     if (pin_num >= 302 && pin_num <= 303) return 'Jaipur'
     if (pin_num >= 342 && pin_num <= 344) return 'Jodhpur'
@@ -3109,7 +3143,7 @@ const getDistrictFromPincode = (pincode: string): string => {
     if (pin_num >= 331 && pin_num <= 332) return 'Churu'
     if (pin_num >= 341 && pin_num <= 342) return 'Barmer'
     if (pin_num >= 345 && pin_num <= 346) return 'Jaisalmer'
-    
+
     // Maharashtra districts (comprehensive mapping)
     if (pin_num >= 400 && pin_num <= 421) return 'Mumbai'
     if (pin_num >= 411 && pin_num <= 414) return 'Pune'
@@ -3120,7 +3154,7 @@ const getDistrictFromPincode = (pincode: string): string => {
     if (pin_num >= 425 && pin_num <= 428) return 'Dhule'
     if (pin_num >= 445 && pin_num <= 448) return 'Amravati'
     if (pin_num >= 413 && pin_num <= 415) return 'Solapur'
-    
+
     // Karnataka districts (comprehensive mapping)
     if (pin_num >= 560 && pin_num <= 562) return 'Bangalore'
     if (pin_num >= 570 && pin_num <= 571) return 'Mysore'
@@ -3131,7 +3165,7 @@ const getDistrictFromPincode = (pincode: string): string => {
     if (pin_num >= 577 && pin_num <= 578) return 'Shimoga'
     if (pin_num >= 585 && pin_num <= 586) return 'Bijapur'
     if (pin_num >= 590 && pin_num <= 591) return 'Gulbarga'
-    
+
     return 'Other District'
   } catch {
     return 'Unknown District'
@@ -3142,10 +3176,10 @@ const getDistrictFromPincode = (pincode: string): string => {
 const getDistrictColor = (districtName: string, stateName: string): string => {
   // Use same Excel data source as state view for consistency
   let pensionerCount = 0
-  
+
   if (excelPensionerData.value?.state_wise_data?.[stateName]) {
     const stateExcelData = excelPensionerData.value.state_wise_data[stateName]
-    
+
     // Count pensioners in this district by checking pincode_counts
     if (stateExcelData.pincode_counts) {
       Object.entries(stateExcelData.pincode_counts).forEach(([pincode, count]) => {
@@ -3156,12 +3190,12 @@ const getDistrictColor = (districtName: string, stateName: string): string => {
       })
     }
   }
-  
+
   // Return light gray for districts with no data (0 pensioners)
   if (pensionerCount === 0) {
     return '#e5e7eb' // Light gray for no data
   }
-  
+
   // Red gradient - zyada pensioners = dark red, kam pensioners = light red (5 ranges only)
   if (pensionerCount >= 1000) {
     return '#7f1d1d' // Very dark red for highest (1k+)
@@ -3174,7 +3208,7 @@ const getDistrictColor = (districtName: string, stateName: string): string => {
   } else if (pensionerCount > 0) {
     return '#fca5a5' // Very light red for lowest counts (1-100)
   }
-  
+
   return '#e5e7eb' // Default gray for no data
 }
 
@@ -3191,7 +3225,7 @@ const addProperChoroplethLayer = () => {
         opacity: 1,
         color: '#374151',
         dashArray: '',
-        fillOpacity: 0.8
+        fillOpacity: 0.8,
       }
     },
     onEachFeature: (feature, layer) => {
@@ -3211,14 +3245,14 @@ const addProperChoroplethLayer = () => {
           layer.setStyle({
             weight: 3,
             color: '#1f2937',
-            fillOpacity: 0.8
+            fillOpacity: 0.8,
           })
         },
         mouseout: (e) => {
           choroplethLayer?.resetStyle(e.target)
-        }
+        },
       })
-    }
+    },
   }).addTo(map)
 }
 
@@ -3263,8 +3297,6 @@ const removeChoroplethLayer = () => {
   }
 }
 
-
-
 // Watch for changes in useCustomGeoJSON checkbox
 watch(useCustomGeoJSON, (newValue) => {
   if (!map) return
@@ -3290,19 +3322,21 @@ onMounted(async () => {
 
   // Load verification data and integrate with Ollama
   await loadVerificationData()
-  
-
 
   // Wait for DOM to be ready
   setTimeout(() => {
     initializeMap()
     // After map init, force a size recalculation for correct rendering inside the card
-    try { map?.invalidateSize(true) } catch (e) {}
+    try {
+      map?.invalidateSize(true)
+    } catch (e) {}
   }, 500)
 
   // Listen to window resize to keep map fitting its container
   const handleResize = () => {
-    try { map?.invalidateSize(true) } catch (e) {}
+    try {
+      map?.invalidateSize(true)
+    } catch (e) {}
   }
   ;(window as any).__rbmHandleResize = handleResize
   window.addEventListener('resize', handleResize)
@@ -3320,9 +3354,6 @@ onUnmounted(() => {
   }
   markers = []
 })
- 
-
-
 
 // Export functionality
 const exportData = () => {
@@ -3332,7 +3363,7 @@ const exportData = () => {
     timestamp: new Date().toISOString(),
     totalVerifications: verificationData.value.reduce((sum, item) => sum + item.total, 0),
     totalCompleted: verificationData.value.reduce((sum, item) => sum + item.completed, 0),
-    totalPending: verificationData.value.reduce((sum, item) => sum + item.pending, 0)
+    totalPending: verificationData.value.reduce((sum, item) => sum + item.pending, 0),
   }
 
   const jsonString = JSON.stringify(data, null, 2)
@@ -3390,12 +3421,7 @@ const forceReloadData = async () => {
     left: -3px;
     right: -3px;
     bottom: -3px;
-    background: linear-gradient(45deg,
-      #667eea 0%,
-      #764ba2 25%,
-      #f093fb 50%,
-      #f5576c 75%,
-      #667eea 100%);
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #667eea 100%);
     border-radius: 23px;
     z-index: -1;
     opacity: 0.8;
@@ -3430,34 +3456,19 @@ const forceReloadData = async () => {
   /* Animate the gradient border on hover */
   &::before {
     opacity: 1;
-    background: linear-gradient(45deg,
-      #667eea 0%,
-      #764ba2 20%,
-      #f093fb 40%,
-      #f5576c 60%,
-      #4facfe 80%,
-      #667eea 100%);
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 20%, #f093fb 40%, #f5576c 60%, #4facfe 80%, #667eea 100%);
     animation: borderGlow 3s ease-in-out infinite;
   }
 }
 
 /* Premium border animation */
 @keyframes borderGlow {
-  0%, 100% {
-    background: linear-gradient(45deg,
-      #667eea 0%,
-      #764ba2 25%,
-      #f093fb 50%,
-      #f5576c 75%,
-      #667eea 100%);
+  0%,
+  100% {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #667eea 100%);
   }
   50% {
-    background: linear-gradient(45deg,
-      #f5576c 0%,
-      #f093fb 25%,
-      #764ba2 50%,
-      #667eea 75%,
-      #4facfe 100%);
+    background: linear-gradient(45deg, #f5576c 0%, #f093fb 25%, #764ba2 50%, #667eea 75%, #4facfe 100%);
   }
 }
 
@@ -3536,10 +3547,7 @@ const forceReloadData = async () => {
     left: 0;
     right: 0;
     height: 2px;
-    background: linear-gradient(90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.3) 50%,
-      transparent 100%);
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
     z-index: 10;
     animation: shimmer 3s ease-in-out infinite;
   }
@@ -3547,8 +3555,13 @@ const forceReloadData = async () => {
 
 /* Shimmer animation for top border */
 @keyframes shimmer {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.8;
+  }
 }
 
 .leaflet-map {
@@ -3714,12 +3727,12 @@ const forceReloadData = async () => {
 [data-theme='dark'] :deep(.pin-center-clean) {
   background: #1a1a1a !important;
   color: #ffffff !important;
-  border: 1px solid rgba(255,255,255,0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
 [data-theme='light'] :deep(.pin-center-clean) {
   background: #ffffff !important;
-  border: 1px solid rgba(0,0,0,0.1) !important;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Popup styles */
@@ -3771,10 +3784,12 @@ const forceReloadData = async () => {
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(135deg,
+    background: linear-gradient(
+      135deg,
       rgba(102, 126, 234, 0.3) 0%,
       rgba(118, 75, 162, 0.3) 50%,
-      rgba(240, 147, 251, 0.3) 100%);
+      rgba(240, 147, 251, 0.3) 100%
+    );
     border-radius: 18px;
     z-index: -1;
   }
@@ -3921,8 +3936,6 @@ const forceReloadData = async () => {
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
-
-
 /* Responsive design for mobile */
 @media (max-width: 768px) {
   .map-container {
@@ -3978,8 +3991,6 @@ const forceReloadData = async () => {
     font-size: 11px;
     gap: 4px;
   }
-
-
 
   :deep(.leaflet-control-zoom) {
     margin-right: 10px !important;
@@ -4137,8 +4148,6 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
   border-color: var(--va-primary, #154ec1);
 }
 
-
-
 .card-text {
   font-size: 12px;
   font-weight: 600;
@@ -4147,8 +4156,13 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .expanded-legend-panel {
@@ -4235,7 +4249,7 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
   border-radius: 50% 50% 50% 0;
   transform: translateX(-50%) rotate(-45deg);
   border: 2px solid white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .pensioner-location-marker .modern-location-pin::after {
@@ -4291,7 +4305,7 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
   background: #ff4444;
   border-radius: 50%;
   border: 3px solid #ffffff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   z-index: 1000;
 }
 
@@ -4306,7 +4320,7 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 12px solid #ff4444;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   z-index: 999;
 }
 
@@ -4316,7 +4330,7 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 
 .modern-location-pin:hover::before {
   background: #cc0000;
-  box-shadow: 0 3px 12px rgba(255,68,68,0.4);
+  box-shadow: 0 3px 12px rgba(255, 68, 68, 0.4);
 }
 
 .modern-location-pin:hover::after {
@@ -4332,7 +4346,7 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
   height: 4px;
   background: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   z-index: 1001;
 }
 
@@ -4462,11 +4476,15 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 }
 
 .data-point-pin {
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .data-point-popup {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   min-width: 200px;
 }
 
@@ -4650,8 +4668,12 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-content p,
@@ -4782,7 +4804,8 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 }
 
 @keyframes pinPulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -4806,8 +4829,6 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 .premium-location-pin.default:hover svg {
   filter: drop-shadow(0 12px 24px rgba(79, 70, 229, 0.4)) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
 }
-
-
 
 .location-popup {
   font-family: 'Inter', sans-serif;
@@ -4845,13 +4866,20 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 
 /* Premium Modern Popup Styles */
 .premium-location-popup {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
   min-width: 320px;
   max-width: 380px;
   background: white;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
 }
@@ -5062,11 +5090,17 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 
 /* Ultra Premium Popup Styles */
 .ultra-premium-popup {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    'Inter',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   width: 320px;
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.15),
+    0 8px 32px rgba(0, 0, 0, 0.1);
   background: white;
   border: 1px solid rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
@@ -5164,23 +5198,43 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
 }
 
 @keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  50% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(239, 68, 68, 0);
+  }
 }
 
 @keyframes pulse-orange {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
-  50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(245, 158, 11, 0);
+  }
 }
 
 @keyframes pulse-green {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-  50% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+  }
 }
 
 @keyframes pulse-blue {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-  50% { box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
 }
 
 .popup-body-ultra {
@@ -5360,235 +5414,37 @@ body[data-theme='light'] .verification-map-card .card-subtitle,
   border: 1px solid rgba(255, 255, 255, 0.2);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
-
 </style>
-/* Floating Ask AI Button */
-.ask-ai-btn {
-  position: fixed;
-  bottom: 32px;
-  right: 32px;
-  z-index: 1000;
-  background: #2c3e50;
-  color: #fff;
-  border: none;
-  border-radius: 24px;
-  padding: 12px 24px;
-  font-size: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.ask-ai-btn:hover {
-  background: #34495e;
-}
-
-/* Chatbot Card View */
-.chatbot-card {
-  position: fixed;
-  top: 64px;
-  right: 32px;
-  width: 340px;
-  max-width: 90vw;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
-  z-index: 1100;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.chatbot-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px;
-  background: #2c3e50;
-  color: #fff;
-  font-weight: bold;
-}
-.close-btn {
-  background: transparent;
-  border: none;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-}
-.chatbot-body {
-  padding: 16px;
-  min-height: 120px;
-}
-
-/* Floating State Info Card */
-.floating-state-info-card {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 280px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  z-index: 1001;
-  overflow: hidden;
-}
-
-.state-info-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.state-info-header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-}
-
-.close-state-info {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: white;
-}
-
-.close-state-info:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.state-info-content {
-  padding: 20px;
-}
-
-.state-stat {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-.stat-label {
-  font-size: 14px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.stat-value {
-  font-size: 16px;
-  font-weight: 700;
-  color: #1f2937;
-}
-
-.top-banks-section {
-  margin-top: 16px;
-}
-
-.top-banks-section h4 {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.banks-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.bank-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 12px;
-  background: rgba(102, 126, 234, 0.1);
-  border-radius: 8px;
-  border-left: 3px solid #667eea;
-}
-
-.bank-name {
-  font-size: 12px;
-  font-weight: 500;
-  color: #374151;
-  flex: 1;
-  margin-right: 8px;
-}
-
-.bank-count {
-  font-size: 12px;
-  font-weight: 600;
-  color: #667eea;
-}
-
-/* Animation for state info card */
-.state-info-slide-enter-active {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.state-info-slide-leave-active {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.state-info-slide-enter-from {
-  opacity: 0;
-  transform: translateX(100%) scale(0.9);
-}
-
-.state-info-slide-enter-to {
-  opacity: 1;
-  transform: translateX(0) scale(1);
-}
-
-.state-info-slide-leave-from {
-  opacity: 1;
-  transform: translateX(0) scale(1);
-}
-
-.state-info-slide-leave-to {
-  opacity: 0;
-  transform: translateX(100%) scale(0.9);
-}
-
-/* Dark theme support for floating state info */
-[data-theme='dark'] .floating-state-info-card {
-  background: rgba(30, 30, 30, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-[data-theme='dark'] .state-stat {
-  border-bottom-color: rgba(255, 255, 255, 0.1);
-}
-
-[data-theme='dark'] .stat-label {
-  color: #9ca3af;
-}
-
-[data-theme='dark'] .stat-value {
-  color: #f9fafb;
-}
-
-[data-theme='dark'] .top-banks-section h4 {
-  color: #e5e7eb;
-}
-
-[data-theme='dark'] .bank-item {
-  background: rgba(102, 126, 234, 0.2);
-}
-
-[data-theme='dark'] .bank-name {
-  color: #d1d5db;
-}
+/* Floating Ask AI Button */ .ask-ai-btn { position: fixed; bottom: 32px; right: 32px; z-index: 1000; background:
+#2c3e50; color: #fff; border: none; border-radius: 24px; padding: 12px 24px; font-size: 16px; box-shadow: 0 2px 8px
+rgba(0,0,0,0.15); cursor: pointer; transition: background 0.2s; } .ask-ai-btn:hover { background: #34495e; } /* Chatbot
+Card View */ .chatbot-card { position: fixed; top: 64px; right: 32px; width: 340px; max-width: 90vw; background: #fff;
+border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.18); z-index: 1100; display: flex; flex-direction: column;
+overflow: hidden; } .chatbot-header { display: flex; justify-content: space-between; align-items: center; padding: 16px;
+background: #2c3e50; color: #fff; font-weight: bold; } .close-btn { background: transparent; border: none; color: #fff;
+font-size: 20px; cursor: pointer; } .chatbot-body { padding: 16px; min-height: 120px; } /* Floating State Info Card */
+.floating-state-info-card { position: absolute; top: 20px; right: 20px; width: 280px; background: rgba(255, 255, 255,
+0.95); backdrop-filter: blur(10px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15); border: 1px solid
+rgba(255, 255, 255, 0.2); z-index: 1001; overflow: hidden; } .state-info-header { background: linear-gradient(135deg,
+#667eea 0%, #764ba2 100%); color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items:
+center; } .state-info-header h3 { margin: 0; font-size: 18px; font-weight: 700; text-shadow: 0 1px 2px rgba(0, 0, 0,
+0.2); } .close-state-info { background: rgba(255, 255, 255, 0.2); border: none; border-radius: 50%; width: 32px; height:
+32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; color:
+white; } .close-state-info:hover { background: rgba(255, 255, 255, 0.3); transform: scale(1.1); } .state-info-content {
+padding: 20px; } .state-stat { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+padding-bottom: 8px; border-bottom: 1px solid rgba(0, 0, 0, 0.1); } .stat-label { font-size: 14px; color: #6b7280;
+font-weight: 500; } .stat-value { font-size: 16px; font-weight: 700; color: #1f2937; } .top-banks-section { margin-top:
+16px; } .top-banks-section h4 { margin: 0 0 12px 0; font-size: 14px; font-weight: 600; color: #374151; } .banks-list {
+display: flex; flex-direction: column; gap: 8px; } .bank-item { display: flex; justify-content: space-between;
+align-items: center; padding: 8px 12px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 3px solid
+#667eea; } .bank-name { font-size: 12px; font-weight: 500; color: #374151; flex: 1; margin-right: 8px; } .bank-count {
+font-size: 12px; font-weight: 600; color: #667eea; } /* Animation for state info card */ .state-info-slide-enter-active
+{ transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); } .state-info-slide-leave-active { transition: all 0.3s
+cubic-bezier(0.4, 0, 0.2, 1); } .state-info-slide-enter-from { opacity: 0; transform: translateX(100%) scale(0.9); }
+.state-info-slide-enter-to { opacity: 1; transform: translateX(0) scale(1); } .state-info-slide-leave-from { opacity: 1;
+transform: translateX(0) scale(1); } .state-info-slide-leave-to { opacity: 0; transform: translateX(100%) scale(0.9); }
+/* Dark theme support for floating state info */ [data-theme='dark'] .floating-state-info-card { background: rgba(30,
+30, 30, 0.95); border: 1px solid rgba(255, 255, 255, 0.1); } [data-theme='dark'] .state-stat { border-bottom-color:
+rgba(255, 255, 255, 0.1); } [data-theme='dark'] .stat-label { color: #9ca3af; } [data-theme='dark'] .stat-value { color:
+#f9fafb; } [data-theme='dark'] .top-banks-section h4 { color: #e5e7eb; } [data-theme='dark'] .bank-item { background:
+rgba(102, 126, 234, 0.2); } [data-theme='dark'] .bank-name { color: #d1d5db; }

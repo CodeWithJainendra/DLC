@@ -550,11 +550,11 @@ const loadPensionerData = async () => {
     // Also load pensioners data for detailed analysis
     const pensionersResponse = await statsApi.getPensioners()
     rawPensionerData.value = pensionersResponse.pensioners || []
-    
+
     // Get total pensioners from dashboard stats API
     const dashboardStats = await statsApi.getDashboardStats()
     totalPensioners.value = dashboardStats.totalPensioners || rawPensionerData.value.length
-    
+
     console.log('📊 Total pensioners from dashboard stats:', dashboardStats.totalPensioners)
     console.log('📊 Total pensioners from pensioners API:', rawPensionerData.value.length)
   } catch (error) {

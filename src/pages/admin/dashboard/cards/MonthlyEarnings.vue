@@ -82,9 +82,9 @@
   </VaCard>
 
   <!-- Enhanced Modal Popup with Two Charts -->
-  <VaModal 
-    v-model="showModal" 
-    size="large" 
+  <VaModal
+    v-model="showModal"
+    size="large"
     class="dlc-status-modal resizable-modal"
     :mobile-fullscreen="false"
     :blur-background="true"
@@ -497,7 +497,7 @@ const loadPensionerData = async () => {
     isLoading.value = true
 
     console.log('🔄 Loading state-wise data from Flask backend...')
-    
+
     // Get active filters from global store
     const activeFilters = globalStore.getActiveFilters()
     console.log('🎯 Active filters:', activeFilters)
@@ -514,7 +514,7 @@ const loadPensionerData = async () => {
     if (Object.keys(activeFilters).length > 0) {
       pensioners = pensioners.filter((pensioner: any) => {
         let matches = true
-        
+
         if (activeFilters.state && pensioner.state !== activeFilters.state) {
           matches = false
         }
@@ -536,10 +536,10 @@ const loadPensionerData = async () => {
           if (ageGroup === '76-80' && (age < 76 || age > 80)) matches = false
           if (ageGroup === '80+' && age <= 80) matches = false
         }
-        
+
         return matches
       })
-      
+
       console.log(`🎯 Filtered pensioners: ${pensioners.length} from ${pensionersResponse.data.length}`)
     }
 
@@ -662,17 +662,17 @@ watch(
     console.log('🎯 Filters changed, reloading data...')
     loadRealData()
   },
-  { deep: true }
+  { deep: true },
 )
 
 // Create line chart when data is available
 const createLineChart = () => {
   if (!lineChartCanvas.value || !top5StatesLineData.value) return
-  
+
   new Chart(lineChartCanvas.value, {
     type: 'line',
     data: top5StatesLineData.value,
-    options: lineChartOptions
+    options: lineChartOptions,
   })
 }
 
@@ -681,7 +681,7 @@ onMounted(async () => {
   console.log('🔄 MonthlyEarnings component mounted, loading real data...')
   await loadRealData()
   console.log('✅ Real data loaded in MonthlyEarnings component')
-  
+
   // Create chart after data is loaded
   nextTick(() => {
     createLineChart()
@@ -746,7 +746,7 @@ const top5StatesLineData = computed(() => {
           Math.floor((data as any).totalPensioners * 0.8),
           Math.floor((data as any).totalPensioners * 0.9),
           Math.floor((data as any).totalPensioners * 0.95),
-          (data as any).totalPensioners
+          (data as any).totalPensioners,
         ],
         borderColor: colors[index % colors.length],
         backgroundColor: colors[index % colors.length] + '20',
@@ -755,7 +755,7 @@ const top5StatesLineData = computed(() => {
         tension: 0.4,
         pointRadius: 3,
         pointHoverRadius: 5,
-      }))
+      })),
     }
   } catch (error) {
     console.error('Error in top5StatesLineData:', error)
@@ -1004,10 +1004,10 @@ const openModal = async () => {
     console.log('🚀 Card clicked - opening modal')
     console.log('📊 Current data keys:', Object.keys(realStateWiseData.value))
     console.log('👤 Total pensioners:', totalPensioners.value)
-    
+
     showModal.value = true
     console.log('✅ Modal state set to:', showModal.value)
-    
+
     // Always try to load fresh data
     await loadRealData()
     console.log('📈 Data loaded, modal should be visible now')
@@ -1015,7 +1015,6 @@ const openModal = async () => {
     console.error('❌ Error opening modal:', error)
   }
 }
-
 
 // Public loader used across component
 const loadRealData = async () => {
