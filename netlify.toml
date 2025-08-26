@@ -2,7 +2,7 @@
 publish = "dist"
 
 # Default build command.
-command = "npm run build"
+command = "npm run build:ci"
 
 [[redirects]]
 from = "/*"
